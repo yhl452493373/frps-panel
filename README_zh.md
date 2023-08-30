@@ -53,13 +53,25 @@ admin_user  = admin
 admin_pwd   = admin
 
 [users]
-;user1
+;user1的meta_token为123
 user1 = 123
-;user2
+;user2的meta_token为abc
 user2 = abc
 
+[ports]
+;user1只能使用8080,9090到9010端口,其他端口则建立连接时返回失败(不影响客户端启动)
+user1=8080,9090-9010
+
+[domains]
+;user1只能使用web01.yyy.zzz域名,配置了其他域名则建立连接时返回失败(不影响客户端启动)
+user1=web01.user1.com
+
+[subdomains]
+;user1只能使用web01.xxx.yyy.zzz域名,配置了其他三级域名则建立连接时返回失败(不影响客户端启动)
+user1=web01
+
 [disabled]
-;user2被禁用
+;user2被禁用,frpc使用此账户与frps通信时,如果未启动则无法启动,如果已启动,则会一直打印错误日志
 user2 = disable
 ```
 
@@ -97,7 +109,7 @@ meta_token = 123
 [ssh]
 type = tcp
 local_port = 22
-remote_port = 6000
+remote_port = 8080
 ```
 
     user2 的配置:（由于示例文件中user2被禁用，因此无法连接）
@@ -116,7 +128,11 @@ local_port = 22
 remote_port = 6000
 ```
 
-# 致谢
+## 使用
+
+如果使用中有问题或者有其他想法，在[issues](https://github.com/yhl452493373/frps-multiuser/issues)上提出来。 如果我能搞定的话，我尽量搞。
+
+## 致谢
 
 + [frp](https://github.com/fatedier/frp)
 + [fp-multiuser](https://github.com/gofrp/fp-multiuser)

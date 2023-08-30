@@ -47,18 +47,31 @@ frp version >= v0.31.0
 plugin_addr = 127.0.0.1
 ;plugin listen port
 plugin_port = 7200
-;user and passwd for basic auth protect
+;the username of manage ui,optional
 admin_user  = admin
+;the password of manage ui,optional
 admin_pwd   = admin
 
 [users]
-;user1
+;user user1 with meta_token 123
 user1 = 123
-;user2
+;user user2 with meta_token abc
 user2 = abc
 
+[ports]
+;user1 can only use ports 8080,9090 to 9010 ,other ports will fail to create proxy (frpc can normally startup)
+user1=8080,9090-9010
+
+[domains]
+;user1 can only use domain web01.user1.com ,other domain will fail to create proxy (frpc can normally startup)
+user1=web01.user1.com
+
+[subdomains]
+;user1 can only use subdomain web01 ,other subdomain will fail to create proxy (frpc can normally startup)
+user1=web01
+
 [disabled]
-;user2 is disable
+;user2 is disabled,when frpc use this user to connect with frps,if frpc is not startup,it cannot startup,if it's already startup,it will always show error logs on console
 user2 = disable
 ```
 
@@ -96,10 +109,10 @@ meta_token = 123
 [ssh]
 type = tcp
 local_port = 22
-remote_port = 6000
+remote_port = 8080
 ```
 
-   For user2:(user2 can't connect to server,because it is disable)
+   For user2:(user2 cannot connect to server,because it is disabled)
 
 ```ini
 # frpc.ini
@@ -115,7 +128,11 @@ local_port = 22
 remote_port = 6000
 ```
 
-# Credits
+## Issues & Ideas
+
+If you have any issues or ideas, put it on [issues](https://github.com/yhl452493373/frps-multiuser/issues). I will try my best to achieve it.
+
+## Credits
 
 + [frp](https://github.com/fatedier/frp)
 + [fp-multiuser](https://github.com/gofrp/fp-multiuser)
