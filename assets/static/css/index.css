@@ -1,0 +1,53 @@
+body {
+    padding: 15px;
+    word-break: break-all;
+}
+
+#searchForm input {
+    height: 30px;
+    line-height: 28px;
+}
+
+#searchForm .layui-input-suffix,
+#searchForm .layui-input-prefix {
+    line-height: 30px;
+    padding: 0;
+}
+
+#addUserForm {
+    padding: 15px 15px 0 15px;
+}
+
+#addUserForm .layui-form-item:last-child {
+    margin-bottom: 0;
+}
+
+#addUserForm .layui-textarea {
+    min-height: 80px;
+    padding: 9px 10px;
+    resize: none;
+}
+
+.layui-form-label {
+    width: 140px;
+}
+
+.layui-input-block {
+    margin-left: 170px;
+}
+
+.layui-btn-sm {
+    line-height: 28px;
+}
+
+.layui-btn-xs {
+    line-height: 20px;
+}
+
+.layui-btn-container{
+    height: 30px;
+}
+
+.layui-layer-btn > a[class^=layui-layer-btn]{
+    line-height: 28px;
+}
