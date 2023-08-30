@@ -229,7 +229,11 @@ $(function () {
                 }
             }
         };
-        layui.form.verify(verifyRules);
+
+        layui.form.set({
+            verIncludeRequired: true,
+            verify: verifyRules
+        });
 
         layui.table.render({
             elem: '#tokenTable',
