@@ -12,7 +12,7 @@ $(function () {
      */
     function verifyUser(username) {
         var valid = true;
-        if (username.trim() === '' || !/\w/.test(username)) {
+        if (username.trim() === '' || !/^\w+$/.test(username)) {
             valid = false;
         }
         return {
@@ -27,12 +27,12 @@ $(function () {
      */
     function verifyToken(token) {
         var valid = true;
-        if (token.trim() === '' || !/\w/.test(token)) {
+        if (token.trim() === '' || !/^[\w!@#$%^&*()]+$/.test(token)) {
             valid = false;
         }
         return {
             valid: valid,
-            trim: token
+            trim: token.trim()
         };
     }
 
@@ -153,7 +153,7 @@ $(function () {
             user: function (value, item) {
                 var result = verifyUser(value);
                 if (!result.valid) {
-                    return lang['UserEmpty'];
+                    return lang['UserFormatError'];
                 }
                 if (item != null) {
                     if (typeof item === "function") {
@@ -166,7 +166,7 @@ $(function () {
             token: function (value, item) {
                 var result = verifyToken(value);
                 if (!result.valid) {
-                    return lang['TokenEmpty'];
+                    return lang['TokenFormatError'];
                 }
                 if (item != null) {
                     if (typeof item === "function") {
@@ -614,9 +614,9 @@ $(function () {
             else if (result.code === 3)
                 reason = lang['ParamError'];
             else if (result.code === 4)
-                reason = lang['UserEmpty'];
+                reason = lang['UserFormatError'];
             else if (result.code === 5)
-                reason = lang['TokenEmpty'];
+                reason = lang['TokenFormatError'];
             layui.layer.msg(lang['OperateFailed'] + ',' + reason)
         }
 

@@ -15,14 +15,16 @@ import (
 )
 
 const (
-	Success    = 0
-	ParamError = 1
-	UserExist  = 2
-	SaveError  = 3
-	UserEmpty  = 4
-	TokenEmpty = 5
+	Success          = 0
+	ParamError       = 1
+	UserExist        = 2
+	SaveError        = 3
+	UserFormatError  = 4
+	TokenFormatError = 5
 )
 
+var UserFormatReg = regexp.MustCompile("^\\w$")
+var TokenFormatReg = regexp.MustCompile("^[\\w!@#$%^&*()]+$")
 var TrimAllSpaceReg = regexp.MustCompile("[\\n\\t\\r\\s]")
 var TrimBreakLineReg = regexp.MustCompile("[\\n\\t\\r]")
 
@@ -212,8 +214,8 @@ func (c *HandleController) MakeLangFunc() func(context *gin.Context) {
 			"OperateError":          ginI18n.MustGetMessage(context, "Operate error"),
 			"OperateFailed":         ginI18n.MustGetMessage(context, "Operate failed"),
 			"UserExist":             ginI18n.MustGetMessage(context, "User exist"),
-			"UserEmpty":             ginI18n.MustGetMessage(context, "User cannot be empty"),
-			"TokenEmpty":            ginI18n.MustGetMessage(context, "Token cannot be empty"),
+			"UserFormatError":       ginI18n.MustGetMessage(context, "User format error"),
+			"TokenFormatError":      ginI18n.MustGetMessage(context, "Token format error"),
 			"ShouldCheckUser":       ginI18n.MustGetMessage(context, "Please check at least one user"),
 			"OperationConfirm":      ginI18n.MustGetMessage(context, "Operation confirm"),
 			"EmptyData":             ginI18n.MustGetMessage(context, "Empty data"),
@@ -317,11 +319,11 @@ func (c *HandleController) MakeAddTokenFunc() func(context *gin.Context) {
 			context.JSON(http.StatusOK, &response)
 			return
 		}
-		if strings.TrimSpace(info.User) == "" {
-			log.Printf("user add failed, user cannot be empty")
+		if !UserFormatReg.MatchString(info.User) {
+			log.Printf("user add failed, user format error")
 			response.Success = false
-			response.Code = UserEmpty
-			response.Message = fmt.Sprintf("user add failed, user cannot be empty")
+			response.Code = UserFormatError
+			response.Message = fmt.Sprintf("user add failed, user format error")
 			context.JSON(http.StatusOK, &response)
 			return
 		}
@@ -333,14 +335,16 @@ func (c *HandleController) MakeAddTokenFunc() func(context *gin.Context) {
 			context.JSON(http.StatusOK, &response)
 			return
 		}
-		if strings.TrimSpace(info.Token) == "" {
-			log.Printf("user add failed, token cannot be empty")
+		if !TokenFormatReg.MatchString(info.Token) {
+			log.Printf("user add failed, token format error")
 			response.Success = false
-			response.Code = TokenEmpty
-			response.Message = fmt.Sprintf("user add failed, token cannot be empty")
+			response.Code = TokenFormatError
+			response.Message = fmt.Sprintf("user add failed, token format error")
 			context.JSON(http.StatusOK, &response)
 			return
 		}
+		replaceSpaceToken := TrimAllSpaceReg.ReplaceAllString(info.Token, "")
+		info.Token = replaceSpaceToken
 		c.Tokens[info.User] = info
 
 		usersSection, _ := c.IniFile.GetSection("users")
@@ -408,7 +412,18 @@ func (c *HandleController) MakeUpdateTokensFunc() func(context *gin.Context) {
 		comment := TrimBreakLineReg.ReplaceAllString(after.Comment, "")
 		after.Comment = comment
 		key.Comment = comment
-		key.SetValue(after.Token)
+
+		if !TokenFormatReg.MatchString(after.Token) {
+			log.Printf("update failed, token format error")
+			response.Success = false
+			response.Code = TokenFormatError
+			response.Message = "user update failed, token format error "
+			context.JSON(http.StatusOK, &response)
+			return
+		}
+		replaceSpaceToken := TrimAllSpaceReg.ReplaceAllString(after.Token, "")
+		after.Token = replaceSpaceToken
+		key.SetValue(replaceSpaceToken)
 
 		if before.Ports != after.Ports {
 			portsSection, _ := c.IniFile.GetSection("ports")
