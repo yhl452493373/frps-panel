@@ -4,10 +4,10 @@ frp server plugin to support multiple users for [frp](https://github.com/fatedie
 
 frps-multiuser will run as one single process and accept HTTP requests from frps.
 
-![用户列表](screenshots/user list.png)
-![新增列表](screenshots/new user.png)
+![用户列表](screenshots/user%20list.png)
+![新增列表](screenshots/new%20user.png)
 ![支持英文](screenshots/i18n.png)
-![自动深色模式](screenshots/i18n.png)
+![自动深色模式](screenshots/dark%20mode.png)
 
 ## update notes
 

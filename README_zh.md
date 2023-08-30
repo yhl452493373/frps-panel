@@ -6,10 +6,10 @@ frps-multiuser 是 [frp](https://github.com/fatedier/frp) 的一个服务端插�
 
 frps-multiuser 会以一个单独的进程运行，并接收 frps 发送过来的 HTTP 请求。
 
-![用户列表](screenshots/user list.png)
-![新增列表](screenshots/new user.png)
+![用户列表](screenshots/user%20list.png)
+![新增列表](screenshots/new%20user.png)
 ![支持英文](screenshots/i18n.png)
-![自动深色模式](screenshots/i18n.png)
+![自动深色模式](screenshots/dark%20mode.png)
 
 ## 更新说明
 
