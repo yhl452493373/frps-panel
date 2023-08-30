@@ -19,6 +19,8 @@ const (
 	ParamError = 1
 	UserExist  = 2
 	SaveError  = 3
+	UserEmpty  = 4
+	TokenEmpty = 5
 )
 
 var TrimAllSpaceReg = regexp.MustCompile("[\\n\\t\\r\\s]")
@@ -210,6 +212,7 @@ func (c *HandleController) MakeLangFunc() func(context *gin.Context) {
 			"OperateError":          ginI18n.MustGetMessage(context, "Operate error"),
 			"OperateFailed":         ginI18n.MustGetMessage(context, "Operate failed"),
 			"UserExist":             ginI18n.MustGetMessage(context, "User exist"),
+			"UserEmpty":             ginI18n.MustGetMessage(context, "User cannot be empty"),
 			"TokenEmpty":            ginI18n.MustGetMessage(context, "Token cannot be empty"),
 			"ShouldCheckUser":       ginI18n.MustGetMessage(context, "Please check at least one user"),
 			"OperationConfirm":      ginI18n.MustGetMessage(context, "Operation confirm"),
@@ -221,6 +224,7 @@ func (c *HandleController) MakeLangFunc() func(context *gin.Context) {
 			"DomainsInvalid":        ginI18n.MustGetMessage(context, "Domains is invalid"),
 			"SubdomainsInvalid":     ginI18n.MustGetMessage(context, "Subdomains is invalid"),
 			"CommentInvalid":        ginI18n.MustGetMessage(context, "Comment is invalid"),
+			"ParamError":            ginI18n.MustGetMessage(context, "Param error"),
 		})
 	}
 }
@@ -313,11 +317,27 @@ func (c *HandleController) MakeAddTokenFunc() func(context *gin.Context) {
 			context.JSON(http.StatusOK, &response)
 			return
 		}
+		if strings.TrimSpace(info.User) == "" {
+			log.Printf("user add failed, user cannot be empty")
+			response.Success = false
+			response.Code = UserEmpty
+			response.Message = fmt.Sprintf("user add failed, user cannot be empty")
+			context.JSON(http.StatusOK, &response)
+			return
+		}
 		if _, exist := c.Tokens[info.User]; exist {
 			log.Printf("user add failed, user [%v] exist", info.User)
 			response.Success = false
 			response.Code = UserExist
 			response.Message = fmt.Sprintf("user add failed, user [%s] exist ", info.User)
+			context.JSON(http.StatusOK, &response)
+			return
+		}
+		if strings.TrimSpace(info.Token) == "" {
+			log.Printf("user add failed, token cannot be empty")
+			response.Success = false
+			response.Code = TokenEmpty
+			response.Message = fmt.Sprintf("user add failed, token cannot be empty")
 			context.JSON(http.StatusOK, &response)
 			return
 		}

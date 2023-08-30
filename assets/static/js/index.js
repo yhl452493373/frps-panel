@@ -7,6 +7,36 @@ $(function () {
     }
 
     /**
+     * verify user value
+     * @param username
+     */
+    function verifyUser(username) {
+        var valid = true;
+        if (username.trim() === '' || !/\w/.test(username)) {
+            valid = false;
+        }
+        return {
+            valid: valid,
+            trim: username
+        };
+    }
+
+    /**
+     * verify token value
+     * @param token
+     */
+    function verifyToken(token) {
+        var valid = true;
+        if (token.trim() === '' || !/\w/.test(token)) {
+            valid = false;
+        }
+        return {
+            valid: valid,
+            trim: token
+        };
+    }
+
+    /**
      * verify comment is valid
      * @param comment
      *
@@ -120,15 +150,43 @@ $(function () {
     function langLoaded(lang) {
         //set verify rules
         var verifyRules = {
+            user: function (value, item) {
+                var result = verifyUser(value);
+                if (!result.valid) {
+                    return lang['UserEmpty'];
+                }
+                if (item != null) {
+                    if (typeof item === "function") {
+                        item && item(result.trim);
+                    } else {
+                        $(item).val(result.trim);
+                    }
+                }
+            },
+            token: function (value, item) {
+                var result = verifyToken(value);
+                if (!result.valid) {
+                    return lang['TokenEmpty'];
+                }
+                if (item != null) {
+                    if (typeof item === "function") {
+                        item && item(result.trim);
+                    } else {
+                        $(item).val(result.trim);
+                    }
+                }
+            },
             comment: function (value, item) {
                 var result = verifyComment(value);
                 if (!result.valid) {
                     return lang['CommentInvalid'];
                 }
-                if (typeof item === "function") {
-                    item && item(result.trim);
-                } else {
-                    $(item).val(result.trim);
+                if (item != null) {
+                    if (typeof item === "function") {
+                        item && item(result.trim);
+                    } else {
+                        $(item).val(result.trim);
+                    }
                 }
             },
             ports: function (value, item) {
@@ -136,10 +194,12 @@ $(function () {
                 if (!result.valid) {
                     return lang['PortsInvalid'];
                 }
-                if (typeof item === "function") {
-                    item && item(result.trim);
-                } else {
-                    $(item).val(result.trim);
+                if (item != null) {
+                    if (typeof item === "function") {
+                        item && item(result.trim);
+                    } else {
+                        $(item).val(result.trim);
+                    }
                 }
             },
             domains: function (value, item) {
@@ -147,10 +207,12 @@ $(function () {
                 if (!result.valid) {
                     return lang['DomainsInvalid'];
                 }
-                if (typeof item === "function") {
-                    item && item(result.trim);
-                } else {
-                    $(item).val(result.trim);
+                if (item != null) {
+                    if (typeof item === "function") {
+                        item && item(result.trim);
+                    } else {
+                        $(item).val(result.trim);
+                    }
                 }
             },
             subdomains: function (value, item) {
@@ -158,10 +220,12 @@ $(function () {
                 if (!result.valid) {
                     return lang['SubdomainsInvalid'];
                 }
-                if (typeof item === "function") {
-                    item && item(result.trim);
-                } else {
-                    $(item).val(result.trim);
+                if (item != null) {
+                    if (typeof item === "function") {
+                        item && item(result.trim);
+                    } else {
+                        $(item).val(result.trim);
+                    }
                 }
             }
         };
@@ -217,8 +281,11 @@ $(function () {
             var after = $.extend(true, {}, obj.data);
             var verifyMsg = false;
             if (field === 'token') {
-                if (value.trim() === '') {
-                    layui.layer.msg(lang['TokenEmpty'])
+                verifyMsg = verifyRules.token(value, function (trim) {
+                    updateTableField(obj, field, trim)
+                });
+                if (verifyMsg) {
+                    layui.layer.msg(verifyMsg);
                     return obj.reedit();
                 }
 
@@ -318,7 +385,7 @@ $(function () {
                 btn: [lang['Confirm'], lang['Cancel']],
                 btn1: function (index) {
                     if (layui.form.validate('#addUserForm')) {
-                        add(layui.form.val('addUserForm'), index)
+                        add(layui.form.val('addUserForm'), index);
                     }
                 },
                 btn2: function (index) {
@@ -540,6 +607,12 @@ $(function () {
                 reason = lang['ParamError'];
             else if (result.code === 2)
                 reason = lang['UserExist'];
+            else if (result.code === 3)
+                reason = lang['ParamError'];
+            else if (result.code === 4)
+                reason = lang['UserEmpty'];
+            else if (result.code === 5)
+                reason = lang['TokenEmpty'];
             layui.layer.msg(lang['OperateFailed'] + ',' + reason)
         }
 

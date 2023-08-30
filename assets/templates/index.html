@@ -24,7 +24,7 @@
             <div class="layui-input-prefix">
                 <i class="layui-icon layui-icon-username"></i>
             </div>
-            <input type="text" name="user" value="" placeholder="${ .User }" class="layui-input" autocomplete="off"
+            <input type="text" name="user" placeholder="${ .User }" class="layui-input" autocomplete="off"
                    lay-affix="clear">
         </div>
     </div>
@@ -73,21 +73,19 @@
     </div>
 </script>
 <script type="text/html" id="addTemplate">
-    <div class="layui-form" id="addUserForm" lay-filter="addUserForm">
+    <form class="layui-form" id="addUserForm" lay-filter="addUserForm">
         <div class="layui-form-item">
             <label class="layui-form-label">${ .User }</label>
             <div class="layui-input-block">
-                <input type="text" name="user" placeholder="${ .PleaseInputUserAccount }" autocomplete="off"
-                       class="layui-input"
-                       lay-verify="required">
+                <input type="text" name="user" lay-verify="user" placeholder="${ .PleaseInputUserAccount }"
+                       autocomplete="off" class="layui-input"/>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">${ .Token }</label>
             <div class="layui-input-block">
-                <input type="text" name="token" lay-verify="required" placeholder="${ .PleaseInputUserToken }"
-                       class="layui-input"
-                       autocomplete="off">
+                <input type="text" name="token" lay-verify="token" placeholder="${ .PleaseInputUserToken }"
+                       autocomplete="off" class="layui-input"/>
             </div>
         </div>
         <div class="layui-form-item layui-form-text">
@@ -118,7 +116,7 @@
                           autocomplete="off" class="layui-textarea"></textarea>
             </div>
         </div>
-    </div>
+    </form>
 </script>
 </body>
 </html>

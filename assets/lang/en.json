@@ -29,6 +29,7 @@
   "Other error": "Other error",
   "Param error": "Param error",
   "User exist": "User exist",
+  "User cannot be empty": "User cannot be empty",
   "Token cannot be empty": "Token cannot be empty",
   "Please check at least one user": "Please Check at least one user",
   "Operation confirm": "Operation confirm",
