@@ -5,4 +5,4 @@ build: frps-multiuser
 	cp -r ./assets/ ./bin/assets/
 
 frps-multiuser:
-	go build -o ./bin/frps-multiuser ./cmd/fp-multiuser
+	go build -o ./bin/frps-multiuser ./cmd/frps-multiuser
