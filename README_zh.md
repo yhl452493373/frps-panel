@@ -139,3 +139,4 @@ remote_port = 6000
 + [frp](https://github.com/fatedier/frp)
 + [fp-multiuser](https://github.com/gofrp/fp-multiuser)
 + [layui](https://github.com/layui/layui)
++ [layui-theme-dark](https://github.com/Sight-wcg/layui-theme-dark)

@@ -139,3 +139,4 @@ If you have any issues or ideas, put it on [issues](https://github.com/yhl452493
 + [frp](https://github.com/fatedier/frp)
 + [fp-multiuser](https://github.com/gofrp/fp-multiuser)
 + [layui](https://github.com/layui/layui)
++ [layui-theme-dark](https://github.com/Sight-wcg/layui-theme-dark)
