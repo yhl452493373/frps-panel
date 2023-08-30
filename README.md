@@ -28,6 +28,8 @@ frps-multiuser will run as one single process and accept HTTP requests from frps
 ### Features
 
 * Support multiple user authentication by tokens saved in file.
+* Support dynamic `add`,`remove`,`disable` or `enable` user
+* Limit `ports`,`domains` and `subdomains` for each user
 
 ### Download
 
