@@ -39,7 +39,7 @@
   "Allowed domains": "允许域名",
   "Please input allowed domains": "请输入允许使用的域名,如:web01.domain.com,web02.domain.com",
   "Allowed subdomains": "允许子域名",
-  "Please input allowed subdomains": "请输入允许使用的端口,如:web01,web02",
+  "Please input allowed subdomains": "请输入允许使用的子域名,如:web01,web02",
   "Ports is invalid": "端口不正确",
   "Domains is invalid": "域名不正确",
   "Subdomains is invalid": "子域名不正确",
