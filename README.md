@@ -11,7 +11,7 @@ frps-multiuser will run as one single process and accept HTTP requests from frps
 ![支持英文](screenshots/i18n.png)
 ![自动深色模式](screenshots/dark%20mode.png)
 
-## update notes
+## Update Notes
 
 + **the default tokens file is frps-multiuser.ini now,ini file support comment**
 + **remove `-l`,it configure in `frps-multiuser.ini` now**
@@ -130,6 +130,32 @@ type = tcp
 local_port = 22
 remote_port = 6000
 ```
+
+## Run as service
+
+this example is for `ubuntu` and with `root` user
+
++ 1.unzip `frps-multiuser.zip` to dir `/root/frps-multiuser`
++ 2.touch a file with command `touch frps-multiuser.service` in dir `/root/frps-multiuser`.the file content is:
+```ini
+[Unit]
+# 服务名称，可自定义
+Description = frp multiuser service
+After = network.target syslog.target
+Wants = network.target
+
+[Service]
+Type = simple
+Environment=FRPS_MULTIUSER_OPTS="-c /root/frps-multiuser/frps-multiuser.ini"
+# 启动frps的命令，需修改为您的frps的安装路径
+ExecStart = /root/frps-multiuser/frps-multiuser $FRPS_MULTIUSER_OPTS
+
+[Install]
+WantedBy = multi-user.target
+```
++ 3.copy `frps-multiuser.service` to `/etc/systemd/system/` with command `cp /root/frps-multiuser.service /etc/systemd/system/`
++ 4.reload service with command `systemctl daemon-reload`
++ 5.start service with command `service frps-multiuser start`
 
 ## Issues & Ideas
 

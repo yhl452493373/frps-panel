@@ -131,6 +131,32 @@ local_port = 22
 remote_port = 6000
 ```
 
+## 以服务的形式运行
+
+本实例是在 `ubuntu` 下， 以 `root` 用户执操作
+
++ 1、解压 `frps-multiuser.zip` 到目录 `/root/frps-multiuser`
++ 2、在目录 `/root/frps-multiuser` 下 用命令创建文件：`touch frps-multiuser.service`。创建后修改文件内容：
+```ini
+[Unit]
+# 服务名称，可自定义
+Description = frp multiuser service
+After = network.target syslog.target
+Wants = network.target
+
+[Service]
+Type = simple
+Environment=FRPS_MULTIUSER_OPTS="-c /root/frps-multiuser/frps-multiuser.ini"
+# 启动frps的命令，需修改为您的frps的安装路径
+ExecStart = /root/frps-multiuser/frps-multiuser $FRPS_MULTIUSER_OPTS
+
+[Install]
+WantedBy = multi-user.target
+```
++ 3、复制服务文件： `cp /root/frps-multiuser.service /etc/systemd/system/`
++ 4、重载服务： `systemctl daemon-reload`
++ 5、启动服务： `service frps-multiuser start`
+
 ## 使用
 
 ___如果要从外网访问管理界面, 需要把配置中的 `plugin_addr` 改为 `0.0.0.0`___
