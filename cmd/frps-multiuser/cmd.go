@@ -9,6 +9,7 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -33,20 +34,29 @@ var rootCmd = &cobra.Command{
 			log.Println(version)
 			return nil
 		}
+		executable, err := os.Executable()
+		if err != nil {
+			log.Printf("error get program path: %v", err)
+			return err
+		}
+		rootDir := filepath.Dir(executable)
+
 		common, tokens, ports, domains, subdomains, iniFile, err := ParseConfigFile(configFile)
 		if err != nil {
 			log.Printf("fail to start frps-multiuser : %v", err)
-			return nil
+			return err
 		}
-		s, err := server.New(controller.HandleController{
-			CommonInfo: common,
-			Tokens:     tokens,
-			Ports:      ports,
-			Domains:    domains,
-			Subdomains: subdomains,
-			ConfigFile: configFile,
-			IniFile:    iniFile,
-		})
+		s, err := server.New(
+			rootDir,
+			controller.HandleController{
+				CommonInfo: common,
+				Tokens:     tokens,
+				Ports:      ports,
+				Domains:    domains,
+				Subdomains: subdomains,
+				ConfigFile: configFile,
+				IniFile:    iniFile,
+			})
 		if err != nil {
 			return err
 		}

@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"gopkg.in/ini.v1"
 	"log"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -24,9 +26,15 @@ func NewHandleController(config *HandleController) *HandleController {
 	return config
 }
 
-func (c *HandleController) Register(engine *gin.Engine) {
+func (c *HandleController) Register(rootDir string, engine *gin.Engine) {
+	assets := filepath.Join(rootDir, "assets")
+	_, err := os.Stat(assets)
+	if err != nil && !os.IsExist(err) {
+		assets = "./assets"
+	}
+
 	engine.Delims("${", "}")
-	engine.LoadHTMLGlob("./assets/templates/*")
+	engine.LoadHTMLGlob(filepath.Join(assets, "templates/*"))
 	engine.POST("/handler", c.MakeHandlerFunc())
 
 	var group *gin.RouterGroup
@@ -37,7 +45,7 @@ func (c *HandleController) Register(engine *gin.Engine) {
 	} else {
 		group = engine.Group("/")
 	}
-	group.Static("/static", "./assets/static")
+	group.Static("/static", filepath.Join(assets, "static"))
 	group.GET("/", c.MakeManagerFunc())
 	group.GET("/lang", c.MakeLangFunc())
 	group.GET("/tokens", c.MakeQueryTokensFunc())

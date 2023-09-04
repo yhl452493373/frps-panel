@@ -23,7 +23,7 @@ const (
 	TokenFormatError = 5
 )
 
-var UserFormatReg = regexp.MustCompile("^\\w$")
+var UserFormatReg = regexp.MustCompile("^\\w+$")
 var TokenFormatReg = regexp.MustCompile("^[\\w!@#$%^&*()]+$")
 var TrimAllSpaceReg = regexp.MustCompile("[\\n\\t\\r\\s]")
 var TrimBreakLineReg = regexp.MustCompile("[\\n\\t\\r]")

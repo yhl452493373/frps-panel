@@ -13,21 +13,24 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 )
 
 type Server struct {
-	cfg  controller.HandleController
-	s    *http.Server
-	done chan struct{}
+	cfg     controller.HandleController
+	s       *http.Server
+	done    chan struct{}
+	rootDir string
 }
 
-func New(cfg controller.HandleController) (*Server, error) {
+func New(rootDir string, cfg controller.HandleController) (*Server, error) {
 	s := &Server{
-		cfg:  cfg,
-		done: make(chan struct{}),
+		cfg:     cfg,
+		done:    make(chan struct{}),
+		rootDir: rootDir,
 	}
 	if err := s.init(); err != nil {
 		return nil, err
@@ -74,14 +77,10 @@ func LoadSupportLanguage(dir string) ([]language.Tag, error) {
 	var tags []language.Tag
 
 	files, err := os.Open(dir)
-	if err != nil {
-		log.Printf("error opening directory: %v", err)
-		return tags, err
-	}
 
 	fileList, err := files.Readdir(-1)
 	if err != nil {
-		log.Printf("error reading directory: %v", err)
+		log.Printf("error read lang directory: %v", err)
 		return tags, err
 	}
 
@@ -103,15 +102,21 @@ func LoadSupportLanguage(dir string) ([]language.Tag, error) {
 	return tags, nil
 }
 
-func GinI18nLocalize() gin.HandlerFunc {
-	dir := "./assets/lang"
-	tags, err := LoadSupportLanguage(dir)
+func GinI18nLocalize(rootDir string) gin.HandlerFunc {
+	assets := filepath.Join(rootDir, "assets")
+	_, err := os.Stat(assets)
+	if err != nil && !os.IsExist(err) {
+		assets = "./assets"
+	}
+	lang := filepath.Join(assets, "lang")
+	tags, err := LoadSupportLanguage(lang)
 	if err != nil {
 		log.Panicf("language file is not found: %v", err)
 	}
+
 	return ginI18n.Localize(
 		ginI18n.WithBundle(&ginI18n.BundleCfg{
-			RootPath:         dir,
+			RootPath:         lang,
 			AcceptLanguage:   tags,
 			DefaultLanguage:  language.Chinese,
 			FormatBundleFile: "json",
@@ -133,10 +138,10 @@ func GinI18nLocalize() gin.HandlerFunc {
 func (s *Server) initHTTPServer() error {
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.New()
-	engine.Use(GinI18nLocalize())
+	engine.Use(GinI18nLocalize(s.rootDir))
 	s.s = &http.Server{
 		Handler: engine,
 	}
-	controller.NewHandleController(&s.cfg).Register(engine)
+	controller.NewHandleController(&s.cfg).Register(s.rootDir, engine)
 	return nil
 }

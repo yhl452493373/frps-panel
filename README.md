@@ -1,5 +1,7 @@
 # frps-multiuser
 
+[README](README.md) | [中文文档](README_zh.md)
+
 frp server plugin to support multiple users for [frp](https://github.com/fatedier/frp).
 
 frps-multiuser will run as one single process and accept HTTP requests from frps.
@@ -22,8 +24,6 @@ frps-multiuser will run as one single process and accept HTTP requests from frps
 
 ***when a user is dynamic been `remove` or `disable`,it will take some time to be effective***
 ***the limit of `ports`、`domains`、`subdomains` only effective at `NewProxy`***
-
-[README](README.md) | [中文文档](README_zh.md)
 
 ### Features
 
@@ -131,6 +131,8 @@ remote_port = 6000
 ```
 
 ## Issues & Ideas
+
+___If you want visit mange ui from internet, you should change `plugin_addr` to `0.0.0.0`___
 
 If you have any issues or ideas, put it on [issues](https://github.com/yhl452493373/frps-multiuser/issues). I will try my best to achieve it.
 

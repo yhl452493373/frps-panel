@@ -132,6 +132,8 @@ remote_port = 6000
 
 ## 使用
 
+___如果要从外网访问管理界面, 需要把配置中的 `plugin_addr` 改为 `0.0.0.0`___
+
 如果使用中有问题或者有其他想法，在[issues](https://github.com/yhl452493373/frps-multiuser/issues)上提出来。 如果我能搞定的话，我尽量搞。
 
 ## 致谢
