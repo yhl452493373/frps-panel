@@ -139,15 +139,15 @@ this example is for `ubuntu` and with `root` user
 + 2.touch a file with command `touch frps-multiuser.service` in dir `/root/frps-multiuser`.the file content is:
 ```ini
 [Unit]
-# 服务名称，可自定义
 Description = frp multiuser service
 After = network.target syslog.target
 Wants = network.target
 
 [Service]
 Type = simple
+# config of frps-multiuser.ini,you should change the file path
 Environment=FRPS_MULTIUSER_OPTS="-c /root/frps-multiuser/frps-multiuser.ini"
-# 启动frps的命令，需修改为您的frps的安装路径
+# command of run frps-multiuser,you should change the file path
 ExecStart = /root/frps-multiuser/frps-multiuser $FRPS_MULTIUSER_OPTS
 
 [Install]
