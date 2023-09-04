@@ -139,15 +139,15 @@ remote_port = 6000
 + 2、在目录 `/root/frps-multiuser` 下 用命令创建文件：`touch frps-multiuser.service`。创建后修改文件内容：
 ```ini
 [Unit]
-# 服务名称，可自定义
 Description = frp multiuser service
 After = network.target syslog.target
 Wants = network.target
 
 [Service]
 Type = simple
+# 启动frps-multiuser的配置文件路径，需修改为您的frps-multiuser.ini的路径
 Environment=FRPS_MULTIUSER_OPTS="-c /root/frps-multiuser/frps-multiuser.ini"
-# 启动frps的命令，需修改为您的frps的安装路径
+# 启动frps-multiuser的命令，需修改为您的frps-multiuser的安装路径
 ExecStart = /root/frps-multiuser/frps-multiuser $FRPS_MULTIUSER_OPTS
 
 [Install]
