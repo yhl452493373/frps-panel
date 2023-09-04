@@ -23,6 +23,7 @@ frps-multiuser will run as one single process and accept HTTP requests from frps
 + **you can limit `ports`,`domains` and `subdomains` for each user now**
 
 ***when a user is dynamic been `remove` or `disable`,it will take some time to be effective***
+
 ***the limit of `ports`、`domains`、`subdomains` only effective at `NewProxy`***
 
 ### Features
