@@ -1,0 +1,128 @@
+header {
+    background-color: #58b7ff;
+    color: #fff;
+}
+
+.layui-btn {
+    background-color: #409eff;
+}
+
+.layui-layer-btn .layui-layer-btn0 {
+    background-color: #409eff;
+}
+
+.layui-btn-primary {
+    background-color: transparent;
+}
+
+.layui-btn-primary:hover {
+    border-color: #79bbff;
+}
+
+.layui-input:focus,
+.layui-textarea:focus {
+    border-color: #79bbff !important;
+    box-shadow: none;
+}
+
+.layui-form-danger + .layui-form-select .layui-input,
+.layui-form-danger:focus {
+    border-color: #ff5722 !important;
+}
+
+.layui-laypage .layui-laypage-curr .layui-laypage-em {
+    background-color: #409eff;
+}
+
+.layui-laypage input:focus, .layui-laypage select:focus {
+    border-color: #79bbff !important;
+    box-shadow: none;
+}
+
+.layui-table-view .layui-table td[data-edit]:hover:after {
+    border-color: #79bbff;
+}
+
+.layui-form-checkbox[lay-skin=primary]:hover > i {
+    border-color: #79bbff;
+}
+
+.layui-form-checked[lay-skin=primary] > i {
+    background-color: #409eff;
+    border-color: #409eff !important;
+}
+
+.layui-table-checked {
+    background-color: #ecf5ff;
+}
+
+.layui-table-checked:hover {
+    background-color: #d9ecff;
+}
+
+.layui-table-cell-c:hover{
+    border-color: #79bbff;
+}
+
+@media (prefers-color-scheme: dark) {
+    header {
+        background-color: #395c74;
+    }
+
+    .layui-btn {
+        background-color: #4f80a1;
+    }
+
+    .layui-layer-btn .layui-layer-btn0 {
+        background-color: #4f80a1;
+    }
+
+    .layui-btn-primary {
+        background-color: transparent;
+        border-color: #484849;
+    }
+
+    .layui-btn-primary:hover {
+        border-color: #5f5f60;
+    }
+
+    .layui-input:focus,
+    .layui-textarea:focus {
+        border-color: #5f5f60 !important;
+        box-shadow: none;
+    }
+
+    .layui-laypage .layui-laypage-curr .layui-laypage-em {
+        background-color: #4f80a1;
+    }
+
+    .layui-laypage input:focus, .layui-laypage select:focus {
+        border-color: #5f5f60 !important;
+        box-shadow: none;
+    }
+
+    .layui-table-view .layui-table td[data-edit]:hover:after {
+        border-color: #5f5f60;
+    }
+
+    .layui-form-checkbox[lay-skin=primary]:hover > i {
+        border-color: #5f5f60;
+    }
+
+    .layui-form-checked[lay-skin=primary] > i {
+        background-color: #484849;
+        border-color: #484849 !important;
+    }
+
+    .layui-table-checked {
+        background-color: rgba(255, 255, 255, .04);
+    }
+
+    .layui-table-checked:hover {
+        background-color: rgba(255, 255, 255, .08);
+    }
+
+    .layui-table-cell-c:hover{
+        border-color: #5f5f60;
+    }
+}
