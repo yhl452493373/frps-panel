@@ -18,42 +18,48 @@
     </style>
 </head>
 <body>
-<form class="layui-form layui-row layui-col-space16" id="searchForm" lay-filter="searchForm">
-    <div class="layui-col-md3">
-        <div class="layui-input-wrap">
-            <div class="layui-input-prefix">
-                <i class="layui-icon layui-icon-username"></i>
+<header>
+    <div class="title">${ .FrpsMultiuser }</div>
+</header>
+<section>
+    <form class="layui-form layui-row layui-col-space16" id="searchForm" lay-filter="searchForm">
+        <div class="layui-col-md3">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-username"></i>
+                </div>
+                <input type="text" name="user" placeholder="${ .User }" class="layui-input" autocomplete="off"
+                       lay-affix="clear">
             </div>
-            <input type="text" name="user" placeholder="${ .User }" class="layui-input" autocomplete="off"
-                   lay-affix="clear">
         </div>
-    </div>
-    <div class="layui-col-md3">
-        <div class="layui-input-wrap">
-            <div class="layui-input-prefix">
-                <i class="layui-icon layui-icon-vercode"></i>
+        <div class="layui-col-md3">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-vercode"></i>
+                </div>
+                <input type="text" name="token" placeholder="${ .Token }" class="layui-input" autocomplete="off"
+                       lay-affix="clear">
             </div>
-            <input type="text" name="token" placeholder="${ .Token }" class="layui-input" autocomplete="off"
-                   lay-affix="clear">
         </div>
-    </div>
-    <div class="layui-col-md3">
-        <div class="layui-input-wrap">
-            <div class="layui-input-prefix">
-                <i class="layui-icon layui-icon-note"></i>
+        <div class="layui-col-md3">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-note"></i>
+                </div>
+                <input type="text" name="comment" placeholder="${ .Notes }" class="layui-input" autocomplete="off"
+                       lay-affix="clear">
             </div>
-            <input type="text" name="comment" placeholder="${ .Notes }" class="layui-input" autocomplete="off"
-                   lay-affix="clear">
         </div>
-    </div>
-    <div class="layui-col-md3">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" id="searchBtn">${ .Search }</button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary" type="reset" id="resetBtn">${ .Reset }</button>
+        <div class="layui-col-md3">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" id="searchBtn">${ .Search }</button>
+                <button class="layui-btn layui-btn-sm layui-btn-primary" type="reset" id="resetBtn">${ .Reset }</button>
+            </div>
         </div>
-    </div>
-</form>
-<table id="tokenTable" lay-filter="tokenTable"></table>
+    </form>
+    <table id="tokenTable" lay-filter="tokenTable"></table>
+</section>
+
 <script type="text/html" id="toolbarTemplate">
     <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm" lay-event="add">${ .NewUser }</button>

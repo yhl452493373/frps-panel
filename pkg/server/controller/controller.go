@@ -164,6 +164,7 @@ func (c *HandleController) MakeManagerFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		context.HTML(http.StatusOK, "index.html", gin.H{
 			"UserManage":                   ginI18n.MustGetMessage(context, "User Manage"),
+			"FrpsMultiuser":                ginI18n.MustGetMessage(context, "frps multiuser"),
 			"User":                         ginI18n.MustGetMessage(context, "User"),
 			"Token":                        ginI18n.MustGetMessage(context, "Token"),
 			"Notes":                        ginI18n.MustGetMessage(context, "Notes"),

@@ -1,5 +1,6 @@
 {
   "User Manage": "用户管理",
+  "frps multiuser": "frps用户管理",
   "User": "用户名(user)",
   "Token": "凭证(meta_token)",
   "Notes": "备注",
