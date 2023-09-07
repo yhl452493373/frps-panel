@@ -1,5 +1,5 @@
-<!--suppress HtmlFormInputWithoutLabel -->
 <!DOCTYPE html>
+<html lang="">
 <head>
     <title>${ .UserManage }</title>
     <link rel="stylesheet" href="./static/layui/css/layui.css">
@@ -17,12 +17,64 @@
             content: '${ .None }';
         }
     </style>
+    <style>
+        .layui-header {
+            width: 200px;
+            right: auto;
+        }
+
+        .layui-layout-admin .layui-body {
+            top: 0;
+            padding: 15px;
+        }
+    </style>
 </head>
 <body>
-<header>
-    <div class="title">${ .FrpsMultiuser }</div>
-</header>
-<section>
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo layui-hide-xs layui-bg-black">${ .FrpsMultiuser }</div>
+    </div>
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree" lay-filter="leftNav">
+                <li class="layui-nav-item">
+                    <a href="javascript:void(0)">服务器信息</a>
+                </li>
+                <li class="layui-nav-item layui-this">
+                    <a href="javascript:void(0)">用户信息</a>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:void(0)">代理信息</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="javascript:void(0)">TCP</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:void(0)">UDP</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:void(0)">HTTP</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:void(0)">HTTPS</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:void(0)">STCP</a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:void(0)">SUDP</a>
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="layui-body" id="layuiBody">
+
+    </div>
+</div>
+
+<script type="text/html" id="userList">
     <form class="layui-form layui-row layui-col-space16" id="searchForm" lay-filter="searchForm">
         <div class="layui-col-md3">
             <div class="layui-input-wrap">
@@ -54,12 +106,13 @@
         <div class="layui-col-md3">
             <div class="layui-btn-container">
                 <button class="layui-btn layui-btn-sm" id="searchBtn">${ .Search }</button>
-                <button class="layui-btn layui-btn-sm layui-btn-primary" type="reset" id="resetBtn">${ .Reset }</button>
+                <button class="layui-btn layui-btn-sm layui-btn-primary" type="reset" id="resetBtn">${ .Reset }
+                </button>
             </div>
         </div>
     </form>
     <table id="tokenTable" lay-filter="tokenTable"></table>
-</section>
+</script>
 
 <script type="text/html" id="toolbarTemplate">
     <div class="layui-btn-container">

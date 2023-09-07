@@ -3,12 +3,6 @@ html, body {
     word-break: break-all;
 }
 
-header .title {
-    padding: 10px 15px;
-    line-height: 40px;
-    font-size: 25px;
-}
-
 section {
     padding: 15px 15px 0 15px;
 }

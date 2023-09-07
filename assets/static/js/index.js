@@ -634,7 +634,19 @@ $(function () {
     }
 
     var langLoading = layui.layer.load()
-    $.getJSON('/lang').done(langLoaded).always(function () {
+    $.getJSON('/lang').done(function (lang){
+        var html = layui.laytpl($('#userList').html()).render();
+        $('#layuiBody').html(html);
+        langLoaded(lang);
+    }).always(function () {
         layui.layer.close(langLoading);
     });
+
+    // $.ajax({
+    //     url:'http://127.0.0.1:7500/api/serverinfo',
+    //     dataType:'jsonp',
+    //     success:function (result){
+    //         console.log(result)
+    //     }
+    // });
 });
