@@ -4,7 +4,14 @@ html, body {
 }
 
 section {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
     padding: 15px 15px 0 15px;
+    overflow: auto;
+    box-sizing: border-box;
 }
 
 #searchForm input {
@@ -58,4 +65,48 @@ section {
 
 .layui-table-page {
     margin-bottom: 0;
+}
+
+section.server-info {
+    display: flex;
+}
+
+section.server-info .text-info,
+section.server-info .chart-info {
+    flex: 1;
+}
+
+section.server-info .text-row {
+    display: flex;
+    font-size: 14px;
+    line-height: 40px;
+}
+
+section.server-info .text-row .text-col {
+    flex: 1;
+}
+
+section.server-info .text-row .text-col:first-child {
+    color: #99a9bf;
+}
+
+section.server-info .chart-info {
+    display: flex;
+    flex-direction: column;
+}
+
+section.server-info .chart-info > .chart-traffic,
+section.server-info .chart-info > .chart-count {
+    display: flex;
+    justify-content: center;
+}
+
+section.server-info .chart-info > .chart-count {
+    margin-top: 30px;
+}
+
+section.server-info .chart-info #trafficChart,
+section.server-info .chart-info #countChart {
+    width: 400px;
+    height: 250px;
 }

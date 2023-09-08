@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="./static/css/index.css">
     <link rel="stylesheet" href="./static/css/index-color.css">
     <script src="./static/layui/layui.js"></script>
+    <script src="./static/js/echarts.min.js"></script>
+    <script src="./static/js/filesize.min.js"></script>
+    <script src="./static/js/index-server-info.js"></script>
+    <script src="./static/js/index-user-list.js"></script>
     <script src="./static/js/index.js"></script>
     <style>
         .layui-table-cell:empty::after {
@@ -25,7 +29,7 @@
 
         .layui-layout-admin .layui-body {
             top: 0;
-            padding: 15px;
+            padding: 0;
         }
     </style>
 </head>
@@ -36,82 +40,159 @@
     </div>
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">
-            <ul class="layui-nav layui-nav-tree" lay-filter="leftNav">
-                <li class="layui-nav-item">
-                    <a href="javascript:void(0)">服务器信息</a>
-                </li>
+            <ul class="layui-nav layui-nav-tree" lay-filter="leftNav" id="leftNav">
                 <li class="layui-nav-item layui-this">
-                    <a href="javascript:void(0)">用户信息</a>
+                    <a href="javascript:void(0)" id="serverInfo">服务器信息</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:void(0)" id="userList">用户列表</a>
                 </li>
                 <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:void(0)">代理信息</a>
+                    <a class="" href="javascript:void(0)">代理列表</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="javascript:void(0)">TCP</a>
+                            <a href="javascript:void(0)" id="tcpList">TCP</a>
                         </dd>
                         <dd>
-                            <a href="javascript:void(0)">UDP</a>
+                            <a href="javascript:void(0)" id="udpList">UDP</a>
                         </dd>
                         <dd>
-                            <a href="javascript:void(0)">HTTP</a>
+                            <a href="javascript:void(0)" id="httpList">HTTP</a>
                         </dd>
                         <dd>
-                            <a href="javascript:void(0)">HTTPS</a>
+                            <a href="javascript:void(0)" id="httpsList">HTTPS</a>
                         </dd>
                         <dd>
-                            <a href="javascript:void(0)">STCP</a>
+                            <a href="javascript:void(0)" id="stcpList">STCP</a>
                         </dd>
                         <dd>
-                            <a href="javascript:void(0)">SUDP</a>
+                            <a href="javascript:void(0)" id="sudpList">SUDP</a>
                         </dd>
                     </dl>
                 </li>
             </ul>
         </div>
     </div>
-    <div class="layui-body" id="layuiBody">
+    <div class="layui-body" id="content">
 
     </div>
 </div>
 
-<script type="text/html" id="userList">
-    <form class="layui-form layui-row layui-col-space16" id="searchForm" lay-filter="searchForm">
-        <div class="layui-col-md3">
-            <div class="layui-input-wrap">
-                <div class="layui-input-prefix">
-                    <i class="layui-icon layui-icon-username"></i>
+<script type="text/html" id="serverInfoTemplate">
+    <section class="server-info">
+        <div class="text-info">
+            <div class="text-row">
+                <div class="text-col">version</div>
+                <div class="text-col">{{= d.version }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">bind_port</div>
+                <div class="text-col">{{= d.bind_port }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">vhost_http_port</div>
+                <div class="text-col">{{= d.vhost_http_port }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">vhost_https_port</div>
+                <div class="text-col">{{= d.vhost_https_port }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">tcpmux_httpconnect_port</div>
+                <div class="text-col">{{= d.tcpmux_httpconnect_port }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">kcp_bind_port</div>
+                <div class="text-col">{{= d.kcp_bind_port }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">quic_bind_port</div>
+                <div class="text-col">{{= d.quic_bind_port }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">subdomain_host</div>
+                <div class="text-col">{{= d.subdomain_host }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">max_pool_count</div>
+                <div class="text-col">{{= d.max_pool_count }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">max_ports_per_client</div>
+                <div class="text-col">{{= d.max_ports_per_client }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">heart_beat_timeout</div>
+                <div class="text-col">{{= d.heart_beat_timeout }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">allow_ports_str</div>
+                <div class="text-col">{{= d.allow_ports_str }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">tls_only</div>
+                <div class="text-col">{{= d.tls_only }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">cur_conns</div>
+                <div class="text-col">{{= d.cur_conns }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">client_counts</div>
+                <div class="text-col">{{= d.client_counts }}</div>
+            </div>
+        </div>
+        <div class="chart-info">
+            <div class="chart-traffic">
+                <div id="trafficChart"></div>
+            </div>
+            <div class="chart-count">
+                <div id="countChart"></div>
+            </div>
+        </div>
+    </section>
+</script>
+
+<script type="text/html" id="userListTemplate">
+    <section class="user-list">
+        <form class="layui-form layui-row layui-col-space16" id="searchForm" lay-filter="searchForm">
+            <div class="layui-col-md3">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-username"></i>
+                    </div>
+                    <input type="text" name="user" placeholder="${ .User }" class="layui-input" autocomplete="off"
+                           lay-affix="clear">
                 </div>
-                <input type="text" name="user" placeholder="${ .User }" class="layui-input" autocomplete="off"
-                       lay-affix="clear">
             </div>
-        </div>
-        <div class="layui-col-md3">
-            <div class="layui-input-wrap">
-                <div class="layui-input-prefix">
-                    <i class="layui-icon layui-icon-vercode"></i>
+            <div class="layui-col-md3">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-vercode"></i>
+                    </div>
+                    <input type="text" name="token" placeholder="${ .Token }" class="layui-input" autocomplete="off"
+                           lay-affix="clear">
                 </div>
-                <input type="text" name="token" placeholder="${ .Token }" class="layui-input" autocomplete="off"
-                       lay-affix="clear">
             </div>
-        </div>
-        <div class="layui-col-md3">
-            <div class="layui-input-wrap">
-                <div class="layui-input-prefix">
-                    <i class="layui-icon layui-icon-note"></i>
+            <div class="layui-col-md3">
+                <div class="layui-input-wrap">
+                    <div class="layui-input-prefix">
+                        <i class="layui-icon layui-icon-note"></i>
+                    </div>
+                    <input type="text" name="comment" placeholder="${ .Notes }" class="layui-input" autocomplete="off"
+                           lay-affix="clear">
                 </div>
-                <input type="text" name="comment" placeholder="${ .Notes }" class="layui-input" autocomplete="off"
-                       lay-affix="clear">
             </div>
-        </div>
-        <div class="layui-col-md3">
-            <div class="layui-btn-container">
-                <button class="layui-btn layui-btn-sm" id="searchBtn">${ .Search }</button>
-                <button class="layui-btn layui-btn-sm layui-btn-primary" type="reset" id="resetBtn">${ .Reset }
-                </button>
+            <div class="layui-col-md3">
+                <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-sm" id="searchBtn">${ .Search }</button>
+                    <button class="layui-btn layui-btn-sm layui-btn-primary" type="reset" id="resetBtn">${ .Reset }
+                    </button>
+                </div>
             </div>
-        </div>
-    </form>
-    <table id="tokenTable" lay-filter="tokenTable"></table>
+        </form>
+        <table id="tokenTable" lay-filter="tokenTable"></table>
+    </section>
 </script>
 
 <script type="text/html" id="toolbarTemplate">
