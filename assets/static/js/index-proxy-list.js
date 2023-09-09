@@ -32,8 +32,6 @@ var loadProxyInfo = (function ($) {
      * @param proxyType proxy type
      */
     function renderProxyListTable(data, proxyType) {
-        data = data.concat(data)
-        data = data.concat(data)
         var $section = $('#content > section');
         var cols = [
             {field: 'id', title: '', width: 30, templet: '#toggleProxyInfoArrowTemplate'},
