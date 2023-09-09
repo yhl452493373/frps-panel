@@ -656,8 +656,10 @@ func (c *HandleController) MakeProxyFunc() func(context *gin.Context) {
 		username := c.CommonInfo.DashboardUser
 		if len(strings.TrimSpace(username)) != 0 {
 			password := c.CommonInfo.DashboardPwd
-			auth := []byte(username + ":" + password)
-			request.Header.Add("Authorization", "Basic "+base64.StdEncoding.EncodeToString(auth))
+			userAndPwd := []byte(username + ":" + password)
+			authorization := "Basic " + base64.StdEncoding.EncodeToString(userAndPwd)
+			request.Header.Add("Authorization", authorization)
+			log.Printf("Proxy to %s with Authorization %s", requestUrl, authorization)
 		}
 		response, err := http.DefaultClient.Do(request)
 
@@ -679,11 +681,13 @@ func (c *HandleController) MakeProxyFunc() func(context *gin.Context) {
 			if res.Code == http.StatusOK {
 				res.Success = true
 				res.Data = string(body)
+				res.Message = "Proxy to " + requestUrl + " success"
 			} else {
 				res.Success = false
-				res.Message = string(body)
+				res.Message = "Proxy to " + requestUrl + " error: " + string(body)
 			}
 		}
+		log.Printf(res.Message)
 		context.JSON(http.StatusOK, &res)
 	}
 }
