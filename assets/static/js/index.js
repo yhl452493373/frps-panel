@@ -4,9 +4,9 @@
         $.getJSON('/lang').done(function (lang) {
             layui.element.on('nav(leftNav)', function (elem) {
                 if (elem.attr('id') === 'serverInfo') {
-                    loadServerInfo(lang);
+                    loadServerInfo(lang, elem.text().trim());
                 } else if (elem.attr('id') === 'userList') {
-                    loadUserList(lang);
+                    loadUserList(lang, elem.text().trim());
                 }
             });
 

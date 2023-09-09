@@ -140,7 +140,8 @@ var loadUserList = (function ($) {
      * load i18n language
      * @param lang {{}} language json
      */
-    function loadUserList(lang) {
+    function loadUserList(lang, title) {
+        $("#title").text(title);
         var html = layui.laytpl($('#userListTemplate').html()).render();
         $('#content').html(html);
 

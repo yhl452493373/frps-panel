@@ -54,6 +54,7 @@ func (c *HandleController) Register(rootDir string, engine *gin.Engine) {
 	group.POST("/remove", c.MakeRemoveTokensFunc())
 	group.POST("/disable", c.MakeDisableTokensFunc())
 	group.POST("/enable", c.MakeEnableTokensFunc())
+	group.GET("/proxy/*serverApi", c.MakeProxyFunc())
 }
 
 func (c *HandleController) HandleLogin(content *plugin.LoginContent) plugin.Response {

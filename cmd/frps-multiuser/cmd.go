@@ -10,7 +10,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 )
 
@@ -103,24 +102,14 @@ func ParseConfigFile(file string) (controller.CommonInfo, map[string]controller.
 		log.Printf("fail to get [common] section from file %s : %v", file, err)
 		return common, nil, nil, nil, nil, iniFile, err
 	}
-	pluginAddr := commonSection.Key("plugin_addr").Value()
-	if len(pluginAddr) != 0 {
-		common.PluginAddr = pluginAddr
-	} else {
-		common.PluginAddr = "0.0.0.0"
-	}
-	pluginPort := commonSection.Key("plugin_port").Value()
-	if len(pluginPort) != 0 {
-		port, err := strconv.Atoi(pluginPort)
-		if err != nil {
-			return common, nil, nil, nil, nil, iniFile, err
-		}
-		common.PluginPort = port
-	} else {
-		common.PluginPort = 7200
-	}
+	common.PluginAddr = commonSection.Key("plugin_addr").MustString("0.0.0.0")
+	common.PluginPort = commonSection.Key("plugin_port").MustInt(7200)
 	common.User = commonSection.Key("admin_user").Value()
 	common.Pwd = commonSection.Key("admin_pwd").Value()
+	common.DashboardAddr = commonSection.Key("dashboard_addr").MustString("127.0.0.1")
+	common.DashboardPort = commonSection.Key("dashboard_port").MustInt(7500)
+	common.DashboardUser = commonSection.Key("dashboard_user").Value()
+	common.DashboardPwd = commonSection.Key("dashboard_pwd").Value()
 
 	portsSection, err := iniFile.GetSection("ports")
 	if err != nil {

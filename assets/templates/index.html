@@ -2,13 +2,13 @@
 <html lang="">
 <head>
     <title>${ .UserManage }</title>
-    <link rel="stylesheet" href="./static/layui/css/layui.css">
+    <link rel="stylesheet" href="./static/lib/layui/css/layui.css">
     <link rel="stylesheet" href="./static/css/layui-theme-dark.css">
     <link rel="stylesheet" href="./static/css/index.css">
     <link rel="stylesheet" href="./static/css/index-color.css">
-    <script src="./static/layui/layui.js"></script>
-    <script src="./static/js/echarts.min.js"></script>
-    <script src="./static/js/filesize.min.js"></script>
+    <script src="./static/lib/layui/layui.js"></script>
+    <script src="./static/lib/echarts.min.js"></script>
+    <script src="./static/lib/filesize.min.js"></script>
     <script src="./static/js/index-server-info.js"></script>
     <script src="./static/js/index-user-list.js"></script>
     <script src="./static/js/index.js"></script>
@@ -22,13 +22,7 @@
         }
     </style>
     <style>
-        .layui-header {
-            width: 200px;
-            right: auto;
-        }
-
         .layui-layout-admin .layui-body {
-            top: 0;
             padding: 0;
         }
     </style>
@@ -37,6 +31,7 @@
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
         <div class="layui-logo layui-hide-xs layui-bg-black">${ .FrpsMultiuser }</div>
+        <div class="layui-title" id="title"></div>
     </div>
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">

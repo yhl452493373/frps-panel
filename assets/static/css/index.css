@@ -14,6 +14,22 @@ section {
     box-sizing: border-box;
 }
 
+.layui-header{
+    line-height: 60px;
+    font-size: 16px;
+}
+
+.layui-title{
+    position: absolute;
+    left: 200px;
+    right: 0;
+    top: 0;
+    height: 100%;
+    color: #fff;
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
 #searchForm input {
     height: 30px;
     line-height: 28px;

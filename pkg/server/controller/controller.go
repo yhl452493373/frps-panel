@@ -1,16 +1,19 @@
 package controller
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	plugin "github.com/fatedier/frp/pkg/plugin/server"
 	ginI18n "github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
+	"io"
 	"log"
 	"net/http"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -21,6 +24,7 @@ const (
 	SaveError        = 3
 	UserFormatError  = 4
 	TokenFormatError = 5
+	FrpServerError   = 6
 )
 
 var UserFormatReg = regexp.MustCompile("^\\w+$")
@@ -38,10 +42,14 @@ type HTTPError struct {
 }
 
 type CommonInfo struct {
-	PluginAddr string
-	PluginPort int
-	User       string
-	Pwd        string
+	PluginAddr    string
+	PluginPort    int
+	User          string
+	Pwd           string
+	DashboardAddr string
+	DashboardPort int
+	DashboardUser string
+	DashboardPwd  string
 }
 
 type TokenInfo struct {
@@ -65,6 +73,11 @@ type OperationResponse struct {
 	Success bool   `json:"success"`
 	Code    int    `json:"code"`
 	Message string `json:"message"`
+}
+
+type ProxyResponse struct {
+	OperationResponse
+	Data string `json:"data"`
 }
 
 type TokenSearch struct {
@@ -630,5 +643,47 @@ func (c *HandleController) MakeEnableTokensFunc() func(context *gin.Context) {
 		}
 
 		context.JSON(http.StatusOK, &response)
+	}
+}
+
+func (c *HandleController) MakeProxyFunc() func(context *gin.Context) {
+	return func(context *gin.Context) {
+		res := ProxyResponse{}
+		host := c.CommonInfo.DashboardAddr
+		port := c.CommonInfo.DashboardPort
+		requestUrl := "http://" + host + ":" + strconv.Itoa(port) + context.Param("serverApi")
+		request, _ := http.NewRequest("GET", requestUrl, nil)
+		username := c.CommonInfo.DashboardUser
+		if len(strings.TrimSpace(username)) != 0 {
+			password := c.CommonInfo.DashboardPwd
+			auth := []byte(username + ":" + password)
+			request.Header.Add("Authorization", "Basic "+base64.StdEncoding.EncodeToString(auth))
+		}
+		response, err := http.DefaultClient.Do(request)
+
+		if err != nil {
+			res.Code = FrpServerError
+			res.Success = false
+			res.Message = err.Error()
+			context.JSON(http.StatusOK, &res)
+			return
+		}
+
+		res.Code = response.StatusCode
+		body, err := io.ReadAll(response.Body)
+
+		if err != nil {
+			res.Success = false
+			res.Message = err.Error()
+		} else {
+			if res.Code == http.StatusOK {
+				res.Success = true
+				res.Data = string(body)
+			} else {
+				res.Success = false
+				res.Message = string(body)
+			}
+		}
+		context.JSON(http.StatusOK, &res)
 	}
 }

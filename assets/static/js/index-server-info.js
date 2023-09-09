@@ -5,37 +5,20 @@ var loadServerInfo = (function ($) {
      * get server info
      * @param lang {{}} language json
      */
-    function loadServerInfo(lang) {
+    function loadServerInfo(lang, title) {
+        console.log(title)
+        $("#title").text(title);
         $('#content').empty();
         var loading = layui.layer.load();
 
-        $.ajax({
-            url: 'http://127.0.0.1:7500/api/serverinfo',
-            dataType: 'jsonp',
-            success: function (result) {
-                result = {
-                    "version": "0.51.3",
-                    "bind_port": 7000,
-                    "vhost_http_port": 80,
-                    "vhost_https_port": 443,
-                    "tcpmux_httpconnect_port": 0,
-                    "kcp_bind_port": 7000,
-                    "quic_bind_port": 0,
-                    "subdomain_host": "frp.yanghuanglin.com",
-                    "max_pool_count": 100,
-                    "max_ports_per_client": 0,
-                    "heart_beat_timeout": 90,
-                    "total_traffic_in": 1669491,
-                    "total_traffic_out": 54422369,
-                    "cur_conns": 0,
-                    "client_counts": 1,
-                    "proxy_type_count": {"http": 9, "https": 8, "tcp": 7}
-                };
-                renderServerInfo(result);
-            },
-            complete: function () {
-                layui.layer.close(loading);
+        $.getJSON('/proxy/api/serverinfo').done(function (result) {
+            if (result.success) {
+                renderServerInfo(JSON.parse(result.data));
+            } else {
+                layui.layer.msg(result.message);
             }
+        }).always(function () {
+            layui.layer.close(loading);
         });
     }
 
