@@ -1,10 +1,10 @@
-# frps-multiuser
+# frps-panel
 
 [README](README.md) | [中文文档](README_zh.md)
 
-frps-multiuser 是 [frp](https://github.com/fatedier/frp) 的一个服务端插件，用于支持多用户鉴权。
+frps-panel 是 [frp](https://github.com/fatedier/frp) 的一个服务端插件，用于支持多用户鉴权。
 
-frps-multiuser 会以一个单独的进程运行，并接收 frps 发送过来的 HTTP 请求。
+frps-panel 会以一个单独的进程运行，并接收 frps 发送过来的 HTTP 请求。
 
 ![用户列表](screenshots/user%20list.png)
 ![新增列表](screenshots/new%20user.png)
@@ -14,7 +14,7 @@ frps-multiuser 会以一个单独的进程运行，并接收 frps 发送过来�
 ## 更新说明
 
 + **配置文件改为ini格式，便于增加注释**
-+ **删除-l参数，其需要的配置由`frps-multiuser.ini`决定**
++ **删除-l参数，其需要的配置由`frps-panel.ini`决定**
 + **指定配置文件的参数由`-f`改为`-c`，和`frps`一致**
 + **配置文件中，\[users\]节下如无用户信息，则直接由frps的token认证**
 + **配置文件中，\[disabled\]节下用户名对应的值如果为`disable`，则说明该账户被禁用，无法连接到服务器**
@@ -42,7 +42,7 @@ frps-multiuser 会以一个单独的进程运行，并接收 frps 发送过来�
 
 ### 使用示例
 
-1. 创建 `frps-multiuser.ini` 文件，内容为所有支持的用户名和 token。
+1. 创建 `frps-panel.ini` 文件，内容为所有支持的用户名和 token。
 
 ```ini
 [common]
@@ -80,9 +80,9 @@ user2 = disable
 
     每一个用户占一行，用户名和 token 之间以 `=` 号分隔。
 
-2. 运行 frps-multiuser，指定监听地址以及 token 存储文件路径。
+2. 运行 frps-panel，指定监听地址以及 token 存储文件路径。
 
-    `./frps-multiuser -c ./frps-multiuser.ini`
+    `./frps-panel -c ./frps-panel.ini`
 
 3. 在 frps 的配置文件中注册插件，并启动。
 
@@ -135,8 +135,8 @@ remote_port = 6000
 
 本实例是在 `ubuntu` 下， 以 `root` 用户执操作
 
-+ 1、解压 `frps-multiuser.zip` 到目录 `/root/frps-multiuser`
-+ 2、在目录 `/root/frps-multiuser` 下 用命令创建文件：`touch frps-multiuser.service`。创建后修改文件内容：
++ 1、解压 `frps-panel.zip` 到目录 `/root/frps-panel`
++ 2、在目录 `/root/frps-panel` 下 用命令创建文件：`touch frps-panel.service`。创建后修改文件内容：
 ```ini
 [Unit]
 Description = frp multiuser service
@@ -145,23 +145,23 @@ Wants = network.target
 
 [Service]
 Type = simple
-# 启动frps-multiuser的配置文件路径，需修改为您的frps-multiuser.ini的路径
-Environment=FRPS_MULTIUSER_OPTS="-c /root/frps-multiuser/frps-multiuser.ini"
-# 启动frps-multiuser的命令，需修改为您的frps-multiuser的安装路径
-ExecStart = /root/frps-multiuser/frps-multiuser $FRPS_MULTIUSER_OPTS
+# 启动frps-panel的配置文件路径，需修改为您的frps-panel.ini的路径
+Environment=FRPS_MULTIUSER_OPTS="-c /root/frps-panel/frps-panel.ini"
+# 启动frps-panel的命令，需修改为您的frps-panel的安装路径
+ExecStart = /root/frps-panel/frps-panel $FRPS_MULTIUSER_OPTS
 
 [Install]
 WantedBy = multi-user.target
 ```
-+ 3、复制服务文件： `cp /root/frps-multiuser.service /etc/systemd/system/`
++ 3、复制服务文件： `cp /root/frps-panel.service /etc/systemd/system/`
 + 4、重载服务： `systemctl daemon-reload`
-+ 5、启动服务： `service frps-multiuser start`
++ 5、启动服务： `service frps-panel start`
 
 ## 使用
 
 ___如果要从外网访问管理界面, 需要把配置中的 `plugin_addr` 改为 `0.0.0.0`___
 
-如果使用中有问题或者有其他想法，在[issues](https://github.com/yhl452493373/frps-multiuser/issues)上提出来。 如果我能搞定的话，我尽量搞。
+如果使用中有问题或者有其他想法，在[issues](https://github.com/yhl452493373/frps-panel/issues)上提出来。 如果我能搞定的话，我尽量搞。
 
 ## 致谢
 

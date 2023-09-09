@@ -2,8 +2,8 @@ package main
 
 import (
 	"errors"
-	"frps-multiuser/pkg/server"
-	"frps-multiuser/pkg/server/controller"
+	"frps-panel/pkg/server"
+	"frps-panel/pkg/server/controller"
 	"github.com/spf13/cobra"
 	"gopkg.in/ini.v1"
 	"io/fs"
@@ -21,13 +21,13 @@ var (
 )
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&showVersion, "version", "v", false, "version of frps-multiuser")
-	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "./frps-multiuser.ini", "config file of frps-multiuser")
+	rootCmd.PersistentFlags().BoolVarP(&showVersion, "version", "v", false, "version of frps-panel")
+	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "./frps-panel.ini", "config file of frps-panel")
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "frps-multiuser",
-	Short: "frps-multiuser is the server plugin of frp to support multiple users.",
+	Use:   "frps-panel",
+	Short: "frps-panel is the server plugin of frp to support multiple users.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if showVersion {
 			log.Println(version)
@@ -42,7 +42,7 @@ var rootCmd = &cobra.Command{
 
 		common, tokens, ports, domains, subdomains, iniFile, err := ParseConfigFile(configFile)
 		if err != nil {
-			log.Printf("fail to start frps-multiuser : %v", err)
+			log.Printf("fail to start frps-panel : %v", err)
 			return err
 		}
 		s, err := server.New(

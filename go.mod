@@ -1,4 +1,4 @@
-module frps-multiuser
+module frps-panel
 
 go 1.21
 

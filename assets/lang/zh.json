@@ -1,6 +1,5 @@
 {
-  "User Manage": "用户管理",
-  "frps multiuser": "frps用户管理",
+  "Frps Panel": "Frps 面板",
   "User": "用户名(user)",
   "Token": "凭证(meta_token)",
   "Notes": "备注",
@@ -46,5 +45,8 @@
   "Subdomains is invalid": "子域名不正确",
   "Comment is invalid": "备注不正确,不能包含换行",
   "Not limit": "无限制",
-  "None": "无"
+  "None": "无",
+  "Server Info": "服务器信息",
+  "Users": "用户列表",
+  "Proxies": "代理列表"
 }

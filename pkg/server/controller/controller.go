@@ -176,8 +176,7 @@ func (c *HandleController) MakeHandlerFunc() gin.HandlerFunc {
 func (c *HandleController) MakeManagerFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		context.HTML(http.StatusOK, "index.html", gin.H{
-			"UserManage":                   ginI18n.MustGetMessage(context, "User Manage"),
-			"FrpsMultiuser":                ginI18n.MustGetMessage(context, "frps multiuser"),
+			"FrpsPanel":                    ginI18n.MustGetMessage(context, "Frps Panel"),
 			"User":                         ginI18n.MustGetMessage(context, "User"),
 			"Token":                        ginI18n.MustGetMessage(context, "Token"),
 			"Notes":                        ginI18n.MustGetMessage(context, "Notes"),
@@ -201,6 +200,9 @@ func (c *HandleController) MakeManagerFunc() func(context *gin.Context) {
 			"PleaseInputAllowedSubdomains": ginI18n.MustGetMessage(context, "Please input allowed subdomains"),
 			"NotLimit":                     ginI18n.MustGetMessage(context, "Not limit"),
 			"None":                         ginI18n.MustGetMessage(context, "None"),
+			"ServerInfo":                   ginI18n.MustGetMessage(context, "Server Info"),
+			"Users":                        ginI18n.MustGetMessage(context, "Users"),
+			"Proxies":                      ginI18n.MustGetMessage(context, "Proxies"),
 		})
 	}
 }

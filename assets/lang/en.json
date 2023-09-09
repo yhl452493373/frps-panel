@@ -1,6 +1,5 @@
 {
-  "User Manage": "User Manage",
-  "frps multiuser": "frps multiuser",
+  "Frps Panel": "Frps Panel",
   "User": "User",
   "Token": "Token",
   "Notes": "Notes",
@@ -46,5 +45,8 @@
   "Subdomains is invalid": "Subdomains is invalid",
   "Comment is invalid": "Comment is invalid, it cannot include line breaks",
   "Not limit": "Not limit",
-  "None": "None"
+  "None": "None",
+  "Server Info": "Server Info",
+  "Users": "Users",
+  "Proxies": "Proxies"
 }

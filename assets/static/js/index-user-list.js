@@ -239,8 +239,11 @@ var loadUserList = (function ($) {
             verify: verifyRules
         });
 
+        var $section = $('#content > section');
         layui.table.render({
             elem: '#tokenTable',
+            height: $section.height() - $('#searchForm').height() + 8,
+            text: {none: lang['EmptyData']},
             url: '/tokens',
             method: 'get',
             where: {},
@@ -249,7 +252,6 @@ var loadUserList = (function ($) {
             page: navigator.language.indexOf("zh") !== -1,
             toolbar: '#userListToolbarTemplate',
             defaultToolbar: false,
-            text: {none: lang['EmptyData']},
             cols: [[
                 {type: 'checkbox'},
                 {field: 'user', title: lang['User'], width: 150, sort: true},

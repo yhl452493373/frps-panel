@@ -4,7 +4,7 @@
 
 frp server plugin to support multiple users for [frp](https://github.com/fatedier/frp).
 
-frps-multiuser will run as one single process and accept HTTP requests from frps.
+frps-panel will run as one single process and accept HTTP requests from frps.
 
 ![用户列表](screenshots/user%20list.png)
 ![新增列表](screenshots/new%20user.png)
@@ -13,8 +13,8 @@ frps-multiuser will run as one single process and accept HTTP requests from frps
 
 ## Update Notes
 
-+ **the default tokens file is frps-multiuser.ini now,ini file support comment**
-+ **remove `-l`,it configure in `frps-multiuser.ini` now**
++ **the default tokens file is frps-panel.ini now,ini file support comment**
++ **remove `-l`,it configure in `frps-panel.ini` now**
 + **change `-f` to `-c`,the same as `frps`**
 + **if \[users\] section is empty,the authentication will only be handle by frps**
 + **if user under \[disabled\] section ,and the value is `disable`, it means that user is be disabled, and can not connect to server**
@@ -34,7 +34,7 @@ frps-multiuser will run as one single process and accept HTTP requests from frps
 
 ### Download
 
-Download frps-multiuser binary file from [Release](../../releases).
+Download frps-panel binary file from [Release](../../releases).
 
 ### Requirements
 
@@ -42,7 +42,7 @@ frp version >= v0.31.0
 
 ### Usage
 
-1. Create file `frps-multiuser.ini` including all support usernames and tokens.
+1. Create file `frps-panel.ini` including all support usernames and tokens.
 
 ```ini
 [common]
@@ -80,9 +80,9 @@ user2 = disable
 
    One user each line. Username and token are split by `=`.
 
-2. Run frps-multiuser:
+2. Run frps-panel:
 
-   `./frps-multiuser -c ./frps-multiuser.ini`
+   `./frps-panel -c ./frps-panel.ini`
 
 3. Register plugin in frps.
 
@@ -135,8 +135,8 @@ remote_port = 6000
 
 this example is for `ubuntu` and with `root` user
 
-+ 1.unzip `frps-multiuser.zip` to dir `/root/frps-multiuser`
-+ 2.touch a file with command `touch frps-multiuser.service` in dir `/root/frps-multiuser`.the file content is:
++ 1.unzip `frps-panel.zip` to dir `/root/frps-panel`
++ 2.touch a file with command `touch frps-panel.service` in dir `/root/frps-panel`.the file content is:
 ```ini
 [Unit]
 Description = frp multiuser service
@@ -145,23 +145,23 @@ Wants = network.target
 
 [Service]
 Type = simple
-# config of frps-multiuser.ini,you should change the file path
-Environment=FRPS_MULTIUSER_OPTS="-c /root/frps-multiuser/frps-multiuser.ini"
-# command of run frps-multiuser,you should change the file path
-ExecStart = /root/frps-multiuser/frps-multiuser $FRPS_MULTIUSER_OPTS
+# config of frps-panel.ini,you should change the file path
+Environment=FRPS_MULTIUSER_OPTS="-c /root/frps-panel/frps-panel.ini"
+# command of run frps-panel,you should change the file path
+ExecStart = /root/frps-panel/frps-panel $FRPS_MULTIUSER_OPTS
 
 [Install]
 WantedBy = multi-user.target
 ```
-+ 3.copy `frps-multiuser.service` to `/etc/systemd/system/` with command `cp /root/frps-multiuser.service /etc/systemd/system/`
++ 3.copy `frps-panel.service` to `/etc/systemd/system/` with command `cp /root/frps-panel.service /etc/systemd/system/`
 + 4.reload service with command `systemctl daemon-reload`
-+ 5.start service with command `service frps-multiuser start`
++ 5.start service with command `service frps-panel start`
 
 ## Issues & Ideas
 
 ___If you want visit mange ui from internet, you should change `plugin_addr` to `0.0.0.0`___
 
-If you have any issues or ideas, put it on [issues](https://github.com/yhl452493373/frps-multiuser/issues). I will try my best to achieve it.
+If you have any issues or ideas, put it on [issues](https://github.com/yhl452493373/frps-panel/issues). I will try my best to achieve it.
 
 ## Credits
 

@@ -3,10 +3,10 @@ export CGO_ENABLED=0
 export GOOS=linux
 export GOARCH=amd64
 
-build: frps-multiuser
-	cp ./config/frps-multiuser.ini ./bin/frps-multiuser.ini
+build: frps-panel
+	cp ./config/frps-panel.ini ./bin/frps-panel.ini
 	cp -r ./assets/ ./bin/assets/
 
-frps-multiuser:
+frps-panel:
 	rm -rf ./bin
-	go build -o ./bin/frps-multiuser ./cmd/frps-multiuser
+	go build -o ./bin/frps-panel ./cmd/frps-panel
