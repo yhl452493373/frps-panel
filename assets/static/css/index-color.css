@@ -1,6 +1,5 @@
-header {
-    background-color: #58b7ff;
-    color: #fff;
+.layui-bg-blue {
+    background-color: #58b7ff !important;
 }
 
 .layui-btn {
@@ -60,13 +59,29 @@ header {
     background-color: #d9ecff;
 }
 
-.layui-table-cell-c:hover{
+.layui-table-cell-c:hover {
     border-color: #79bbff;
 }
 
+.layui-nav-tree .layui-nav-child dd.layui-this,
+.layui-nav-tree .layui-nav-child dd.layui-this a,
+.layui-nav-tree .layui-this,
+.layui-nav-tree .layui-this > a,
+.layui-nav-tree .layui-this > a:hover {
+    background-color: #409eff;
+}
+
+.layui-nav-tree .layui-nav-bar {
+    background-color: #409eff;
+}
+
+.proxy-expand .layui-row .layui-row > div:first-child {
+    color: #99a9bf;
+}
+
 @media (prefers-color-scheme: dark) {
-    header {
-        background-color: #395c74;
+    .layui-bg-blue {
+        background-color: #395c74 !important;
     }
 
     .layui-btn {
@@ -122,7 +137,19 @@ header {
         background-color: rgba(255, 255, 255, .08);
     }
 
-    .layui-table-cell-c:hover{
+    .layui-table-cell-c:hover {
         border-color: #5f5f60;
+    }
+
+    .layui-nav-tree .layui-nav-child dd.layui-this,
+    .layui-nav-tree .layui-nav-child dd.layui-this a,
+    .layui-nav-tree .layui-this,
+    .layui-nav-tree .layui-this > a,
+    .layui-nav-tree .layui-this > a:hover {
+        background-color: #4f80a1;
+    }
+
+    .layui-nav-tree .layui-nav-bar {
+        background-color: #4f80a1;
     }
 }

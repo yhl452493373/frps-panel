@@ -11,9 +11,10 @@
     <script src="./static/lib/filesize.min.js"></script>
     <script src="./static/js/index-server-info.js"></script>
     <script src="./static/js/index-user-list.js"></script>
+    <script src="./static/js/index-proxy-list.js"></script>
     <script src="./static/js/index.js"></script>
     <style>
-        .layui-table-cell:empty::after {
+        section.user-list .layui-table-cell:empty::after {
             content: '${ .NotLimit }';
         }
 
@@ -29,7 +30,7 @@
 </head>
 <body>
 <div class="layui-layout layui-layout-admin">
-    <div class="layui-header">
+    <div class="layui-header layui-bg-blue">
         <div class="layui-logo layui-hide-xs layui-bg-black">${ .FrpsMultiuser }</div>
         <div class="layui-title" id="title"></div>
     </div>
@@ -42,26 +43,26 @@
                 <li class="layui-nav-item">
                     <a href="javascript:void(0)" id="userList">用户列表</a>
                 </li>
-                <li class="layui-nav-item layui-nav-itemed">
+                <li class="layui-nav-item layui-nav-itemed" id="proxyList">
                     <a class="" href="javascript:void(0)">代理列表</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="javascript:void(0)" id="tcpList">TCP</a>
+                            <a href="javascript:void(0)" id="tcp">TCP</a>
                         </dd>
                         <dd>
-                            <a href="javascript:void(0)" id="udpList">UDP</a>
+                            <a href="javascript:void(0)" id="udp">UDP</a>
                         </dd>
                         <dd>
-                            <a href="javascript:void(0)" id="httpList">HTTP</a>
+                            <a href="javascript:void(0)" id="http">HTTP</a>
                         </dd>
                         <dd>
-                            <a href="javascript:void(0)" id="httpsList">HTTPS</a>
+                            <a href="javascript:void(0)" id="https">HTTPS</a>
                         </dd>
                         <dd>
-                            <a href="javascript:void(0)" id="stcpList">STCP</a>
+                            <a href="javascript:void(0)" id="stcp">STCP</a>
                         </dd>
                         <dd>
-                            <a href="javascript:void(0)" id="sudpList">SUDP</a>
+                            <a href="javascript:void(0)" id="sudp">SUDP</a>
                         </dd>
                     </dl>
                 </li>
@@ -73,68 +74,73 @@
     </div>
 </div>
 
+<!--服务器信息模板-->
 <script type="text/html" id="serverInfoTemplate">
     <section class="server-info">
         <div class="text-info">
             <div class="text-row">
-                <div class="text-col">version</div>
+                <div class="text-col">Version</div>
                 <div class="text-col">{{= d.version }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">bind_port</div>
+                <div class="text-col">BindPort</div>
                 <div class="text-col">{{= d.bind_port }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">vhost_http_port</div>
-                <div class="text-col">{{= d.vhost_http_port }}</div>
-            </div>
-            <div class="text-row">
-                <div class="text-col">vhost_https_port</div>
-                <div class="text-col">{{= d.vhost_https_port }}</div>
-            </div>
-            <div class="text-row">
-                <div class="text-col">tcpmux_httpconnect_port</div>
-                <div class="text-col">{{= d.tcpmux_httpconnect_port }}</div>
-            </div>
-            <div class="text-row">
-                <div class="text-col">kcp_bind_port</div>
+                <div class="text-col">KCP Bind Port</div>
                 <div class="text-col">{{= d.kcp_bind_port }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">quic_bind_port</div>
+                <div class="text-col">QUIC Bind Port</div>
                 <div class="text-col">{{= d.quic_bind_port }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">subdomain_host</div>
+                <div class="text-col">Http Port</div>
+                <div class="text-col">{{= d.vhost_http_port }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">Https Port</div>
+                <div class="text-col">{{= d.vhost_https_port }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">TCPMUX Port</div>
+                <div class="text-col">{{= d.tcpmux_httpconnect_port }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">Subdomain Host</div>
                 <div class="text-col">{{= d.subdomain_host }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">max_pool_count</div>
+                <div class="text-col">Max PoolCount</div>
                 <div class="text-col">{{= d.max_pool_count }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">max_ports_per_client</div>
+                <div class="text-col">Max Ports Per Client</div>
                 <div class="text-col">{{= d.max_ports_per_client }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">heart_beat_timeout</div>
+                <div class="text-col">HeartBeat Timeout</div>
                 <div class="text-col">{{= d.heart_beat_timeout }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">allow_ports_str</div>
-                <div class="text-col">{{= d.allow_ports_str }}</div>
+                <div class="text-col">Allow Ports</div>
+                <div class="text-col">{{= d.allow_ports_str || 'Not limit' }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">tls_only</div>
-                <div class="text-col">{{= d.tls_only }}</div>
+                <div class="text-col">TLS Only</div>
+                <div class="text-col">{{= d.tls_only || 'No' }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">cur_conns</div>
+                <div class="text-col">Current Connections</div>
                 <div class="text-col">{{= d.cur_conns }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">client_counts</div>
+                <div class="text-col">Client Counts</div>
                 <div class="text-col">{{= d.client_counts }}</div>
+            </div>
+            <div class="text-row">
+                <div class="text-col">Proxy Counts</div>
+                <div class="text-col">{{= d.proxy_counts }}</div>
             </div>
         </div>
         <div class="chart-info">
@@ -148,6 +154,7 @@
     </section>
 </script>
 
+<!--用户列表模板-->
 <script type="text/html" id="userListTemplate">
     <section class="user-list">
         <form class="layui-form layui-row layui-col-space16" id="searchForm" lay-filter="searchForm">
@@ -190,7 +197,8 @@
     </section>
 </script>
 
-<script type="text/html" id="toolbarTemplate">
+<!--用户列表-表格工具条按钮模板-->
+<script type="text/html" id="userListToolbarTemplate">
     <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm" lay-event="add">${ .NewUser }</button>
         <button class="layui-btn layui-btn-sm" lay-event="remove">${ .RemoveUser }</button>
@@ -198,7 +206,9 @@
         <button class="layui-btn layui-btn-sm" lay-event="enable">${ .EnableUser }</button>
     </div>
 </script>
-<script type="text/html" id="operationTemplate">
+
+<!--用户列表-操作按钮模板-->
+<script type="text/html" id="userListOperationTemplate">
     <div class="layui-clear-space">
         <a class="layui-btn layui-btn-xs" lay-event="remove">${ .Remove }</a>
         {{# if (d.status) { }}
@@ -208,7 +218,9 @@
         {{# } }}
     </div>
 </script>
-<script type="text/html" id="addTemplate">
+
+<!--用户列表-添加用户表单模板-->
+<script type="text/html" id="addUserTemplate">
     <form class="layui-form" id="addUserForm" lay-filter="addUserForm">
         <div class="layui-form-item">
             <label class="layui-form-label">${ .User }</label>
@@ -253,6 +265,151 @@
             </div>
         </div>
     </form>
+</script>
+
+<!--代理列表-代理表格模板-->
+<script type="text/html" id="proxyListTableTemplate">
+    <section class="proxy-list">
+        <table id="proxyListTable" lay-filter="proxyListTable"></table>
+    </section>
+</script>
+
+<!--代理列表-代理表格展示代理详情的箭头模板-->
+<script type="text/html" id="toggleProxyInfoArrowTemplate">
+    <i class='layui-icon layui-icon-triangle-r toggle-proxy-info-arrow' data-index='{{ d.LAY_INDEX }}'
+       lay-event='toggleProxyInfo'></i>
+</script>
+
+<!--代理列表-代理列表每行展开后的表格模板-->
+<script type="text/html" id="expandTrTemplate">
+    <tr class="layui-hide proxy-info" id="childTr_{{= d.index }}">
+        <td></td>
+        <td colspan="{{= d.colspan }}">
+            {{# if (d.proxyType === 'http' || d.proxyType === 'https') { }}
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Name</div>
+                        <div class="layui-col-md9">{{= d.data.conf.name }}</div>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Type</div>
+                        <div class="layui-col-md9">{{= d.data.conf.type }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Domains</div>
+                        <div class="layui-col-md9">{{= JSON.stringify(d.data.conf.custom_domains) }}</div>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">SubDomain</div>
+                        <div class="layui-col-md9">{{= d.data.conf.subdomain }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">locations</div>
+                        <div class="layui-col-md9">{{= d.data.conf.locations }}</div>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">HostRewrite</div>
+                        <div class="layui-col-md9">{{= d.data.conf.host_header_rewrite }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Encryption</div>
+                        <div class="layui-col-md9">{{= d.data.conf.use_encryption }}</div>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Compression</div>
+                        <div class="layui-col-md9">{{= d.data.conf.use_compression }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Last Start</div>
+                        <div class="layui-col-md9">{{= d.data.last_start_time }}</div>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Last Close</div>
+                        <div class="layui-col-md9">{{= d.data.last_close_time }}</div>
+                    </div>
+                </div>
+            </div>
+            {{# } else { }}
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Name</div>
+                        <div class="layui-col-md9">{{= d.data.conf.name }}</div>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Type</div>
+                        <div class="layui-col-md9">{{= d.data.conf.type }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Addr</div>
+                        <div class="layui-col-md9">:{{= d.data.conf.remote_port }}</div>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Encryption</div>
+                        <div class="layui-col-md9">{{= d.data.conf.use_encryption }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Compression</div>
+                        <div class="layui-col-md9">{{= d.data.conf.use_compression }}</div>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Last Start</div>
+                        <div class="layui-col-md9">{{= d.data.last_start_time }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <div class="layui-row">
+                        <div class="layui-col-md3">Last Close</div>
+                        <div class="layui-col-md9">{{= d.data.last_close_time }}</div>
+                    </div>
+                </div>
+            </div>
+            {{# } }}
+        </td>
+    </tr>
 </script>
 </body>
 </html>

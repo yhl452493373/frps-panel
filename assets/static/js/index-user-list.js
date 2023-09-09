@@ -139,6 +139,7 @@ var loadUserList = (function ($) {
     /**
      * load i18n language
      * @param lang {{}} language json
+     * @param title page title
      */
     function loadUserList(lang, title) {
         $("#title").text(title);
@@ -245,8 +246,8 @@ var loadUserList = (function ($) {
             where: {},
             dataType: 'json',
             editTrigger: 'dblclick',
-            page: navigator.language.indexOf("zh") === 0,
-            toolbar: '#toolbarTemplate',
+            page: navigator.language.indexOf("zh") !== -1,
+            toolbar: '#userListToolbarTemplate',
             defaultToolbar: false,
             text: {none: lang['EmptyData']},
             cols: [[
@@ -264,7 +265,7 @@ var loadUserList = (function ($) {
                     templet: '<span>{{d.status? "' + lang['Enable'] + '":"' + lang['Disable'] + '"}}</span>',
                     sort: true
                 },
-                {title: lang['Operation'], width: 150, toolbar: '#operationTemplate'}
+                {title: lang['Operation'], width: 150, toolbar: '#userListOperationTemplate'}
             ]]
         });
 
@@ -388,7 +389,7 @@ var loadUserList = (function ($) {
                 type: 1,
                 title: lang['NewUser'],
                 area: ['500px'],
-                content: layui.laytpl(document.getElementById('addTemplate').innerHTML).render(),
+                content: layui.laytpl(document.getElementById('addUserTemplate').innerHTML).render(),
                 btn: [lang['Confirm'], lang['Cancel']],
                 btn1: function (index) {
                     if (layui.form.validate('#addUserForm')) {

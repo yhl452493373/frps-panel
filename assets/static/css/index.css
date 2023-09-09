@@ -9,25 +9,45 @@ section {
     right: 0;
     top: 0;
     bottom: 0;
-    padding: 15px 15px 0 15px;
-    overflow: auto;
+    padding: 15px;
+    overflow: hidden;
     box-sizing: border-box;
 }
 
-.layui-header{
+.layui-header {
     line-height: 60px;
     font-size: 16px;
 }
 
-.layui-title{
+.layui-layout-admin .layui-side {
+    width: 225px !important;
+}
+
+.layui-side-scroll {
+    width: 245px !important;
+}
+
+.layui-logo {
+    width: 225px !important;
+}
+
+.layui-title {
     position: absolute;
-    left: 200px;
+    left: 225px !important;
     right: 0;
     top: 0;
     height: 100%;
     color: #fff;
     padding: 0 15px;
     box-sizing: border-box;
+}
+
+.layui-nav.layui-nav-tree {
+    width: 225px !important;
+}
+
+.layui-body {
+    left: 225px;
 }
 
 #searchForm input {
@@ -92,6 +112,10 @@ section.server-info .chart-info {
     flex: 1;
 }
 
+section.server-info .text-info{
+    padding: 0 20px;
+}
+
 section.server-info .text-row {
     display: flex;
     font-size: 14px;
@@ -125,4 +149,22 @@ section.server-info .chart-info #trafficChart,
 section.server-info .chart-info #countChart {
     width: 400px;
     height: 250px;
+}
+
+.toggle-proxy-info-arrow{
+    display: inline-block;
+    transition-duration: 0.2s;
+}
+
+.toggle-proxy-info-arrow.open{
+    transform: rotate(90deg);
+}
+
+.proxy-info .layui-row {
+    font-size: 14px !important;
+    padding: 10px;
+}
+
+.proxy-info .layui-col-xs6 .layui-row{
+    padding: 0;
 }

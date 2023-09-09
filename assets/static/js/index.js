@@ -3,10 +3,17 @@
         var langLoading = layui.layer.load()
         $.getJSON('/lang').done(function (lang) {
             layui.element.on('nav(leftNav)', function (elem) {
-                if (elem.attr('id') === 'serverInfo') {
-                    loadServerInfo(lang, elem.text().trim());
-                } else if (elem.attr('id') === 'userList') {
-                    loadUserList(lang, elem.text().trim());
+                var id = elem.attr('id');
+                var title = elem.text();
+                if (id === 'serverInfo') {
+                    loadServerInfo(lang, title.trim());
+                } else if (id === 'userList') {
+                    loadUserList(lang, title.trim());
+                } else if (elem.closest('.layui-nav-item').attr('id') === 'proxyList') {
+                    if (id != null && id.trim() !== '') {
+                        var suffix = elem.closest('.layui-nav-item').children('a').text().trim();
+                        loadProxyInfo(lang, title + " " + suffix, id);
+                    }
                 }
             });
 

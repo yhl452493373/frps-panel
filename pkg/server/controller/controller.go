@@ -667,6 +667,7 @@ func (c *HandleController) MakeProxyFunc() func(context *gin.Context) {
 			res.Code = FrpServerError
 			res.Success = false
 			res.Message = err.Error()
+			log.Print(err)
 			context.JSON(http.StatusOK, &res)
 			return
 		}
