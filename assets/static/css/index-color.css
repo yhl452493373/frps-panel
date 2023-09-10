@@ -108,6 +108,11 @@ section.proxy-list .proxy-info .layui-row .layui-row > div:first-child {
     border-color: #fde2e2;
 }
 
+.version a,
+.version span {
+    color: #99a9bf;
+}
+
 @media (prefers-color-scheme: dark) {
     .layui-bg-blue {
         background-color: #395c74 !important;

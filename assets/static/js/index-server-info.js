@@ -38,6 +38,7 @@ var loadServerInfo = (function ($) {
     function renderServerInfo(data) {
         var html = layui.laytpl($('#serverInfoTemplate').html()).render(data);
         $('#content').html(html);
+        $('#frpVersion').text(data.version);
 
         renderTrafficChart(data);
         renderCountChart(data);

@@ -20,6 +20,7 @@ type HandleController struct {
 	Subdomains map[string][]string
 	ConfigFile string
 	IniFile    *ini.File
+	Version    string
 }
 
 func NewHandleController(config *HandleController) *HandleController {

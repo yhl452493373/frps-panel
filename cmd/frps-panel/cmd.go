@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-const version = "0.0.2"
+const version = "1.4.0"
 
 var (
 	showVersion bool
@@ -55,6 +55,7 @@ var rootCmd = &cobra.Command{
 				Subdomains: subdomains,
 				ConfigFile: configFile,
 				IniFile:    iniFile,
+				Version:    version,
 			})
 		if err != nil {
 			return err

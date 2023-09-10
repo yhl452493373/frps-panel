@@ -215,6 +215,7 @@ func (c *HandleController) MakeManagerFunc() func(context *gin.Context) {
 			"Addr":                         ginI18n.MustGetMessage(context, "Addr"),
 			"LastStart":                    ginI18n.MustGetMessage(context, "Last Start"),
 			"LastClose":                    ginI18n.MustGetMessage(context, "Last Close"),
+			"version":                      c.Version,
 		})
 	}
 }
