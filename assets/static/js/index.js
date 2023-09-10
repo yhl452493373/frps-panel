@@ -2,7 +2,7 @@ var http_port, https_port;
 (function ($) {
     $(function () {
         var langLoading = layui.layer.load()
-        $.getJSON('/lang').done(function (lang) {
+        $.getJSON('/lang.json').done(function (lang) {
             layui.element.on('nav(leftNav)', function (elem) {
                 var id = elem.attr('id');
                 var title = elem.text();

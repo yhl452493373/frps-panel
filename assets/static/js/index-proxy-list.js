@@ -32,17 +32,48 @@ var loadProxyInfo = (function ($) {
      * @param proxyType proxy type
      */
     function renderProxyListTable(data, proxyType) {
+        proxyType = proxyType.toLowerCase();
+        data.forEach(function (temp) {
+            temp.conf = temp.conf || {
+                remote_port: 0,
+                use_encryption: false,
+                use_compression: false,
+                custom_domains: null,
+                subdomain: null,
+                locations: null,
+                host_header_rewrite: null
+            };
+
+            temp.client_version = temp.client_version || '-';
+            temp.conf.custom_domains = temp.conf.custom_domains || '-';
+            temp.conf.subdomain = temp.conf.subdomain || '-';
+            temp.conf.locations = temp.conf.locations || '-';
+            temp.conf.host_header_rewrite = temp.conf.host_header_rewrite || '-';
+
+            if (temp.conf.custom_domains !== '-') {
+                temp.conf.custom_domains = JSON.stringify(temp.conf.custom_domains);
+            }
+            if (proxyType === 'http') {
+                temp.conf.remote_port = http_port;
+            } else if (proxyType === 'https') {
+                temp.conf.remote_port = https_port;
+            }
+        });
         var $section = $('#content > section');
         var cols = [
             {field: 'id', type: 'space', width: 60, align: 'center', templet: '#toggleProxyInfoArrowTemplate'},
-            {field: 'name', title: 'Name', sort: true},
+            {field: 'name', title: i18n['Name'], sort: true},
             {
-                field: 'port', title: 'Port', width: '12%', sort: true, templet: '<span>{{ d.conf.remote_port }}</span>'
+                field: 'port',
+                title: i18n['Port'],
+                width: '12%',
+                sort: true,
+                templet: '<span>{{= d.conf.remote_port }}</span>'
             },
-            {field: 'cur_conns', title: 'Connections', minWidth: 140, width: '12%', sort: true},
+            {field: 'cur_conns', title: i18n['Connections'], minWidth: 140, width: '12%', sort: true},
             {
                 field: 'today_traffic_in',
-                title: 'Traffic In',
+                title: i18n['TrafficIn'],
                 minWidth: 140,
                 width: '12%',
                 sort: true,
@@ -52,7 +83,7 @@ var loadProxyInfo = (function ($) {
             },
             {
                 field: 'today_traffic_out',
-                title: 'Traffic Out',
+                title: i18n['TrafficOut'],
                 minWidth: 140,
                 width: '12%',
                 sort: true,
@@ -60,20 +91,13 @@ var loadProxyInfo = (function ($) {
                     return size(d.today_traffic_out);
                 }
             },
-            {field: 'client_version', title: 'ClientVersion', minWidth: 140, width: '12%', sort: true},
-            {field: 'status', title: 'Status', width: '12%', sort: true}
-        ];
-
-        proxyType = proxyType.toLowerCase();
-        if (proxyType === 'http' || proxyType === 'https') {
-            data.forEach(function (temp) {
-                if (proxyType === 'http') {
-                    temp.conf.remote_port = http_port;
-                } else if (proxyType === 'https') {
-                    temp.conf.remote_port = https_port;
+            {field: 'client_version', title: i18n['ClientVersion'], minWidth: 140, width: '12%', sort: true},
+            {
+                field: 'status', title: i18n['Status'], width: '12%', sort: true, templet: function (d) {
+                    return '<span class="' + d.status + '">' + i18n[d.status] + '</span>';
                 }
-            });
-        }
+            }
+        ];
 
         var proxyListTable = layui.table.render({
             elem: '#proxyListTable',
@@ -87,11 +111,17 @@ var loadProxyInfo = (function ($) {
                 var $tr = $('.layui-table-view[lay-id=' + this.id + '] tbody tr');
                 var expandTrTemplateHtml = $('#expandTrTemplate').html();
                 for (var i = 0; i < $tr.length; i++) {
+                    var datum = res.data[i];
+                    var useEncryption = datum.conf.use_encryption;
+                    var useCompression = datum.conf.use_compression;
+                    datum.conf.use_encryption = i18n[useEncryption + ''];
+                    datum.conf.use_compression = i18n[useCompression + ''];
+                    console.log(datum)
                     var html = layui.laytpl(expandTrTemplateHtml).render({
                         index: i,
                         colspan: cols.length - 1,
                         proxyType: proxyType,
-                        data: res.data[i]
+                        data: datum
                     });
                     $($tr[i]).after(html);
                 }
@@ -141,7 +171,7 @@ var loadProxyInfo = (function ($) {
             now.setDate(now.getDate() - 1);
         }
         layui.layer.open({
-            title: 'Traffic Statistics',
+            title: i18n['TrafficStatistics'],
             type: 1,
             content: html,
             area: ['800px', '400px'],
@@ -164,10 +194,14 @@ var loadProxyInfo = (function ($) {
                                 html += colorEl + v.seriesName + ': ' + size(v.value) + '<br/>'
                             }
                             return html
-                        },
+                        }
                     },
                     legend: {
-                        data: ['Traffic In', 'Traffic Out'],
+                        data: [i18n['TrafficIn'], i18n['TrafficOut']],
+                        textStyle: {
+                            textBorderColor: '#fff',
+                            textBorderWidth: 2
+                        }
                     },
                     grid: {
                         left: '3%',
@@ -178,8 +212,8 @@ var loadProxyInfo = (function ($) {
                     xAxis: [
                         {
                             type: 'category',
-                            data: dates.reverse(),
-                        },
+                            data: dates.reverse()
+                        }
                     ],
                     yAxis: [
                         {
@@ -187,22 +221,22 @@ var loadProxyInfo = (function ($) {
                             axisLabel: {
                                 formatter: function (value) {
                                     return size(value)
-                                },
-                            },
-                        },
+                                }
+                            }
+                        }
                     ],
                     series: [
                         {
-                            name: 'Traffic In',
+                            name: i18n['TrafficIn'],
                             type: 'bar',
                             data: data.traffic_in.reverse(),
                         },
                         {
-                            name: 'Traffic Out',
+                            name: i18n['TrafficOut'],
                             type: 'bar',
                             data: data.traffic_out.reverse(),
-                        },
-                    ],
+                        }
+                    ]
                 };
 
                 option && chart.setOption(option);

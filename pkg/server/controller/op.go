@@ -47,7 +47,7 @@ func (c *HandleController) Register(rootDir string, engine *gin.Engine) {
 	}
 	group.Static("/static", filepath.Join(assets, "static"))
 	group.GET("/", c.MakeManagerFunc())
-	group.GET("/lang", c.MakeLangFunc())
+	group.GET("/lang.json", c.MakeLangFunc())
 	group.GET("/tokens", c.MakeQueryTokensFunc())
 	group.POST("/add", c.MakeAddTokenFunc())
 	group.POST("/update", c.MakeUpdateTokensFunc())

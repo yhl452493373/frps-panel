@@ -48,18 +48,26 @@ var loadServerInfo = (function ($) {
      * @param data traffic data
      */
     function renderTrafficChart(data) {
-        var chartLegend = ['total_traffic_in', 'total_traffic_out'];
+        var chartLegend = [i18n['TrafficIn'], i18n['TrafficOut']];
         var chartData = [
-            {value: data.total_traffic_in, name: 'Traffic In'},
-            {value: data.total_traffic_out, name: 'Traffic Out'}
+            {value: data.total_traffic_in, name: i18n['TrafficIn']},
+            {value: data.total_traffic_out, name: i18n['TrafficOut']}
         ];
         var chartDom = document.getElementById('trafficPieChart');
         var chart = echarts.init(chartDom);
         var option = {
             title: {
-                text: 'Network Traffic',
-                subtext: 'today',
-                left: 'center'
+                text: i18n['NetworkTraffic'],
+                subtext: i18n['today'],
+                left: 'center',
+                textStyle: {
+                    textBorderColor: '#fff',
+                    textBorderWidth: 2
+                },
+                subtextStyle: {
+                    textBorderColor: '#fff',
+                    textBorderWidth: 2
+                }
             },
             tooltip: {
                 trigger: 'item',
@@ -71,6 +79,10 @@ var loadServerInfo = (function ($) {
                 orient: 'vertical',
                 left: 'left',
                 data: chartLegend,
+                textStyle: {
+                    textBorderColor: '#fff',
+                    textBorderWidth: 2
+                }
             },
             series: [
                 {
@@ -106,16 +118,25 @@ var loadServerInfo = (function ($) {
                 name: type.toUpperCase(),
                 value: proxies[type]
             };
-            chartLegend.push(type);
+            chartLegend.push(type.toUpperCase());
             chartData.push(temp);
         }
+
         var chartDom = document.getElementById('countPieChart');
         var chart = echarts.init(chartDom);
         var option = {
             title: {
-                text: 'Proxies',
-                subtext: 'now',
-                left: 'center'
+                text: i18n['Proxies'],
+                subtext: i18n['now'],
+                left: 'center',
+                textStyle: {
+                    textBorderColor: '#fff',
+                    textBorderWidth: 2
+                },
+                subtextStyle: {
+                    textBorderColor: '#fff',
+                    textBorderWidth: 2
+                }
             },
             tooltip: {
                 trigger: 'item',
@@ -127,6 +148,10 @@ var loadServerInfo = (function ($) {
                 orient: 'vertical',
                 left: 'left',
                 data: chartLegend,
+                textStyle: {
+                    textBorderColor: '#fff',
+                    textBorderWidth: 2
+                }
             },
             series: [
                 {

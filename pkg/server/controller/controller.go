@@ -203,6 +203,18 @@ func (c *HandleController) MakeManagerFunc() func(context *gin.Context) {
 			"ServerInfo":                   ginI18n.MustGetMessage(context, "Server Info"),
 			"Users":                        ginI18n.MustGetMessage(context, "Users"),
 			"Proxies":                      ginI18n.MustGetMessage(context, "Proxies"),
+			"TrafficStatistics":            ginI18n.MustGetMessage(context, "Traffic Statistics"),
+			"Name":                         ginI18n.MustGetMessage(context, "Name"),
+			"Type":                         ginI18n.MustGetMessage(context, "Type"),
+			"Domains":                      ginI18n.MustGetMessage(context, "Domains"),
+			"SubDomain":                    ginI18n.MustGetMessage(context, "SubDomain"),
+			"Locations":                    ginI18n.MustGetMessage(context, "Locations"),
+			"HostRewrite":                  ginI18n.MustGetMessage(context, "HostRewrite"),
+			"Encryption":                   ginI18n.MustGetMessage(context, "Encryption"),
+			"Compression":                  ginI18n.MustGetMessage(context, "Compression"),
+			"Addr":                         ginI18n.MustGetMessage(context, "Addr"),
+			"LastStart":                    ginI18n.MustGetMessage(context, "Last Start"),
+			"LastClose":                    ginI18n.MustGetMessage(context, "Last Close"),
 		})
 	}
 }
@@ -243,6 +255,21 @@ func (c *HandleController) MakeLangFunc() func(context *gin.Context) {
 			"SubdomainsInvalid":     ginI18n.MustGetMessage(context, "Subdomains is invalid"),
 			"CommentInvalid":        ginI18n.MustGetMessage(context, "Comment is invalid"),
 			"ParamError":            ginI18n.MustGetMessage(context, "Param error"),
+			"Name":                  ginI18n.MustGetMessage(context, "Name"),
+			"Port":                  ginI18n.MustGetMessage(context, "Port"),
+			"Connections":           ginI18n.MustGetMessage(context, "Connections"),
+			"TrafficIn":             ginI18n.MustGetMessage(context, "Traffic In"),
+			"TrafficOut":            ginI18n.MustGetMessage(context, "Traffic Out"),
+			"ClientVersion":         ginI18n.MustGetMessage(context, "Client Version"),
+			"TrafficStatistics":     ginI18n.MustGetMessage(context, "Traffic Statistics"),
+			"online":                ginI18n.MustGetMessage(context, "online"),
+			"offline":               ginI18n.MustGetMessage(context, "offline"),
+			"true":                  ginI18n.MustGetMessage(context, "true"),
+			"false":                 ginI18n.MustGetMessage(context, "false"),
+			"NetworkTraffic":        ginI18n.MustGetMessage(context, "Network Traffic"),
+			"today":                 ginI18n.MustGetMessage(context, "today"),
+			"now":                   ginI18n.MustGetMessage(context, "now"),
+			"Proxies":               ginI18n.MustGetMessage(context, "Proxies"),
 		})
 	}
 }

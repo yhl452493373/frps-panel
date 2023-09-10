@@ -68,6 +68,7 @@
                 </li>
             </ul>
         </div>
+        <div class="version">1.0.0</div>
     </div>
     <div class="layui-body" id="content"></div>
 </div>
@@ -287,8 +288,8 @@
                 <div class="layui-col-xs12">
                     <div class="layui-row">
                         <div class="layui-col-md12">
-                            <input type="hidden" value="{{= d.data.conf.name }}">
-                            <div class="layui-btn traffic-statistics">Traffic Statistics</div>
+                            <input type="hidden" value="{{= d.data.name }}">
+                            <div class="layui-btn traffic-statistics">${ .TrafficStatistics }</div>
                         </div>
                     </div>
                 </div>
@@ -297,27 +298,27 @@
             <div class="layui-row">
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Name</div>
-                        <div class="layui-col-md9">{{= d.data.conf.name }}</div>
+                        <div class="layui-col-md3">${ .Name }</div>
+                        <div class="layui-col-md9">{{= d.data.name }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Type</div>
-                        <div class="layui-col-md9">{{= d.data.conf.type }}</div>
+                        <div class="layui-col-md3">${ .Type }</div>
+                        <div class="layui-col-md9">{{= d.proxyType.toUpperCase() }}</div>
                     </div>
                 </div>
             </div>
             <div class="layui-row">
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Domains</div>
-                        <div class="layui-col-md9">{{= JSON.stringify(d.data.conf.custom_domains) }}</div>
+                        <div class="layui-col-md3">${ .Domains }</div>
+                        <div class="layui-col-md9">{{= d.data.conf.custom_domains }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">SubDomain</div>
+                        <div class="layui-col-md3">${ .SubDomain }</div>
                         <div class="layui-col-md9">{{= d.data.conf.subdomain }}</div>
                     </div>
                 </div>
@@ -325,13 +326,13 @@
             <div class="layui-row">
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">locations</div>
+                        <div class="layui-col-md3">${ .Locations }</div>
                         <div class="layui-col-md9">{{= d.data.conf.locations }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">HostRewrite</div>
+                        <div class="layui-col-md3">${ .HostRewrite }</div>
                         <div class="layui-col-md9">{{= d.data.conf.host_header_rewrite }}</div>
                     </div>
                 </div>
@@ -339,13 +340,13 @@
             <div class="layui-row">
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Encryption</div>
+                        <div class="layui-col-md3">${ .Encryption }</div>
                         <div class="layui-col-md9">{{= d.data.conf.use_encryption }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Compression</div>
+                        <div class="layui-col-md3">${ .Compression }</div>
                         <div class="layui-col-md9">{{= d.data.conf.use_compression }}</div>
                     </div>
                 </div>
@@ -353,13 +354,13 @@
             <div class="layui-row">
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Last Start</div>
+                        <div class="layui-col-md3">${ .LastStart }</div>
                         <div class="layui-col-md9">{{= d.data.last_start_time }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Last Close</div>
+                        <div class="layui-col-md3">${ .LastClose }</div>
                         <div class="layui-col-md9">{{= d.data.last_close_time }}</div>
                     </div>
                 </div>
@@ -368,27 +369,27 @@
             <div class="layui-row">
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Name</div>
-                        <div class="layui-col-md9">{{= d.data.conf.name }}</div>
+                        <div class="layui-col-md3">${ .Name }</div>
+                        <div class="layui-col-md9">{{= d.data.name }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Type</div>
-                        <div class="layui-col-md9">{{= d.data.conf.type }}</div>
+                        <div class="layui-col-md3">${ .Type }</div>
+                        <div class="layui-col-md9">{{= d.proxyType.toUpperCase() }}</div>
                     </div>
                 </div>
             </div>
             <div class="layui-row">
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Addr</div>
-                        <div class="layui-col-md9">:{{= d.data.conf.remote_port }}</div>
+                        <div class="layui-col-md3">${ .Addr }</div>
+                        <div class="layui-col-md9">{{= d.data.conf.remote_port }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Encryption</div>
+                        <div class="layui-col-md3">${ .Encryption }</div>
                         <div class="layui-col-md9">{{= d.data.conf.use_encryption }}</div>
                     </div>
                 </div>
@@ -396,13 +397,13 @@
             <div class="layui-row">
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Compression</div>
+                        <div class="layui-col-md3">${ .Compression }</div>
                         <div class="layui-col-md9">{{= d.data.conf.use_compression }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Last Start</div>
+                        <div class="layui-col-md3">${ .LastStart }</div>
                         <div class="layui-col-md9">{{= d.data.last_start_time }}</div>
                     </div>
                 </div>
@@ -410,7 +411,7 @@
             <div class="layui-row">
                 <div class="layui-col-xs6">
                     <div class="layui-row">
-                        <div class="layui-col-md3">Last Close</div>
+                        <div class="layui-col-md3">${ .LastClose }</div>
                         <div class="layui-col-md9">{{= d.data.last_close_time }}</div>
                     </div>
                 </div>

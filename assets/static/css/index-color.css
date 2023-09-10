@@ -79,6 +79,35 @@
     color: #99a9bf;
 }
 
+section.server-info .text-row .text-col:first-child {
+    color: #99a9bf;
+}
+
+section.proxy-list .proxy-info .layui-row .layui-row > div:first-child {
+    color: #99a9bf;
+}
+
+.online,
+.offline {
+    border-radius: 4px;
+    padding: 2px 10px;
+    font-size: 12px;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.online {
+    color: #67c23a;
+    background-color: #f0f9eb;
+    border-color: #e1f3d8;
+}
+
+.offline {
+    color: #f56c6c;
+    background-color: #fef0f0;
+    border-color: #fde2e2;
+}
+
 @media (prefers-color-scheme: dark) {
     .layui-bg-blue {
         background-color: #395c74 !important;
@@ -151,5 +180,17 @@
 
     .layui-nav-tree .layui-nav-bar {
         background-color: #4f80a1;
+    }
+
+    .online {
+        color: #67c23a;
+        background-color: #1c2518;
+        border-color: #25371c;
+    }
+
+    .offline {
+        color: #f56c6c;
+        background-color: #2b1d1d;
+        border-color: #412626;
     }
 }
