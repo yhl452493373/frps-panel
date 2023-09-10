@@ -69,9 +69,7 @@
             </ul>
         </div>
     </div>
-    <div class="layui-body" id="content">
-
-    </div>
+    <div class="layui-body" id="content"></div>
 </div>
 
 <!--服务器信息模板-->
@@ -145,10 +143,10 @@
         </div>
         <div class="chart-info">
             <div class="chart-traffic">
-                <div id="trafficChart"></div>
+                <div id="trafficPieChart"></div>
             </div>
             <div class="chart-count">
-                <div id="countChart"></div>
+                <div id="countPieChart"></div>
             </div>
         </div>
     </section>
@@ -285,6 +283,16 @@
     <tr class="layui-hide proxy-info" id="childTr_{{= d.index }}">
         <td></td>
         <td colspan="{{= d.colspan }}">
+            <div class="layui-row">
+                <div class="layui-col-xs12">
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+                            <input type="hidden" value="{{= d.data.conf.name }}">
+                            <div class="layui-btn traffic-statistics">Traffic Statistics</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {{# if (d.proxyType === 'http' || d.proxyType === 'https') { }}
             <div class="layui-row">
                 <div class="layui-col-xs6">
@@ -410,6 +418,11 @@
             {{# } }}
         </td>
     </tr>
+</script>
+
+<!--代理列表-每个代理的最近7天流量统计模板-->
+<script type="text/html" id="trafficStaticTemplate">
+    <div id="trafficBarChart"></div>
 </script>
 </body>
 </html>

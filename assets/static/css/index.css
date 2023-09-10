@@ -145,8 +145,8 @@ section.server-info .chart-info > .chart-count {
     margin-top: 30px;
 }
 
-section.server-info .chart-info #trafficChart,
-section.server-info .chart-info #countChart {
+section.server-info .chart-info #trafficPieChart,
+section.server-info .chart-info #countPieChart {
     width: 400px;
     height: 250px;
 }
@@ -167,4 +167,8 @@ section.server-info .chart-info #countChart {
 
 .proxy-info .layui-col-xs6 .layui-row{
     padding: 0;
+}
+
+#trafficBarChart{
+    height: 100%;
 }

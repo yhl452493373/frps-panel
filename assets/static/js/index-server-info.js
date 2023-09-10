@@ -17,6 +17,8 @@ var loadServerInfo = (function ($) {
             if (result.success) {
                 var data = JSON.parse(result.data);
                 data.proxy_counts = 0;
+                http_port = data.vhost_http_port;
+                https_port = data.vhost_https_port;
                 for (var proxy in data.proxy_type_count) {
                     data.proxy_counts = data.proxy_counts + data.proxy_type_count[proxy];
                 }
@@ -46,11 +48,12 @@ var loadServerInfo = (function ($) {
      * @param data traffic data
      */
     function renderTrafficChart(data) {
+        var chartLegend = ['total_traffic_in', 'total_traffic_out'];
         var chartData = [
             {value: data.total_traffic_in, name: 'Traffic In'},
             {value: data.total_traffic_out, name: 'Traffic Out'}
         ];
-        var chartDom = document.getElementById('trafficChart');
+        var chartDom = document.getElementById('trafficPieChart');
         var chart = echarts.init(chartDom);
         var option = {
             title: {
@@ -67,7 +70,7 @@ var loadServerInfo = (function ($) {
             legend: {
                 orient: 'vertical',
                 left: 'left',
-                data: ['total_traffic_in', 'total_traffic_out'],
+                data: chartLegend,
             },
             series: [
                 {
@@ -95,7 +98,7 @@ var loadServerInfo = (function ($) {
      */
     function renderCountChart(data) {
         var proxies = data.proxy_type_count;
-        var charLegend = [];
+        var chartLegend = [];
         var chartData = [];
 
         for (var type in proxies) {
@@ -103,11 +106,10 @@ var loadServerInfo = (function ($) {
                 name: type.toUpperCase(),
                 value: proxies[type]
             };
-            charLegend.push(type);
+            chartLegend.push(type);
             chartData.push(temp);
         }
-
-        var chartDom = document.getElementById('countChart');
+        var chartDom = document.getElementById('countPieChart');
         var chart = echarts.init(chartDom);
         var option = {
             title: {
@@ -118,13 +120,13 @@ var loadServerInfo = (function ($) {
             tooltip: {
                 trigger: 'item',
                 formatter: function (v) {
-                    return v.value;
-                },
+                    return v.value + ' (' + v.percent + '%)';
+                }
             },
             legend: {
                 orient: 'vertical',
                 left: 'left',
-                data: charLegend,
+                data: chartLegend,
             },
             series: [
                 {

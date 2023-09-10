@@ -1,3 +1,4 @@
+var http_port, https_port;
 (function ($) {
     $(function () {
         var langLoading = layui.layer.load()
