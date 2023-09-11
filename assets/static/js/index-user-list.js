@@ -227,10 +227,7 @@ var loadUserList = (function ($) {
      * set verify rule of layui.form
      */
     (function setFormVerifyRule() {
-        layui.form.set({
-            verIncludeRequired: true,
-            verify: verifyRules
-        });
+        layui.form.verify(verifyRules);
     })();
 
     /**
