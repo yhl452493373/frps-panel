@@ -22,6 +22,18 @@ var loadServerInfo = (function ($) {
                 for (var proxy in data.proxy_type_count) {
                     data.proxy_counts = data.proxy_counts + data.proxy_type_count[proxy];
                 }
+                data.bind_port = data.bind_port || i18n['Disable'];
+                data.kcp_bind_port = data.kcp_bind_port || i18n['Disable'];
+                data.quic_bind_port = data.quic_bind_port || i18n['Disable'];
+                data.vhost_http_port = data.vhost_http_port || i18n['Disable'];
+                data.vhost_https_port = data.vhost_https_port || i18n['Disable'];
+                data.tcpmux_httpconnect_port = data.tcpmux_httpconnect_port || i18n['Disable'];
+                data.subdomain_host = data.subdomain_host || i18n['NotSet'];
+                data.max_pool_count = data.max_pool_count || i18n['NotSet'];
+                data.max_ports_per_client = data.max_ports_per_client || i18n['NotLimit'];
+                data.heart_beat_timeout = data.heart_beat_timeout || i18n['NotSet'];
+                data.allow_ports_str = data.allow_ports_str || i18n['NotLimit'];
+                data.tls_only = i18n[data.tls_only || false];
                 renderServerInfo(data);
             } else {
                 layui.layer.msg(result.message);

@@ -176,6 +176,7 @@ func (c *HandleController) MakeHandlerFunc() gin.HandlerFunc {
 func (c *HandleController) MakeManagerFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		context.HTML(http.StatusOK, "index.html", gin.H{
+			"version":                      c.Version,
 			"FrpsPanel":                    ginI18n.MustGetMessage(context, "Frps Panel"),
 			"User":                         ginI18n.MustGetMessage(context, "User"),
 			"Token":                        ginI18n.MustGetMessage(context, "Token"),
@@ -215,7 +216,22 @@ func (c *HandleController) MakeManagerFunc() func(context *gin.Context) {
 			"Addr":                         ginI18n.MustGetMessage(context, "Addr"),
 			"LastStart":                    ginI18n.MustGetMessage(context, "Last Start"),
 			"LastClose":                    ginI18n.MustGetMessage(context, "Last Close"),
-			"version":                      c.Version,
+			"Version":                      ginI18n.MustGetMessage(context, "Version"),
+			"BindPort":                     ginI18n.MustGetMessage(context, "Bind Port"),
+			"KCPBindPort":                  ginI18n.MustGetMessage(context, "KCP Bind Port"),
+			"QUICBindPort":                 ginI18n.MustGetMessage(context, "QUIC Bind Port"),
+			"HTTPPort":                     ginI18n.MustGetMessage(context, "HTTP Port"),
+			"HTTPSPort":                    ginI18n.MustGetMessage(context, "HTTPS Port"),
+			"TCPMUXPort":                   ginI18n.MustGetMessage(context, "TCPMUX Port"),
+			"SubdomainHost":                ginI18n.MustGetMessage(context, "Subdomain Host"),
+			"MaxPoolCount":                 ginI18n.MustGetMessage(context, "Max Pool Count"),
+			"MaxPortsPerClient":            ginI18n.MustGetMessage(context, "Max Ports Per Client"),
+			"HeartBeatTimeout":             ginI18n.MustGetMessage(context, "Heart Beat Timeout"),
+			"AllowPorts":                   ginI18n.MustGetMessage(context, "Allow Ports"),
+			"TLSOnly":                      ginI18n.MustGetMessage(context, "TLS Only"),
+			"CurrentConnections":           ginI18n.MustGetMessage(context, "Current Connections"),
+			"ClientCounts":                 ginI18n.MustGetMessage(context, "Client Counts"),
+			"ProxyCounts":                  ginI18n.MustGetMessage(context, "Proxy Counts"),
 		})
 	}
 }
@@ -248,6 +264,7 @@ func (c *HandleController) MakeLangFunc() func(context *gin.Context) {
 			"ShouldCheckUser":       ginI18n.MustGetMessage(context, "Please check at least one user"),
 			"OperationConfirm":      ginI18n.MustGetMessage(context, "Operation confirm"),
 			"EmptyData":             ginI18n.MustGetMessage(context, "Empty data"),
+			"NotLimit":              ginI18n.MustGetMessage(context, "Not limit"),
 			"AllowedPorts":          ginI18n.MustGetMessage(context, "Allowed ports"),
 			"AllowedDomains":        ginI18n.MustGetMessage(context, "Allowed domains"),
 			"AllowedSubdomains":     ginI18n.MustGetMessage(context, "Allowed subdomains"),
@@ -271,6 +288,7 @@ func (c *HandleController) MakeLangFunc() func(context *gin.Context) {
 			"today":                 ginI18n.MustGetMessage(context, "today"),
 			"now":                   ginI18n.MustGetMessage(context, "now"),
 			"Proxies":               ginI18n.MustGetMessage(context, "Proxies"),
+			"NotSet":                ginI18n.MustGetMessage(context, "Not Set"),
 		})
 	}
 }

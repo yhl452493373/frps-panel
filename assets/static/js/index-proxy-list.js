@@ -114,8 +114,8 @@ var loadProxyInfo = (function ($) {
                     var datum = res.data[i];
                     var useEncryption = datum.conf.use_encryption;
                     var useCompression = datum.conf.use_compression;
-                    datum.conf.use_encryption = i18n[useEncryption + ''];
-                    datum.conf.use_compression = i18n[useCompression + ''];
+                    datum.conf.use_encryption = i18n[useEncryption];
+                    datum.conf.use_compression = i18n[useCompression];
                     console.log(datum)
                     var html = layui.laytpl(expandTrTemplateHtml).render({
                         index: i,

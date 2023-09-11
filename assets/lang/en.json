@@ -72,5 +72,22 @@
   "Last Close": "Last Close",
   "Network Traffic": "Network Traffic",
   "today": "today",
-  "now": "now"
+  "now": "now",
+  "Version": "Version",
+  "Bind Port": "Bind Port",
+  "KCP Bind Port": "KCP Bind Port",
+  "QUIC Bind Port": "QUIC Bind Port",
+  "HTTP Port": "HTTP Port",
+  "HTTPS Port": "HTTPS Port",
+  "TCPMUX Port": "TCPMUX Port",
+  "Subdomain Host": "Subdomain Host",
+  "Max Pool Count": "Max Pool Count",
+  "Max Ports Per Client": "Max Ports Per Client",
+  "Heart Beat Timeout": "Heart Beat Timeout",
+  "Allow Ports": "Allow Ports",
+  "TLS Only": "TLS Only",
+  "Current Connections": "Current Connections",
+  "Client Counts": "Client Counts",
+  "Proxy Counts": "Proxy Counts",
+  "Not Set": "Not Set"
 }

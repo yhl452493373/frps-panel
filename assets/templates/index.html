@@ -71,7 +71,7 @@
         <div class="version">
             <a href="https://github.com/fatedier/frp" target="_blank">Frp <span id="frpVersion"></span></a>
             <span> | </span>
-            <a href="https://github.com/yhl452493373/frps-panel" target="_blank">${ .FrpsPanel } v${ .version }</a>
+            <a href="https://github.com/yhl452493373/frps-panel" target="_blank">${ .FrpsPanel } ${ .version }</a>
         </div>
     </div>
     <div class="layui-body" id="content"></div>
@@ -82,67 +82,67 @@
     <section class="server-info">
         <div class="text-info">
             <div class="text-row">
-                <div class="text-col">Version</div>
+                <div class="text-col">${ .Version }</div>
                 <div class="text-col">{{= d.version }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">BindPort</div>
+                <div class="text-col">${ .BindPort }</div>
                 <div class="text-col">{{= d.bind_port }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">KCP Bind Port</div>
+                <div class="text-col">${ .KCPBindPort }</div>
                 <div class="text-col">{{= d.kcp_bind_port }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">QUIC Bind Port</div>
+                <div class="text-col">${ .QUICBindPort }</div>
                 <div class="text-col">{{= d.quic_bind_port }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">Http Port</div>
+                <div class="text-col">${ .HTTPPort }</div>
                 <div class="text-col">{{= d.vhost_http_port }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">Https Port</div>
+                <div class="text-col">${ .HTTPSPort }</div>
                 <div class="text-col">{{= d.vhost_https_port }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">TCPMUX Port</div>
+                <div class="text-col">${ .TCPMUXPort }</div>
                 <div class="text-col">{{= d.tcpmux_httpconnect_port }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">Subdomain Host</div>
+                <div class="text-col">${ .SubdomainHost }</div>
                 <div class="text-col">{{= d.subdomain_host }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">Max PoolCount</div>
+                <div class="text-col">${ .MaxPoolCount }</div>
                 <div class="text-col">{{= d.max_pool_count }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">Max Ports Per Client</div>
+                <div class="text-col">${ .MaxPortsPerClient }</div>
                 <div class="text-col">{{= d.max_ports_per_client }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">HeartBeat Timeout</div>
+                <div class="text-col">${ .HeartBeatTimeout }</div>
                 <div class="text-col">{{= d.heart_beat_timeout }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">Allow Ports</div>
-                <div class="text-col">{{= d.allow_ports_str || 'Not limit' }}</div>
+                <div class="text-col">${ .AllowPorts }</div>
+                <div class="text-col">{{= d.allow_ports_str }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">TLS Only</div>
-                <div class="text-col">{{= d.tls_only || 'No' }}</div>
+                <div class="text-col">${ .TLSOnly }</div>
+                <div class="text-col">{{= d.tls_only }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">Current Connections</div>
+                <div class="text-col">${ .CurrentConnections }</div>
                 <div class="text-col">{{= d.cur_conns }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">Client Counts</div>
+                <div class="text-col">${ .ClientCounts }</div>
                 <div class="text-col">{{= d.client_counts }}</div>
             </div>
             <div class="text-row">
-                <div class="text-col">Proxy Counts</div>
+                <div class="text-col">${ .ProxyCounts }</div>
                 <div class="text-col">{{= d.proxy_counts }}</div>
             </div>
         </div>

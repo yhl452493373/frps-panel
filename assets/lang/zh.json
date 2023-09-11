@@ -72,5 +72,22 @@
   "Last Close": "上次断开时间",
   "Network Traffic": "网络流量",
   "today": "今日",
-  "now": "当前"
+  "now": "当前",
+  "Version": "版本号",
+  "Bind Port": "TCP 端口",
+  "KCP Bind Port": "KCP 端口",
+  "QUIC Bind Port": "QUIC 端口",
+  "HTTP Port": "HTTP 端口",
+  "HTTPS Port": "HTTPS 端口",
+  "TCPMUX Port": "TCPMUX 端口",
+  "Subdomain Host": "二级域名后缀",
+  "Max Pool Count": "每个代理最大连接池大小",
+  "Max Ports Per Client": "单个客户端最大同时存在代理数",
+  "Heart Beat Timeout": "心跳连接超时时间",
+  "Allow Ports": "端口限制",
+  "TLS Only": "仅接受启用 TLS 的客户端",
+  "Current Connections": "当前连接数",
+  "Client Counts": "客户端总数",
+  "Proxy Counts": "代理总数",
+  "Not Set": "未配置"
 }
