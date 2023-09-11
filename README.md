@@ -2,35 +2,28 @@
 
 [README](README.md) | [中文文档](README_zh.md)
 
-frp server plugin to support multiple users for [frp](https://github.com/fatedier/frp).
+frp server plugin to show server info and support multiple users for [frp](https://github.com/fatedier/frp).
 
 frps-panel will run as one single process and accept HTTP requests from frps.
 
+![支持英文](screenshots/i18n.png)
+![服务器信息](screenshots/server%20info.png)
 ![用户列表](screenshots/user%20list.png)
 ![新增列表](screenshots/new%20user.png)
-![支持英文](screenshots/i18n.png)
+![代理列表](screenshots/proxy%20list.png)
+![代理流量统计](screenshots/proxy%20traffic%20statistics.png)
 ![自动深色模式](screenshots/dark%20mode.png)
 
-## Update Notes
+### Features
 
-+ **the default tokens file is frps-panel.ini now,ini file support comment**
-+ **remove `-l`,it configure in `frps-panel.ini` now**
-+ **change `-f` to `-c`,the same as `frps`**
-+ **if \[users\] section is empty,the authentication will only be handle by frps**
-+ **if user under \[disabled\] section ,and the value is `disable`, it means that user is be disabled, and can not connect to server**
-+ **add a manage ui, and change color mode base on browser**
-+ **you can dynamic `add`,`remove`,`disable` or `enable` user now**
-+ **you can limit `ports`,`domains` and `subdomains` for each user now**
++ **Show frp server info**
++ **Support multiple user authentication by tokens saved in file.**
++ **Dynamic `add`,`remove`,`disable` or `enable` user now**
++ **Limit `ports`,`domains` and `subdomains` for each user now**
 
 ***when a user is dynamic been `remove` or `disable`,it will take some time to be effective***
 
 ***the limit of `ports`、`domains`、`subdomains` only effective at `NewProxy`***
-
-### Features
-
-* Support multiple user authentication by tokens saved in file.
-* Support dynamic `add`,`remove`,`disable` or `enable` user
-* Limit `ports`,`domains` and `subdomains` for each user
 
 ### Download
 
@@ -54,6 +47,13 @@ plugin_port = 7200
 admin_user  = admin
 ;the password of manage ui,optional
 admin_pwd   = admin
+
+; frp server's dashboard config info, it's required and should be the same as frp server
+; otherwaise, this plugin cannot get server info
+dashboard_addr = 127.0.0.1
+dashboard_port = 7500
+dashboard_user = admin
+dashboard_pwd  = admin
 
 [users]
 ;user user1 with meta_token 123
@@ -146,9 +146,9 @@ Wants = network.target
 [Service]
 Type = simple
 # config of frps-panel.ini,you should change the file path
-Environment=FRPS_MULTIUSER_OPTS="-c /root/frps-panel/frps-panel.ini"
+Environment=FRPS_PANEL_OPTS="-c /root/frps-panel/frps-panel.ini"
 # command of run frps-panel,you should change the file path
-ExecStart = /root/frps-panel/frps-panel $FRPS_MULTIUSER_OPTS
+ExecStart = /root/frps-panel/frps-panel $FRPS_PANEL_OPTS
 
 [Install]
 WantedBy = multi-user.target

@@ -2,35 +2,29 @@
 
 [README](README.md) | [中文文档](README_zh.md)
 
-frps-panel 是 [frp](https://github.com/fatedier/frp) 的一个服务端插件，用于支持多用户鉴权。
+frps-panel 是 [frp](https://github.com/fatedier/frp) 的一个服务端插件，用于查看服务器信息以及支持多用户鉴权。
 
 frps-panel 会以一个单独的进程运行，并接收 frps 发送过来的 HTTP 请求。
 
+![支持英文](screenshots/i18n.png)
+![服务器信息](screenshots/server%20info.png)
 ![用户列表](screenshots/user%20list.png)
 ![新增列表](screenshots/new%20user.png)
-![支持英文](screenshots/i18n.png)
+![代理列表](screenshots/proxy%20list.png)
+![代理流量统计](screenshots/proxy%20traffic%20statistics.png)
 ![自动深色模式](screenshots/dark%20mode.png)
 
-## 更新说明
 
-+ **配置文件改为ini格式，便于增加注释**
-+ **删除-l参数，其需要的配置由`frps-panel.ini`决定**
-+ **指定配置文件的参数由`-f`改为`-c`，和`frps`一致**
-+ **配置文件中，\[users\]节下如无用户信息，则直接由frps的token认证**
-+ **配置文件中，\[disabled\]节下用户名对应的值如果为`disable`，则说明该账户被禁用，无法连接到服务器**
-+ **增加了管理界面，并且会根据浏览器主题自动切换深色或浅色模式**
-+ **新增动态`添加`、`删除`、`禁用`、`启用`用户**
-+ **新增对用户的`端口`、`域名`、`二级域名`进行限制**
+### 功能
+
++ **支持展示服务器信息**
++ **支持多用户鉴权**
++ **动态`添加`、`删除`、`禁用`、`启用`用户**
++ **对用户的`端口`、`域名`、`二级域名`进行限制**
 
 ***用户被`删除`或`禁用`后，不会马上生效，需要等一段时间***
 
 ***用户`端口`、`域名`、`二级域名`限制仅在建立新连接(`NewProxy`)时生效***
-
-### 功能
-
-* 通过配置文件配置所有支持的用户名和 Token，只允许匹配的 frpc 客户端登录。
-* 动态`添加`、`删除`、`禁用`、`启用`用户
-* 对每个用户进行`端口`、`域名`、`二级域名`限制
 
 ### 下载
 
@@ -54,6 +48,12 @@ plugin_port = 7200
 admin_user  = admin
 ;插件管理页面密码,与账号一起进行鉴权,可选
 admin_pwd   = admin
+
+; frp服务器的看板页面信息，必须配置，且与frp服务器一致，否则无法获取服务器信息
+dashboard_addr = 127.0.0.1
+dashboard_port = 7500
+dashboard_user = admin
+dashboard_pwd  = admin
 
 [users]
 ;user1的meta_token为123
@@ -146,9 +146,9 @@ Wants = network.target
 [Service]
 Type = simple
 # 启动frps-panel的配置文件路径，需修改为您的frps-panel.ini的路径
-Environment=FRPS_MULTIUSER_OPTS="-c /root/frps-panel/frps-panel.ini"
+Environment=FRPS_PANEL_OPTS="-c /root/frps-panel/frps-panel.ini"
 # 启动frps-panel的命令，需修改为您的frps-panel的安装路径
-ExecStart = /root/frps-panel/frps-panel $FRPS_MULTIUSER_OPTS
+ExecStart = /root/frps-panel/frps-panel $FRPS_PANEL_OPTS
 
 [Install]
 WantedBy = multi-user.target
