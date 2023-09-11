@@ -106,6 +106,10 @@ var loadProxyInfo = (function ($) {
             cols: [cols],
             page: navigator.language.indexOf("zh") !== -1,
             data: data,
+            initSort: {
+                field: 'name',
+                type: 'asc'
+            },
             done: function (res, curr, count, origin) {
                 //向每一行tr后面追加显示子table的tr
                 var $tr = $('.layui-table-view[lay-id=' + this.id + '] tbody tr');
@@ -116,7 +120,6 @@ var loadProxyInfo = (function ($) {
                     var useCompression = datum.conf.use_compression;
                     datum.conf.use_encryption = i18n[useEncryption];
                     datum.conf.use_compression = i18n[useCompression];
-                    console.log(datum)
                     var html = layui.laytpl(expandTrTemplateHtml).render({
                         index: i,
                         colspan: cols.length - 1,
