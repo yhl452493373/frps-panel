@@ -89,5 +89,6 @@
   "Current Connections": "Current Connections",
   "Client Counts": "Client Counts",
   "Proxy Counts": "Proxy Counts",
-  "Not Set": "Not Set"
+  "Not Set": "Not Set",
+  "Proxy": "Proxies"
 }

@@ -139,7 +139,7 @@ var loadServerInfo = (function ($) {
         var chart = echarts.init(chartDom);
         var option = {
             title: {
-                text: i18n['Proxies'],
+                text: i18n['Proxy'],
                 subtext: i18n['now'],
                 left: 'center',
                 textStyle: {

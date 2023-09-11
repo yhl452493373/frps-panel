@@ -289,6 +289,7 @@ func (c *HandleController) MakeLangFunc() func(context *gin.Context) {
 			"now":                   ginI18n.MustGetMessage(context, "now"),
 			"Proxies":               ginI18n.MustGetMessage(context, "Proxies"),
 			"NotSet":                ginI18n.MustGetMessage(context, "Not Set"),
+			"Proxy":                 ginI18n.MustGetMessage(context, "Proxy"),
 		})
 	}
 }

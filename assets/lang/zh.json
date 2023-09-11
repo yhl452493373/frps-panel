@@ -89,5 +89,6 @@
   "Current Connections": "当前连接数",
   "Client Counts": "客户端总数",
   "Proxy Counts": "代理总数",
-  "Not Set": "未配置"
+  "Not Set": "未配置",
+  "Proxy": "代理数量"
 }
