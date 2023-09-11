@@ -1,11 +1,13 @@
 package controller
 
 import (
+	"encoding/base64"
 	"fmt"
 	plugin "github.com/fatedier/frp/pkg/plugin/server"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/ini.v1"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -37,17 +39,21 @@ func (c *HandleController) Register(rootDir string, engine *gin.Engine) {
 	engine.Delims("${", "}")
 	engine.LoadHTMLGlob(filepath.Join(assets, "templates/*"))
 	engine.POST("/handler", c.MakeHandlerFunc())
+	engine.Static("/static", filepath.Join(assets, "static"))
+	engine.GET("/login", c.MakeLoginFunc())
 
 	var group *gin.RouterGroup
 	if len(c.CommonInfo.User) != 0 {
-		group = engine.Group("/", gin.BasicAuthForRealm(gin.Accounts{
-			c.CommonInfo.User: c.CommonInfo.Pwd,
-		}, "Restricted"))
+		//group = engine.Group("/", gin.BasicAuthForRealm(gin.Accounts{
+		//	c.CommonInfo.User: c.CommonInfo.Pwd,
+		//}, "Restricted"))
+
+		group = engine.Group("/", c.Authorize())
 	} else {
 		group = engine.Group("/")
 	}
-	group.Static("/static", filepath.Join(assets, "static"))
-	group.GET("/", c.MakeManagerFunc())
+	group.POST("/login", c.MakeLoginFunc())
+	group.GET("/", c.MakeIndexFunc())
 	group.GET("/lang.json", c.MakeLangFunc())
 	group.GET("/tokens", c.MakeQueryTokensFunc())
 	group.POST("/add", c.MakeAddTokenFunc())
@@ -56,6 +62,23 @@ func (c *HandleController) Register(rootDir string, engine *gin.Engine) {
 	group.POST("/disable", c.MakeDisableTokensFunc())
 	group.POST("/enable", c.MakeEnableTokensFunc())
 	group.GET("/proxy/*serverApi", c.MakeProxyFunc())
+}
+
+func (c *HandleController) Authorize() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		authorizationFromUser := context.Request.Header.Get("Authorization")
+
+		userAndPwd := []byte(c.CommonInfo.User + ":" + c.CommonInfo.Pwd)
+		authorizationFromConfig := "Basic " + base64.StdEncoding.EncodeToString(userAndPwd)
+
+		if authorizationFromUser == authorizationFromConfig {
+			context.Next()
+		} else {
+			context.Abort()
+			context.Redirect(http.StatusTemporaryRedirect, "/login")
+			return
+		}
+	}
 }
 
 func (c *HandleController) HandleLogin(content *plugin.LoginContent) plugin.Response {

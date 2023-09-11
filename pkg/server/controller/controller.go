@@ -175,7 +175,22 @@ func (c *HandleController) MakeHandlerFunc() gin.HandlerFunc {
 	}
 }
 
-func (c *HandleController) MakeManagerFunc() func(context *gin.Context) {
+func (c *HandleController) MakeLoginFunc() func(context *gin.Context) {
+	return func(context *gin.Context) {
+		method := context.Request.Method
+		if method == "GET" {
+			context.HTML(http.StatusOK, "login.html", gin.H{
+				"version": c.Version,
+			})
+		} else {
+			context.JSON(http.StatusOK, gin.H{
+				"Success": true,
+			})
+		}
+	}
+}
+
+func (c *HandleController) MakeIndexFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		context.HTML(http.StatusOK, "index.html", gin.H{
 			"version":                      c.Version,
