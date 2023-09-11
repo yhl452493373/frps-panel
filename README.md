@@ -48,12 +48,18 @@ admin_user  = admin
 ;the password of manage ui,optional
 admin_pwd   = admin
 
-; frp server's dashboard config info, it's required and should be the same as frp server
-; otherwise, this plugin cannot get server info
+; enable tls
+tls_mode = false
+; tls_cert_file = cert.crt
+; tls_key_file = cert.key
+
+; frp dashboard info
 dashboard_addr = 127.0.0.1
 dashboard_port = 7500
 dashboard_user = admin
 dashboard_pwd  = admin
+; if your frps dashboard enable tls, change this to true
+dashboard_tls  = false
 
 [users]
 ;user user1 with meta_token 123
