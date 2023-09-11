@@ -40,23 +40,17 @@ var rootCmd = &cobra.Command{
 		}
 		rootDir := filepath.Dir(executable)
 
-		common, tokens, ports, domains, subdomains, iniFile, err := ParseConfigFile(configFile)
+		config, tls, err := ParseConfigFile(configFile)
 		if err != nil {
 			log.Printf("fail to start frps-panel : %v", err)
 			return err
 		}
+
 		s, err := server.New(
 			rootDir,
-			controller.HandleController{
-				CommonInfo: common,
-				Tokens:     tokens,
-				Ports:      ports,
-				Domains:    domains,
-				Subdomains: subdomains,
-				ConfigFile: configFile,
-				IniFile:    iniFile,
-				Version:    version,
-			})
+			config,
+			tls,
+		)
 		if err != nil {
 			return err
 		}
@@ -74,12 +68,16 @@ func Execute() {
 	}
 }
 
-func ParseConfigFile(file string) (controller.CommonInfo, map[string]controller.TokenInfo, map[string][]string, map[string][]string, map[string][]string, *ini.File, error) {
+func ParseConfigFile(file string) (controller.HandleController, server.TLS, error) {
 	common := controller.CommonInfo{}
 	users := make(map[string]controller.TokenInfo)
 	ports := make(map[string][]string)
 	domains := make(map[string][]string)
 	subdomains := make(map[string][]string)
+	tls := server.TLS{
+		Enable:   false,
+		Protocol: "HTTP",
+	}
 
 	iniFile, err := ini.LoadSources(ini.LoadOptions{
 		Insensitive:         false,
@@ -95,13 +93,27 @@ func ParseConfigFile(file string) (controller.CommonInfo, map[string]controller.
 		} else {
 			log.Printf("fail to parse token file %s : %v", file, err)
 		}
-		return common, nil, nil, nil, nil, iniFile, err
+		return controller.HandleController{
+			CommonInfo: common,
+			Tokens:     nil,
+			Ports:      nil,
+			Domains:    nil,
+			Subdomains: nil,
+			IniFile:    iniFile,
+		}, tls, err
 	}
 
 	commonSection, err := iniFile.GetSection("common")
 	if err != nil {
 		log.Printf("fail to get [common] section from file %s : %v", file, err)
-		return common, nil, nil, nil, nil, iniFile, err
+		return controller.HandleController{
+			CommonInfo: common,
+			Tokens:     nil,
+			Ports:      nil,
+			Domains:    nil,
+			Subdomains: nil,
+			IniFile:    iniFile,
+		}, tls, err
 	}
 	common.PluginAddr = commonSection.Key("plugin_addr").MustString("0.0.0.0")
 	common.PluginPort = commonSection.Key("plugin_port").MustInt(7200)
@@ -112,10 +124,24 @@ func ParseConfigFile(file string) (controller.CommonInfo, map[string]controller.
 	common.DashboardUser = commonSection.Key("dashboard_user").Value()
 	common.DashboardPwd = commonSection.Key("dashboard_pwd").Value()
 
+	tls.Enable = commonSection.Key("dashboard_tls_mode").MustBool(false)
+	tls.Cert = commonSection.Key("dashboard_tls_cert_file").MustString("")
+	tls.Key = commonSection.Key("dashboard_tls_key_file").MustString("")
+	if tls.Enable {
+		tls.Protocol = "HTTPS"
+	}
+
 	portsSection, err := iniFile.GetSection("ports")
 	if err != nil {
 		log.Printf("fail to get [ports] section from file %s : %v", file, err)
-		return common, nil, nil, nil, nil, iniFile, err
+		return controller.HandleController{
+			CommonInfo: common,
+			Tokens:     nil,
+			Ports:      nil,
+			Domains:    nil,
+			Subdomains: nil,
+			IniFile:    iniFile,
+		}, tls, err
 	}
 	for _, key := range portsSection.Keys() {
 		user := key.Name()
@@ -127,7 +153,14 @@ func ParseConfigFile(file string) (controller.CommonInfo, map[string]controller.
 	domainsSection, err := iniFile.GetSection("domains")
 	if err != nil {
 		log.Printf("fail to get [domains] section from file %s : %v", file, err)
-		return common, nil, nil, nil, nil, iniFile, err
+		return controller.HandleController{
+			CommonInfo: common,
+			Tokens:     nil,
+			Ports:      nil,
+			Domains:    nil,
+			Subdomains: nil,
+			IniFile:    iniFile,
+		}, tls, err
 	}
 	for _, key := range domainsSection.Keys() {
 		user := key.Name()
@@ -139,7 +172,14 @@ func ParseConfigFile(file string) (controller.CommonInfo, map[string]controller.
 	subdomainsSection, err := iniFile.GetSection("subdomains")
 	if err != nil {
 		log.Printf("fail to get [subdomains] section from file %s : %v", file, err)
-		return common, nil, nil, nil, nil, iniFile, err
+		return controller.HandleController{
+			CommonInfo: common,
+			Tokens:     nil,
+			Ports:      nil,
+			Domains:    nil,
+			Subdomains: nil,
+			IniFile:    iniFile,
+		}, tls, err
 	}
 	for _, key := range subdomainsSection.Keys() {
 		user := key.Name()
@@ -151,13 +191,27 @@ func ParseConfigFile(file string) (controller.CommonInfo, map[string]controller.
 	usersSection, err := iniFile.GetSection("users")
 	if err != nil {
 		log.Printf("fail to get [users] section from file %s : %v", file, err)
-		return common, nil, nil, nil, nil, iniFile, err
+		return controller.HandleController{
+			CommonInfo: common,
+			Tokens:     nil,
+			Ports:      nil,
+			Domains:    nil,
+			Subdomains: nil,
+			IniFile:    iniFile,
+		}, tls, err
 	}
 
 	disabledSection, err := iniFile.GetSection("disabled")
 	if err != nil {
 		log.Printf("fail to get [disabled] section from file %s : %v", file, err)
-		return common, nil, nil, nil, nil, iniFile, err
+		return controller.HandleController{
+			CommonInfo: common,
+			Tokens:     nil,
+			Ports:      nil,
+			Domains:    nil,
+			Subdomains: nil,
+			IniFile:    iniFile,
+		}, tls, err
 	}
 
 	keys := usersSection.Keys()
@@ -177,6 +231,14 @@ func ParseConfigFile(file string) (controller.CommonInfo, map[string]controller.
 		}
 		users[token.User] = token
 	}
-
-	return common, users, ports, domains, subdomains, iniFile, nil
+	return controller.HandleController{
+		CommonInfo: common,
+		Tokens:     users,
+		Ports:      ports,
+		Domains:    domains,
+		Subdomains: subdomains,
+		ConfigFile: configFile,
+		IniFile:    iniFile,
+		Version:    version,
+	}, tls, nil
 }

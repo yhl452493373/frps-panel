@@ -22,16 +22,26 @@ import (
 type Server struct {
 	cfg     controller.HandleController
 	s       *http.Server
+	tls     TLS
 	done    chan struct{}
 	rootDir string
 }
 
-func New(rootDir string, cfg controller.HandleController) (*Server, error) {
+type TLS struct {
+	Enable   bool
+	Cert     string
+	Key      string
+	Protocol string
+}
+
+func New(rootDir string, cfg controller.HandleController, tls TLS) (*Server, error) {
 	s := &Server{
 		cfg:     cfg,
 		done:    make(chan struct{}),
 		rootDir: rootDir,
+		tls:     tls,
 	}
+
 	if err := s.init(); err != nil {
 		return nil, err
 	}
@@ -44,10 +54,32 @@ func (s *Server) Run() error {
 	if err != nil {
 		return err
 	}
-	log.Printf("HTTP server listen on %s", l.Addr().String())
+	log.Printf("%s server listen on %s", s.tls.Protocol, l.Addr().String())
 	go func() {
-		if err = s.s.Serve(l); !errors.Is(http.ErrServerClosed, err) {
-			log.Printf("error shutdown HTTP server: %v", err)
+		if s.tls.Enable {
+			configDir := filepath.Dir(s.cfg.ConfigFile)
+
+			cert := filepath.Join(configDir, s.tls.Cert)
+			_, err := os.Stat(cert)
+			if err != nil && !os.IsExist(err) {
+				cert = s.tls.Cert
+			}
+
+			key := filepath.Join(configDir, s.tls.Key)
+			_, err = os.Stat(key)
+			if err != nil && !os.IsExist(err) {
+				key = s.tls.Key
+			}
+
+			if err = s.s.ServeTLS(l, cert, key); !errors.Is(http.ErrServerClosed, err) {
+				log.Printf("error shutdown %s server: %v", s.tls.Protocol, err)
+				_ = s.Stop()
+			}
+		} else {
+			if err = s.s.Serve(l); !errors.Is(http.ErrServerClosed, err) {
+				log.Printf("error shutdown %s server: %v", s.tls.Protocol, err)
+				_ = s.Stop()
+			}
 		}
 	}()
 	<-s.done
@@ -58,16 +90,17 @@ func (s *Server) Stop() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := s.s.Shutdown(ctx); err != nil {
-		log.Fatalf("shutdown HTTP server error: %v", err)
+		log.Fatalf("shutdown %s server error: %v", s.tls.Protocol, err)
 	}
-	log.Printf("HTTP server exited")
+	log.Printf("%s server exited", s.tls.Protocol)
+
 	close(s.done)
 	return nil
 }
 
 func (s *Server) init() error {
 	if err := s.initHTTPServer(); err != nil {
-		log.Printf("init HTTP server error: %v", err)
+		log.Printf("init %s server error: %v", s.tls.Protocol, err)
 		return err
 	}
 	return nil
