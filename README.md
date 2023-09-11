@@ -49,7 +49,7 @@ admin_user  = admin
 admin_pwd   = admin
 
 ; frp server's dashboard config info, it's required and should be the same as frp server
-; otherwaise, this plugin cannot get server info
+; otherwise, this plugin cannot get server info
 dashboard_addr = 127.0.0.1
 dashboard_port = 7500
 dashboard_user = admin
