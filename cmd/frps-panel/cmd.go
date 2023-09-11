@@ -124,11 +124,16 @@ func ParseConfigFile(file string) (controller.HandleController, server.TLS, erro
 	common.DashboardUser = commonSection.Key("dashboard_user").Value()
 	common.DashboardPwd = commonSection.Key("dashboard_pwd").Value()
 
-	tls.Enable = commonSection.Key("dashboard_tls_mode").MustBool(false)
-	tls.Cert = commonSection.Key("dashboard_tls_cert_file").MustString("")
-	tls.Key = commonSection.Key("dashboard_tls_key_file").MustString("")
+	tls.Enable = commonSection.Key("tls_mode").MustBool(false)
+	tls.Cert = commonSection.Key("tls_cert_file").MustString("")
+	tls.Key = commonSection.Key("tls_key_file").MustString("")
 	if tls.Enable {
 		tls.Protocol = "HTTPS"
+	}
+	if tls.Enable && (strings.TrimSpace(tls.Cert) == "" || strings.TrimSpace(tls.Key) == "") {
+		tls.Enable = false
+		tls.Protocol = "HTTP"
+		log.Printf("fail to enable tls: tls cert or key not exist, use http as default.")
 	}
 
 	portsSection, err := iniFile.GetSection("ports")
