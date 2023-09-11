@@ -169,3 +169,4 @@ ___如果要从外网访问管理界面, 需要把配置中的 `plugin_addr` 改
 + [fp-multiuser](https://github.com/gofrp/fp-multiuser)
 + [layui](https://github.com/layui/layui)
 + [layui-theme-dark](https://github.com/Sight-wcg/layui-theme-dark)
++ [echarts](https://github.com/apache/echarts)
