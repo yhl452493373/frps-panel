@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -46,6 +47,7 @@ type CommonInfo struct {
 	PluginPort    int
 	User          string
 	Pwd           string
+	DashboardTLS  bool
 	DashboardAddr string
 	DashboardPort int
 	DashboardUser string
@@ -697,10 +699,27 @@ func (c *HandleController) MakeEnableTokensFunc() func(context *gin.Context) {
 
 func (c *HandleController) MakeProxyFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
+		var client *http.Client
+		var protocol string
+
+		if c.CommonInfo.DashboardTLS {
+			client = &http.Client{
+				Transport: &http.Transport{
+					TLSClientConfig: &tls.Config{
+						InsecureSkipVerify: true,
+					},
+				},
+			}
+			protocol = "https://"
+		} else {
+			client = http.DefaultClient
+			protocol = "http://"
+		}
+
 		res := ProxyResponse{}
 		host := c.CommonInfo.DashboardAddr
 		port := c.CommonInfo.DashboardPort
-		requestUrl := "http://" + host + ":" + strconv.Itoa(port) + context.Param("serverApi")
+		requestUrl := protocol + host + ":" + strconv.Itoa(port) + context.Param("serverApi")
 		request, _ := http.NewRequest("GET", requestUrl, nil)
 		username := c.CommonInfo.DashboardUser
 		if len(strings.TrimSpace(username)) != 0 {
@@ -710,7 +729,8 @@ func (c *HandleController) MakeProxyFunc() func(context *gin.Context) {
 			request.Header.Add("Authorization", authorization)
 			log.Printf("Proxy to %s with Authorization %s", requestUrl, authorization)
 		}
-		response, err := http.DefaultClient.Do(request)
+
+		response, err := client.Do(request)
 
 		if err != nil {
 			res.Code = FrpServerError

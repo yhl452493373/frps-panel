@@ -119,6 +119,7 @@ func ParseConfigFile(file string) (controller.HandleController, server.TLS, erro
 	common.PluginPort = commonSection.Key("plugin_port").MustInt(7200)
 	common.User = commonSection.Key("admin_user").Value()
 	common.Pwd = commonSection.Key("admin_pwd").Value()
+	common.DashboardTLS = commonSection.Key("dashboard_tls").MustBool(false)
 	common.DashboardAddr = commonSection.Key("dashboard_addr").MustString("127.0.0.1")
 	common.DashboardPort = commonSection.Key("dashboard_port").MustInt(7500)
 	common.DashboardUser = commonSection.Key("dashboard_user").Value()
