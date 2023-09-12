@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/base64"
 	"fmt"
 	plugin "github.com/fatedier/frp/pkg/plugin/server"
 	"github.com/gin-gonic/gin"
@@ -41,20 +40,19 @@ func (c *HandleController) Register(rootDir string, engine *gin.Engine) {
 	engine.POST("/handler", c.MakeHandlerFunc())
 	engine.Static("/static", filepath.Join(assets, "static"))
 	engine.GET("/login", c.MakeLoginFunc())
+	engine.GET("/lang.json", c.MakeLangFunc())
 
 	var group *gin.RouterGroup
 	if len(c.CommonInfo.User) != 0 {
 		//group = engine.Group("/", gin.BasicAuthForRealm(gin.Accounts{
 		//	c.CommonInfo.User: c.CommonInfo.Pwd,
 		//}, "Restricted"))
-
-		group = engine.Group("/", c.Authorize())
+		group = engine.Group("/", c.BasicAuth())
 	} else {
 		group = engine.Group("/")
 	}
 	group.POST("/login", c.MakeLoginFunc())
 	group.GET("/", c.MakeIndexFunc())
-	group.GET("/lang.json", c.MakeLangFunc())
 	group.GET("/tokens", c.MakeQueryTokensFunc())
 	group.POST("/add", c.MakeAddTokenFunc())
 	group.POST("/update", c.MakeUpdateTokensFunc())
@@ -64,19 +62,23 @@ func (c *HandleController) Register(rootDir string, engine *gin.Engine) {
 	group.GET("/proxy/*serverApi", c.MakeProxyFunc())
 }
 
-func (c *HandleController) Authorize() gin.HandlerFunc {
+func (c *HandleController) BasicAuth() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		authorizationFromUser := context.Request.Header.Get("Authorization")
+		username, password, _ := context.Request.BasicAuth()
 
-		userAndPwd := []byte(c.CommonInfo.User + ":" + c.CommonInfo.Pwd)
-		authorizationFromConfig := "Basic " + base64.StdEncoding.EncodeToString(userAndPwd)
+		usernameMatch := username == c.CommonInfo.User
+		passwordMatch := password == c.CommonInfo.Pwd
 
-		if authorizationFromUser == authorizationFromConfig {
+		if usernameMatch && passwordMatch {
 			context.Next()
-		} else {
-			context.Abort()
-			context.Redirect(http.StatusTemporaryRedirect, "/login")
 			return
+		}
+
+		if context.Request.RequestURI == "/" {
+			context.Header("WWW-Authenticate", `Basic realm="Restricted", charset="UTF-8"`)
+			context.AbortWithStatus(http.StatusUnauthorized)
+		} else {
+			context.Redirect(http.StatusTemporaryRedirect, "/login")
 		}
 	}
 }
