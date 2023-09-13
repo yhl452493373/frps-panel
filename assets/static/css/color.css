@@ -113,7 +113,17 @@ section.proxy-list .proxy-info .layui-row .layui-row > div:first-child {
     color: #99a9bf;
 }
 
+.login-title,
+.login-title a {
+    color: #333 !important;
+}
+
 @media (prefers-color-scheme: dark) {
+    .login-title,
+    .login-title a {
+        color: #99a9bf !important;
+    }
+
     .layui-bg-blue {
         background-color: #395c74 !important;
     }
@@ -152,6 +162,11 @@ section.proxy-list .proxy-info .layui-row .layui-row > div:first-child {
 
     .layui-table-view .layui-table td[data-edit]:hover:after {
         border-color: #5f5f60;
+    }
+
+    .layui-form-danger + .layui-form-select .layui-input,
+    .layui-form-danger:focus {
+        border-color: #ff5722 !important;
     }
 
     .layui-form-checkbox[lay-skin=primary]:hover > i {

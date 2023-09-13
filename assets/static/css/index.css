@@ -47,6 +47,19 @@ section {
     height: 100%;
     padding: 0 15px;
     box-sizing: border-box;
+    display: flex;
+}
+
+.layui-title #title {
+    flex: 1;
+    display: inline-block;
+}
+
+.layui-title #logout{
+    display: inline-block;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .layui-nav.layui-nav-tree {

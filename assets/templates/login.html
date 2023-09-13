@@ -4,26 +4,26 @@
     <title>Login</title>
     <link rel="stylesheet" href="./static/lib/layui/css/layui.css">
     <link rel="stylesheet" href="./static/css/layui-theme-dark.css">
-    <link rel="stylesheet" href="./static/css/index.css">
-    <link rel="stylesheet" href="./static/css/index-color.css">
+    <link rel="stylesheet" href="./static/css/color.css">
+    <link rel="stylesheet" href="./static/css/login.css">
     <script src="./static/lib/layui/layui.js"></script>
-    <script src="./static/js/index.js"></script>
-    <style>
-        .login-container {
-            width: 320px;
-            margin: 21px auto 0;
-        }
-    </style>
+    <script src="./static/js/login.js"></script>
 </head>
 <body>
-<div class="layui-form login-container">
+<div class="login-title">
+    <a href="https://github.com/yhl452493373/frps-panel" target="_blank">
+        <span class="title-text">${ .FrpsPanel }</span>
+        <span class="title-version">${ .version }</span>
+    </a>
+</div>
+<div class="layui-form login-container" id="loginForm">
     <div class="layui-form-item">
         <div class="layui-input-wrap">
             <div class="layui-input-prefix">
                 <i class="layui-icon layui-icon-username"></i>
             </div>
-            <input type="text" id="username" value="" lay-verify="required" placeholder="用户名"
-                   lay-reqtext="请填写用户名" autocomplete="off" class="layui-input" lay-affix="clear">
+            <input type="text" id="username" value="" lay-verify="required" placeholder="${ .Username }"
+                   lay-reqtext="${ .PleaseInputUsername }" autocomplete="off" class="layui-input" lay-affix="clear">
         </div>
     </div>
     <div class="layui-form-item">
@@ -31,37 +31,13 @@
             <div class="layui-input-prefix">
                 <i class="layui-icon layui-icon-password"></i>
             </div>
-            <input type="password" id="password" value="" lay-verify="required" placeholder="密码"
-                   lay-reqtext="请填写密码" autocomplete="off" class="layui-input" lay-affix="eye">
+            <input type="password" id="password" value="" lay-verify="required" placeholder="${ .Password }"
+                   lay-reqtext="${ .PleaseInputPassword }" autocomplete="off" class="layui-input" lay-affix="eye">
         </div>
     </div>
     <div class="layui-form-item">
-        <button class="layui-btn layui-btn-fluid" id="login">登录</button>
+        <button class="layui-btn layui-btn-fluid" id="login">${ .Login }</button>
     </div>
 </div>
-
-<script>
-    var $ = layui.$;
-
-    $(function () {
-        $('#login').click(function () {
-            $.ajax({
-                url: "/",
-                username: $('#username').val(),
-                password: $('#password').val(),
-                success: function (result) {
-                    console.log(result);
-                    window.location.href = "/"
-                },
-                error: function (xhr, status, error) {
-                    if (xhr.status === 401) {
-                        layui.layer.msg('用户名或密码错误');
-                        return false;
-                    }
-                }
-            });
-        });
-    });
-</script>
 </body>
 </html>

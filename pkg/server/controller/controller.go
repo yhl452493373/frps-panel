@@ -12,104 +12,14 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 )
 
-const (
-	Success          = 0
-	ParamError       = 1
-	UserExist        = 2
-	SaveError        = 3
-	UserFormatError  = 4
-	TokenFormatError = 5
-	FrpServerError   = 6
-)
-
-var UserFormatReg = regexp.MustCompile("^\\w+$")
-var TokenFormatReg = regexp.MustCompile("^[\\w!@#$%^&*()]+$")
-var TrimAllSpaceReg = regexp.MustCompile("[\\n\\t\\r\\s]")
-var TrimBreakLineReg = regexp.MustCompile("[\\n\\t\\r]")
-
-type Response struct {
-	Msg string `json:"msg"`
-}
-
-type HTTPError struct {
-	Code int
-	Err  error
-}
-
-type CommonInfo struct {
-	PluginAddr    string
-	PluginPort    int
-	User          string
-	Pwd           string
-	DashboardTLS  bool
-	DashboardAddr string
-	DashboardPort int
-	DashboardUser string
-	DashboardPwd  string
-}
-
-type TokenInfo struct {
-	User       string `json:"user" form:"user"`
-	Token      string `json:"token" form:"token"`
-	Comment    string `json:"comment" form:"comment"`
-	Ports      string `json:"ports" from:"ports"`
-	Domains    string `json:"domains" from:"domains"`
-	Subdomains string `json:"subdomains" from:"subdomains"`
-	Status     bool   `json:"status" form:"status"`
-}
-
-type TokenResponse struct {
-	Code  int         `json:"code"`
-	Msg   string      `json:"msg"`
-	Count int         `json:"count"`
-	Data  []TokenInfo `json:"data"`
-}
-
-type OperationResponse struct {
-	Success bool   `json:"success"`
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-}
-
-type ProxyResponse struct {
-	OperationResponse
-	Data string `json:"data"`
-}
-
-type TokenSearch struct {
-	TokenInfo
-	Page  int `form:"page"`
-	Limit int `form:"limit"`
-}
-
-type TokenUpdate struct {
-	Before TokenInfo `json:"before"`
-	After  TokenInfo `json:"after"`
-}
-
-type TokenRemove struct {
-	Users []TokenInfo `json:"users"`
-}
-
-type TokenDisable struct {
-	TokenRemove
-}
-
-type TokenEnable struct {
-	TokenDisable
-}
-
 func (e *HTTPError) Error() string {
 	return e.Err.Error()
 }
-
-type HandlerFunc func(ctx *gin.Context) (interface{}, error)
 
 func (c *HandleController) MakeHandlerFunc() gin.HandlerFunc {
 	return func(context *gin.Context) {
@@ -177,9 +87,48 @@ func (c *HandleController) MakeHandlerFunc() gin.HandlerFunc {
 
 func (c *HandleController) MakeLoginFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
-		context.HTML(http.StatusOK, "login.html", gin.H{
-			"version": c.Version,
-		})
+		if context.Request.Method == "GET" {
+			if strings.TrimSpace(c.CommonInfo.User) == "" || strings.TrimSpace(c.CommonInfo.Pwd) == "" {
+				ClearLogin(context)
+				if context.Request.RequestURI == LoginUrl {
+					context.Redirect(http.StatusTemporaryRedirect, LoginSuccessUrl)
+				}
+				return
+			}
+			context.HTML(http.StatusOK, "login.html", gin.H{
+				"version":             c.Version,
+				"FrpsPanel":           ginI18n.MustGetMessage(context, "Frps Panel"),
+				"Username":            ginI18n.MustGetMessage(context, "Username"),
+				"Password":            ginI18n.MustGetMessage(context, "Password"),
+				"Login":               ginI18n.MustGetMessage(context, "Login"),
+				"PleaseInputUsername": ginI18n.MustGetMessage(context, "Please input username"),
+				"PleaseInputPassword": ginI18n.MustGetMessage(context, "Please input password"),
+			})
+		} else if context.Request.Method == "POST" {
+			username := context.PostForm("username")
+			password := context.PostForm("password")
+
+			auth := EncodeBasicAuth(username, password)
+			if auth == EncodeBasicAuth(c.CommonInfo.User, c.CommonInfo.Pwd) {
+				context.JSON(http.StatusOK, gin.H{
+					"success": true,
+					"message": ginI18n.MustGetMessage(context, "Login success"),
+					"token":   auth,
+				})
+			} else {
+				context.JSON(http.StatusOK, gin.H{
+					"success": false,
+					"message": ginI18n.MustGetMessage(context, "Username or password incorrect"),
+					"token":   "",
+				})
+			}
+		}
+	}
+}
+
+func (c *HandleController) MakeLogoutFunc() func(context *gin.Context) {
+	return func(context *gin.Context) {
+		ClearLogin(context)
 	}
 }
 
@@ -187,6 +136,7 @@ func (c *HandleController) MakeIndexFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		context.HTML(http.StatusOK, "index.html", gin.H{
 			"version":                      c.Version,
+			"showExit":                     strings.TrimSpace(c.CommonInfo.User) != "" && strings.TrimSpace(c.CommonInfo.Pwd) != "",
 			"FrpsPanel":                    ginI18n.MustGetMessage(context, "Frps Panel"),
 			"User":                         ginI18n.MustGetMessage(context, "User"),
 			"Token":                        ginI18n.MustGetMessage(context, "Token"),
@@ -300,6 +250,7 @@ func (c *HandleController) MakeLangFunc() func(context *gin.Context) {
 			"Proxies":               ginI18n.MustGetMessage(context, "Proxies"),
 			"NotSet":                ginI18n.MustGetMessage(context, "Not Set"),
 			"Proxy":                 ginI18n.MustGetMessage(context, "Proxy"),
+			"TokenInvalid":          ginI18n.MustGetMessage(context, "Token invalid"),
 		})
 	}
 }

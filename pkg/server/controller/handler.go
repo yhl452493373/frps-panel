@@ -3,85 +3,10 @@ package controller
 import (
 	"fmt"
 	plugin "github.com/fatedier/frp/pkg/plugin/server"
-	"github.com/gin-gonic/gin"
-	"gopkg.in/ini.v1"
 	"log"
-	"net/http"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 )
-
-type HandleController struct {
-	CommonInfo CommonInfo
-	Tokens     map[string]TokenInfo
-	Ports      map[string][]string
-	Domains    map[string][]string
-	Subdomains map[string][]string
-	ConfigFile string
-	IniFile    *ini.File
-	Version    string
-}
-
-func NewHandleController(config *HandleController) *HandleController {
-	return config
-}
-
-func (c *HandleController) Register(rootDir string, engine *gin.Engine) {
-	assets := filepath.Join(rootDir, "assets")
-	_, err := os.Stat(assets)
-	if err != nil && !os.IsExist(err) {
-		assets = "./assets"
-	}
-
-	engine.Delims("${", "}")
-	engine.LoadHTMLGlob(filepath.Join(assets, "templates/*"))
-	engine.POST("/handler", c.MakeHandlerFunc())
-	engine.Static("/static", filepath.Join(assets, "static"))
-	engine.GET("/login", c.MakeLoginFunc())
-	engine.GET("/lang.json", c.MakeLangFunc())
-
-	var group *gin.RouterGroup
-	if len(c.CommonInfo.User) != 0 {
-		//group = engine.Group("/", gin.BasicAuthForRealm(gin.Accounts{
-		//	c.CommonInfo.User: c.CommonInfo.Pwd,
-		//}, "Restricted"))
-		group = engine.Group("/", c.BasicAuth())
-	} else {
-		group = engine.Group("/")
-	}
-	group.POST("/login", c.MakeLoginFunc())
-	group.GET("/", c.MakeIndexFunc())
-	group.GET("/tokens", c.MakeQueryTokensFunc())
-	group.POST("/add", c.MakeAddTokenFunc())
-	group.POST("/update", c.MakeUpdateTokensFunc())
-	group.POST("/remove", c.MakeRemoveTokensFunc())
-	group.POST("/disable", c.MakeDisableTokensFunc())
-	group.POST("/enable", c.MakeEnableTokensFunc())
-	group.GET("/proxy/*serverApi", c.MakeProxyFunc())
-}
-
-func (c *HandleController) BasicAuth() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		username, password, _ := context.Request.BasicAuth()
-
-		usernameMatch := username == c.CommonInfo.User
-		passwordMatch := password == c.CommonInfo.Pwd
-
-		if usernameMatch && passwordMatch {
-			context.Next()
-			return
-		}
-
-		if context.Request.RequestURI == "/" {
-			context.Header("WWW-Authenticate", `Basic realm="Restricted", charset="UTF-8"`)
-			context.AbortWithStatus(http.StatusUnauthorized)
-		} else {
-			context.Redirect(http.StatusTemporaryRedirect, "/login")
-		}
-	}
-}
 
 func (c *HandleController) HandleLogin(content *plugin.LoginContent) plugin.Response {
 	token := content.Metas["token"]
