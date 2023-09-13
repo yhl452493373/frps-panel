@@ -41,6 +41,7 @@ frps-panel 会以一个单独的进程运行，并接收 frps 发送过来的 HT
 ```ini
 [common]
 ;插件监听地址
+;如果上面配置中 tls_mode = true, 则把plugin_addr的值改为 https://127.0.0.1:7200
 plugin_addr = 127.0.0.1
 ;插件端口
 plugin_port = 7200
