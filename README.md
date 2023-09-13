@@ -98,6 +98,7 @@ user2 = disable
 bind_port = 7000
 
 [plugin.multiuser]
+; if you set tls_mode = true, you should change addr value to https://127.0.0.1:7200
 addr = 127.0.0.1:7200
 path = /handler
 ops = Login,NewWorkConn,NewUserConn,NewProxy,Ping
