@@ -138,7 +138,7 @@ local_port = 22
 remote_port = 6000
 ```
 
-5. Manage your users via: http://127.0.0.1:7200 or https://127.0.0.1:7200
+5. Manage your users in browser via: http://127.0.0.1:7200 or https://127.0.0.1:7200
 
 ## Run as service
 
