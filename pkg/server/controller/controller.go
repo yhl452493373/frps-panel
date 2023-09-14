@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/BurntSushi/toml"
 	plugin "github.com/fatedier/frp/pkg/plugin/server"
 	ginI18n "github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -121,7 +123,7 @@ func (c *HandleController) MakeIndexFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		context.HTML(http.StatusOK, "index.html", gin.H{
 			"version":                      c.Version,
-			"showExit":                     strings.TrimSpace(c.CommonInfo.User) != "" && strings.TrimSpace(c.CommonInfo.Pwd) != "",
+			"showExit":                     strings.TrimSpace(c.CommonInfo.AdminUser) != "" && strings.TrimSpace(c.CommonInfo.AdminPwd) != "",
 			"FrpsPanel":                    ginI18n.MustGetMessage(context, "Frps Panel"),
 			"User":                         ginI18n.MustGetMessage(context, "User"),
 			"Token":                        ginI18n.MustGetMessage(context, "Token"),
@@ -352,36 +354,18 @@ func (c *HandleController) MakeAddTokenFunc() func(context *gin.Context) {
 			context.JSON(http.StatusOK, &response)
 			return
 		}
-		replaceSpaceToken := TrimAllSpaceReg.ReplaceAllString(info.Token, "")
-		info.Token = replaceSpaceToken
-		c.Tokens[info.User] = info
 
-		usersSection, _ := c.IniFile.GetSection("users")
-		key, err := usersSection.NewKey(info.User, info.Token)
-		key.Comment = info.Comment
-
-		replaceSpacePorts := TrimAllSpaceReg.ReplaceAllString(info.Ports, "")
-		if len(replaceSpacePorts) != 0 {
-			portsSection, _ := c.IniFile.GetSection("ports")
-			key, err = portsSection.NewKey(info.User, replaceSpacePorts)
-			key.Comment = fmt.Sprintf("user %s allowed ports", info.User)
+		tokenFile, err := os.Create(c.TokensFile)
+		if err != nil {
+			log.Printf("error to crate file %v: %v", c.TokensFile, err)
+		}
+		if err = toml.NewEncoder(tokenFile).Encode(c.Tokens); err != nil {
+			log.Printf("error to encode tokens: %v", err)
+		}
+		if err = tokenFile.Close(); err != nil {
+			log.Printf("error to close file %v: %v", c.TokensFile, err)
 		}
 
-		replaceSpaceDomains := TrimAllSpaceReg.ReplaceAllString(info.Domains, "")
-		if len(replaceSpaceDomains) != 0 {
-			domainsSection, _ := c.IniFile.GetSection("domains")
-			key, err = domainsSection.NewKey(info.User, replaceSpaceDomains)
-			key.Comment = fmt.Sprintf("user %s allowed domains", info.User)
-		}
-
-		replaceSpaceSubdomains := TrimAllSpaceReg.ReplaceAllString(info.Subdomains, "")
-		if len(replaceSpaceSubdomains) != 0 {
-			subdomainsSection, _ := c.IniFile.GetSection("subdomains")
-			key, err = subdomainsSection.NewKey(info.User, replaceSpaceSubdomains)
-			key.Comment = fmt.Sprintf("user %s allowed subdomains", info.User)
-		}
-
-		err = c.IniFile.SaveTo(c.ConfigFile)
 		if err != nil {
 			log.Printf("add failed, error : %v", err)
 			response.Success = false
@@ -414,13 +398,7 @@ func (c *HandleController) MakeUpdateTokensFunc() func(context *gin.Context) {
 		}
 
 		after := update.After
-		before := update.Before
-
-		usersSection, _ := c.IniFile.GetSection("users")
-		key, err := usersSection.GetKey(before.User)
-		comment := TrimBreakLineReg.ReplaceAllString(after.Comment, "")
-		after.Comment = comment
-		key.Comment = comment
+		_ = update.Before
 
 		if !TokenFormatReg.MatchString(after.Token) {
 			log.Printf("update failed, token format error")
@@ -430,58 +408,20 @@ func (c *HandleController) MakeUpdateTokensFunc() func(context *gin.Context) {
 			context.JSON(http.StatusOK, &response)
 			return
 		}
-		replaceSpaceToken := TrimAllSpaceReg.ReplaceAllString(after.Token, "")
-		after.Token = replaceSpaceToken
-		key.SetValue(replaceSpaceToken)
-
-		if before.Ports != after.Ports {
-			portsSection, _ := c.IniFile.GetSection("ports")
-			replaceSpacePorts := TrimAllSpaceReg.ReplaceAllString(after.Ports, "")
-			after.Ports = replaceSpacePorts
-			ports := strings.Split(replaceSpacePorts, ",")
-			if len(replaceSpacePorts) != 0 {
-				key, err = portsSection.NewKey(after.User, replaceSpacePorts)
-				key.Comment = fmt.Sprintf("user %s allowed ports", after.User)
-				c.Ports[after.User] = ports
-			} else {
-				portsSection.DeleteKey(after.User)
-				delete(c.Ports, after.User)
-			}
-		}
-
-		if before.Domains != after.Domains {
-			domainsSection, _ := c.IniFile.GetSection("domains")
-			replaceSpaceDomains := TrimAllSpaceReg.ReplaceAllString(after.Domains, "")
-			after.Domains = replaceSpaceDomains
-			domains := strings.Split(replaceSpaceDomains, ",")
-			if len(replaceSpaceDomains) != 0 {
-				key, err = domainsSection.NewKey(after.User, replaceSpaceDomains)
-				key.Comment = fmt.Sprintf("user %s allowed domains", after.User)
-				c.Domains[after.User] = domains
-			} else {
-				domainsSection.DeleteKey(after.User)
-				delete(c.Domains, after.User)
-			}
-		}
-
-		if before.Subdomains != after.Subdomains {
-			subdomainsSection, _ := c.IniFile.GetSection("subdomains")
-			replaceSpaceSubdomains := TrimAllSpaceReg.ReplaceAllString(after.Subdomains, "")
-			after.Subdomains = replaceSpaceSubdomains
-			subdomains := strings.Split(replaceSpaceSubdomains, ",")
-			if len(replaceSpaceSubdomains) != 0 {
-				key, err = subdomainsSection.NewKey(after.User, replaceSpaceSubdomains)
-				key.Comment = fmt.Sprintf("user %s allowed subdomains", after.User)
-				c.Subdomains[after.User] = subdomains
-			} else {
-				subdomainsSection.DeleteKey(after.User)
-				delete(c.Subdomains, after.User)
-			}
-		}
 
 		c.Tokens[after.User] = after
 
-		err = c.IniFile.SaveTo(c.ConfigFile)
+		tokenFile, err := os.Create(c.TokensFile)
+		if err != nil {
+			log.Printf("error to crate file %v: %v", c.TokensFile, err)
+		}
+		if err = toml.NewEncoder(tokenFile).Encode(c.Tokens); err != nil {
+			log.Printf("error to encode tokens: %v", err)
+		}
+		if err = tokenFile.Close(); err != nil {
+			log.Printf("error to close file %v: %v", c.TokensFile, err)
+		}
+
 		if err != nil {
 			log.Printf("user update failed, error : %v", err)
 			response.Success = false
@@ -513,36 +453,26 @@ func (c *HandleController) MakeRemoveTokensFunc() func(context *gin.Context) {
 			return
 		}
 
-		usersSection, _ := c.IniFile.GetSection("users")
 		for _, user := range remove.Users {
 			delete(c.Tokens, user.User)
-			usersSection.DeleteKey(user.User)
 		}
 
-		portsSection, _ := c.IniFile.GetSection("ports")
-		for _, user := range remove.Users {
-			delete(c.Ports, user.User)
-			portsSection.DeleteKey(user.User)
-		}
-
-		domainsSection, _ := c.IniFile.GetSection("domains")
-		for _, user := range remove.Users {
-			delete(c.Domains, user.User)
-			domainsSection.DeleteKey(user.User)
-		}
-
-		subdomainsSection, _ := c.IniFile.GetSection("subdomains")
-		for _, user := range remove.Users {
-			delete(c.Subdomains, user.User)
-			subdomainsSection.DeleteKey(user.User)
-		}
-
-		err = c.IniFile.SaveTo(c.ConfigFile)
+		tokenFile, err := os.Create(c.TokensFile)
 		if err != nil {
-			log.Printf("user remove failed, error : %v", err)
+			log.Printf("error to crate file %v: %v", c.TokensFile, err)
+		}
+		if err = toml.NewEncoder(tokenFile).Encode(c.Tokens); err != nil {
+			log.Printf("error to encode tokens: %v", err)
+		}
+		if err = tokenFile.Close(); err != nil {
+			log.Printf("error to close file %v: %v", c.TokensFile, err)
+		}
+
+		if err != nil {
+			log.Printf("user update failed, error : %v", err)
 			response.Success = false
 			response.Code = SaveError
-			response.Message = "user remove failed"
+			response.Message = "user update failed"
 			context.JSON(http.StatusOK, &response)
 			return
 		}
@@ -569,25 +499,22 @@ func (c *HandleController) MakeDisableTokensFunc() func(context *gin.Context) {
 			return
 		}
 
-		section, _ := c.IniFile.GetSection("disabled")
 		for _, user := range disable.Users {
-			section.DeleteKey(user.User)
 			token := c.Tokens[user.User]
 			token.Status = false
-			c.Tokens[user.User] = token
-			key, err := section.NewKey(user.User, "disable")
-			if err != nil {
-				log.Printf("disable failed, error : %v", err)
-				response.Success = false
-				response.Code = SaveError
-				response.Message = "disable failed"
-				context.JSON(http.StatusOK, &response)
-				return
-			}
-			key.Comment = fmt.Sprintf("disable user '%s'", user.User)
 		}
 
-		err = c.IniFile.SaveTo(c.ConfigFile)
+		tokenFile, err := os.Create(c.TokensFile)
+		if err != nil {
+			log.Printf("error to crate file %v: %v", c.TokensFile, err)
+		}
+		if err = toml.NewEncoder(tokenFile).Encode(c.Tokens); err != nil {
+			log.Printf("error to encode tokens: %v", err)
+		}
+		if err = tokenFile.Close(); err != nil {
+			log.Printf("error to close file %v: %v", c.TokensFile, err)
+		}
+
 		if err != nil {
 			log.Printf("disable failed, error : %v", err)
 			response.Success = false
@@ -619,15 +546,22 @@ func (c *HandleController) MakeEnableTokensFunc() func(context *gin.Context) {
 			return
 		}
 
-		section, _ := c.IniFile.GetSection("disabled")
 		for _, user := range enable.Users {
-			section.DeleteKey(user.User)
 			token := c.Tokens[user.User]
 			token.Status = true
-			c.Tokens[user.User] = token
 		}
 
-		err = c.IniFile.SaveTo(c.ConfigFile)
+		tokenFile, err := os.Create(c.TokensFile)
+		if err != nil {
+			log.Printf("error to crate file %v: %v", c.TokensFile, err)
+		}
+		if err = toml.NewEncoder(tokenFile).Encode(c.Tokens); err != nil {
+			log.Printf("error to encode tokens: %v", err)
+		}
+		if err = tokenFile.Close(); err != nil {
+			log.Printf("error to close file %v: %v", c.TokensFile, err)
+		}
+
 		if err != nil {
 			log.Printf("enable failed, error : %v", err)
 			response.Success = false
@@ -646,7 +580,7 @@ func (c *HandleController) MakeProxyFunc() func(context *gin.Context) {
 		var client *http.Client
 		var protocol string
 
-		if c.CommonInfo.DashboardTLS {
+		if c.CommonInfo.DashboardTls {
 			client = &http.Client{
 				Transport: &http.Transport{
 					TLSClientConfig: &tls.Config{

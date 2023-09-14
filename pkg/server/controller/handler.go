@@ -92,8 +92,8 @@ func (c *HandleController) JudgePort(content *plugin.NewProxyContent) plugin.Res
 	portAllowed := true
 	if proxyType == "tcp" || proxyType == "udp" {
 		portAllowed = false
-		if _, exist := c.Ports[user]; exist {
-			for _, port := range c.Ports[user] {
+		if token, exist := c.Tokens[user]; exist {
+			for _, port := range token.Ports {
 				if strings.Contains(port, "-") {
 					allowedRanges := strings.Split(port, "-")
 					if len(allowedRanges) != 2 {
@@ -139,9 +139,9 @@ func (c *HandleController) JudgePort(content *plugin.NewProxyContent) plugin.Res
 	domainAllowed := true
 	if proxyType == "http" || proxyType == "https" || proxyType == "tcpmux" {
 		if portAllowed {
-			if _, exist := c.Domains[user]; exist {
+			if token, exist := c.Tokens[user]; exist {
 				for _, userDomain := range userDomains {
-					if StringIndexOf(userDomain, c.Domains[user]) == -1 {
+					if StringIndexOf(userDomain, token.Domains) == -1 {
 						domainAllowed = false
 						break
 					}
@@ -158,8 +158,8 @@ func (c *HandleController) JudgePort(content *plugin.NewProxyContent) plugin.Res
 	if proxyType == "http" || proxyType == "https" {
 		subdomainAllowed = false
 		if portAllowed && domainAllowed {
-			if _, exist := c.Subdomains[user]; exist {
-				for _, subdomain := range c.Subdomains[user] {
+			if token, exist := c.Tokens[user]; exist {
+				for _, subdomain := range token.Subdomains {
 					if subdomain == userSubdomain {
 						subdomainAllowed = true
 						break

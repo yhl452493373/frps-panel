@@ -179,7 +179,7 @@ func (s *Server) initHTTPServer() error {
 		HttpOnly: false,
 		SameSite: 4,
 		Path:     "/",
-		MaxAge:   s.cfg.CommonInfo.KeepTime,
+		MaxAge:   s.cfg.CommonInfo.AdminKeepTime,
 	})
 	engine.Use(sessions.Sessions(controller.SessionName, authStore))
 	engine.Use(GinI18nLocalize(s.rootDir))

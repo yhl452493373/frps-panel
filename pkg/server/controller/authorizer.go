@@ -12,7 +12,7 @@ import (
 
 func (c *HandleController) BasicAuth() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		if strings.TrimSpace(c.CommonInfo.User) == "" || strings.TrimSpace(c.CommonInfo.Pwd) == "" {
+		if strings.TrimSpace(c.CommonInfo.AdminUser) == "" || strings.TrimSpace(c.CommonInfo.AdminPwd) == "" {
 			if context.Request.RequestURI == LoginUrl {
 				context.Redirect(http.StatusTemporaryRedirect, LoginSuccessUrl)
 			}
@@ -23,19 +23,19 @@ func (c *HandleController) BasicAuth() gin.HandlerFunc {
 		auth := session.Get(AuthName)
 
 		if auth != nil {
-			if c.CommonInfo.KeepTime > 0 {
+			if c.CommonInfo.AdminKeepTime > 0 {
 				cookie, _ := context.Request.Cookie(SessionName)
 				if cookie != nil {
 					//important thx https://blog.csdn.net/zhanghongxia8285/article/details/107321838/
-					cookie.Expires = time.Now().Add(time.Second * time.Duration(c.CommonInfo.KeepTime))
+					cookie.Expires = time.Now().Add(time.Second * time.Duration(c.CommonInfo.AdminKeepTime))
 					http.SetCookie(context.Writer, cookie)
 				}
 			}
 
 			username, password, _ := parseBasicAuth(fmt.Sprintf("%v", auth))
 
-			usernameMatch := username == c.CommonInfo.User
-			passwordMatch := password == c.CommonInfo.Pwd
+			usernameMatch := username == c.CommonInfo.AdminUser
+			passwordMatch := password == c.CommonInfo.AdminPwd
 
 			if usernameMatch && passwordMatch {
 				context.Next()
@@ -54,14 +54,14 @@ func (c *HandleController) BasicAuth() gin.HandlerFunc {
 }
 
 func (c *HandleController) LoginAuth(username, password string, context *gin.Context) bool {
-	if strings.TrimSpace(c.CommonInfo.User) == "" || strings.TrimSpace(c.CommonInfo.Pwd) == "" {
+	if strings.TrimSpace(c.CommonInfo.AdminUser) == "" || strings.TrimSpace(c.CommonInfo.AdminPwd) == "" {
 		return true
 	}
 
 	session := sessions.Default(context)
 
 	sessionAuth := session.Get(AuthName)
-	internalAuth := encodeBasicAuth(c.CommonInfo.User, c.CommonInfo.Pwd)
+	internalAuth := encodeBasicAuth(c.CommonInfo.AdminUser, c.CommonInfo.AdminPwd)
 
 	if sessionAuth == internalAuth {
 		return true

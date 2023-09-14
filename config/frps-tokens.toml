@@ -1,0 +1,18 @@
+# token info
+[[tokens]]
+user = "user1"
+token = "token1"
+comment = "张三"
+ports = ["1", "2", "3", "10-100"]
+domains = ["aaa.com", "bbb.com"]
+subdomains = ["a.com", "b.com"]
+status = true
+
+[[tokens]]
+user = "user2"
+token = "token2"
+comment = "李四"
+ports = ["11", "22", "33", "110-200"]
+domains = ["ccc.com", "ddd.com"]
+subdomains = ["c.com", "d.com"]
+status = true

@@ -2,7 +2,6 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"gopkg.in/ini.v1"
 	"os"
 	"path/filepath"
 )
@@ -10,12 +9,9 @@ import (
 type HandleController struct {
 	CommonInfo CommonInfo
 	Tokens     map[string]TokenInfo
-	Ports      map[string][]string
-	Domains    map[string][]string
-	Subdomains map[string][]string
-	ConfigFile string
-	IniFile    *ini.File
 	Version    string
+	ConfigFile string
+	TokensFile string
 }
 
 func NewHandleController(config *HandleController) *HandleController {
@@ -39,7 +35,7 @@ func (c *HandleController) Register(rootDir string, engine *gin.Engine) {
 	engine.GET(LogoutUrl, c.MakeLogoutFunc())
 
 	var group *gin.RouterGroup
-	if len(c.CommonInfo.User) != 0 {
+	if len(c.CommonInfo.AdminUser) != 0 {
 		//group = engine.Group("/", gin.BasicAuthForRealm(gin.Accounts{
 		//	c.CommonInfo.User: c.CommonInfo.Pwd,
 		//}, "Restricted"))

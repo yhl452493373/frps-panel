@@ -37,27 +37,35 @@ type HTTPError struct {
 	Err  error
 }
 
+type Config struct {
+	Common CommonInfo
+	Tokens []TokenInfo
+}
+
 type CommonInfo struct {
-	PluginAddr    string
-	PluginPort    int
-	User          string
-	Pwd           string
-	KeepTime      int
-	DashboardTLS  bool
-	DashboardAddr string
-	DashboardPort int
-	DashboardUser string
-	DashboardPwd  string
+	PluginAddr    string `toml:"plugin_addr"`
+	PluginPort    int    `toml:"plugin_port"`
+	AdminUser     string `toml:"admin_user"`
+	AdminPwd      string `toml:"admin_pwd"`
+	AdminKeepTime int    `toml:"admin_keep_time"`
+	TlsMode       bool   `toml:"tls_mode"`
+	TlsCertFile   string `toml:"tls_cert_file"`
+	TlsKeyFile    string `toml:"tls_key_file"`
+	DashboardAddr string `toml:"dashboard_addr"`
+	DashboardPort int    `toml:"dashboard_port"`
+	DashboardUser string `toml:"dashboard_user"`
+	DashboardPwd  string `toml:"dashboard_pwd"`
+	DashboardTls  bool
 }
 
 type TokenInfo struct {
-	User       string `json:"user" form:"user"`
-	Token      string `json:"token" form:"token"`
-	Comment    string `json:"comment" form:"comment"`
-	Ports      string `json:"ports" from:"ports"`
-	Domains    string `json:"domains" from:"domains"`
-	Subdomains string `json:"subdomains" from:"subdomains"`
-	Status     bool   `json:"status" form:"status"`
+	User       string   `toml:"user" json:"user" form:"user"`
+	Token      string   `toml:"token" json:"token" form:"token"`
+	Comment    string   `toml:"comment" json:"comment" form:"comment"`
+	Ports      []string `toml:"ports" json:"ports" from:"ports"`
+	Domains    []string `toml:"domains" json:"domains" from:"domains"`
+	Subdomains []string `toml:"subdomains" json:"subdomains" from:"subdomains"`
+	Status     bool     `toml:"status" json:"status" form:"status"`
 }
 
 type TokenResponse struct {
