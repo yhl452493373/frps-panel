@@ -4,6 +4,7 @@ import (
 	"errors"
 	"frps-panel/pkg/server"
 	"frps-panel/pkg/server/controller"
+	"github.com/pelletier/go-toml/v2"
 	"github.com/spf13/cobra"
 	"gopkg.in/ini.v1"
 	"io/fs"
@@ -69,6 +70,25 @@ func Execute() {
 }
 
 func ParseConfigFile(file string) (controller.HandleController, server.TLS, error) {
+
+	var config Config
+	readFile, _ := os.ReadFile("/Volumes/Working/Works/Git Sources/frps-panel/config/frps-panel.toml")
+	_ = toml.Unmarshal(readFile, &config)
+	log.Printf("%v", config)
+	f, err := os.Create("/Volumes/Working/Works/Git Sources/frps-panel/config/frps-panel-new.toml")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := toml.NewEncoder(f).Encode(config); err != nil {
+		// failed to encode
+		log.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		// failed to close the file
+		log.Fatal(err)
+
+	}
+
 	common := controller.CommonInfo{}
 	users := make(map[string]controller.TokenInfo)
 	ports := make(map[string][]string)
@@ -252,4 +272,8 @@ func ParseConfigFile(file string) (controller.HandleController, server.TLS, erro
 		IniFile:    iniFile,
 		Version:    version,
 	}, tls, nil
+}
+
+func decode() {
+
 }

@@ -1,0 +1,39 @@
+# basic options
+[common]
+# frps panel config info
+plugin_addr = "127.0.0.1" #aadr
+plugin_port = 7200
+admin_user = "admin"
+admin_pwd = "admin"
+# specified login state keep time
+admin_keep_time = 0
+
+# enable tls
+tls_mode = false
+# tls_cert_file = cert.crt
+# tls_key_file = cert.key
+
+# frp dashboard info
+dashboard_addr = "127.0.0.1"
+dashboard_port = 7500
+dashboard_user = "admin"
+dashboard_pwd = "admin"
+
+# token info
+[[tokens]]
+user = "user1"
+token = "token1"
+comment = "张三"
+ports = [1, 2, 3, "10-100"]
+domains = ["aaa.com", "bbb.com"]
+subdomains = ["a.com", "b.com"]
+status = true
+
+[[tokens]]
+user = "user2"
+token = "token2"
+comment = "李四"
+ports = [11, 22, 33, "110-200"]
+domains = ["ccc.com", "ddd.com"]
+subdomains = ["c.com", "d.com"]
+status = true
