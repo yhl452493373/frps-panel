@@ -47,6 +47,8 @@ plugin_port = 7200
 admin_user  = admin
 ;the password of manage ui,optional
 admin_pwd   = admin
+;specified login state keep time in seconds.0 - before the browser completely exit, don't need to re-login,greater than 0: when Idle time exceeds this value,you should re-login
+admin_keep_time = 0
 
 ; enable tls
 tls_mode = false
@@ -58,8 +60,6 @@ dashboard_addr = 127.0.0.1
 dashboard_port = 7500
 dashboard_user = admin
 dashboard_pwd  = admin
-; if your frps dashboard enable tls, change this to true
-dashboard_tls  = false
 
 [users]
 ;user user1 with meta_token 123

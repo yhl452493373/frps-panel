@@ -49,6 +49,8 @@ plugin_port = 7200
 admin_user  = admin
 ;插件管理页面密码,与账号一起进行鉴权,可选
 admin_pwd   = admin
+;登录状态空闲时间(秒):0-浏览器完全退出前不用重新登录,大于0-空闲超过此时间则需要重新登录.
+admin_keep_time = 0
 
 ; frps 面板页面是否启用https访问,如果为true,则只能通过https访问
 tls_mode = false
@@ -60,8 +62,6 @@ dashboard_addr = 127.0.0.1
 dashboard_port = 7500
 dashboard_user = admin
 dashboard_pwd  = admin
-; 如果frps的dashboard启用了tls，则把这个选项置为true，否则无法获取服务器信息
-dashboard_tls  = false
 
 [users]
 ;user1的meta_token为123

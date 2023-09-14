@@ -1,6 +1,8 @@
 package controller
 
-import "regexp"
+import (
+	"regexp"
+)
 
 const (
 	Success          = 0
@@ -11,10 +13,12 @@ const (
 	TokenFormatError = 5
 	FrpServerError   = 6
 
-	AuthPrefix      = "Basic "
-	LoginUrl        = "/login"
-	LogoutUrl       = "/logout"
-	LoginSuccessUrl = "/"
+	SessionName      = "GOSESSION"
+	AuthName         = "_PANEL_AUTH"
+	LoginUrl         = "/login"
+	LoginSuccessUrl  = "/"
+	LogoutUrl        = "/logout"
+	LogoutSuccessUrl = "/login"
 )
 
 var (
@@ -38,6 +42,7 @@ type CommonInfo struct {
 	PluginPort    int
 	User          string
 	Pwd           string
+	KeepTime      int
 	DashboardTLS  bool
 	DashboardAddr string
 	DashboardPort int
@@ -94,4 +99,8 @@ type TokenDisable struct {
 
 type TokenEnable struct {
 	TokenDisable
+}
+
+func (e *HTTPError) Error() string {
+	return e.Err.Error()
 }

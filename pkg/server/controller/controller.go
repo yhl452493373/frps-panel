@@ -2,7 +2,6 @@ package controller
 
 import (
 	"crypto/tls"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -17,10 +16,6 @@ import (
 	"strings"
 )
 
-func (e *HTTPError) Error() string {
-	return e.Err.Error()
-}
-
 func (c *HandleController) MakeHandlerFunc() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		var response plugin.Response
@@ -28,19 +23,13 @@ func (c *HandleController) MakeHandlerFunc() gin.HandlerFunc {
 
 		request := plugin.Request{}
 		if err := context.BindJSON(&request); err != nil {
-			_ = context.Error(&HTTPError{
-				Code: http.StatusBadRequest,
-				Err:  err,
-			})
+			_ = context.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
 
 		jsonStr, err := json.Marshal(request.Content)
 		if err != nil {
-			_ = context.Error(&HTTPError{
-				Code: http.StatusBadRequest,
-				Err:  err,
-			})
+			_ = context.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
 
@@ -88,8 +77,7 @@ func (c *HandleController) MakeHandlerFunc() gin.HandlerFunc {
 func (c *HandleController) MakeLoginFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		if context.Request.Method == "GET" {
-			if strings.TrimSpace(c.CommonInfo.User) == "" || strings.TrimSpace(c.CommonInfo.Pwd) == "" {
-				ClearLogin(context)
+			if c.LoginAuth("", "", context) {
 				if context.Request.RequestURI == LoginUrl {
 					context.Redirect(http.StatusTemporaryRedirect, LoginSuccessUrl)
 				}
@@ -107,19 +95,15 @@ func (c *HandleController) MakeLoginFunc() func(context *gin.Context) {
 		} else if context.Request.Method == "POST" {
 			username := context.PostForm("username")
 			password := context.PostForm("password")
-
-			auth := EncodeBasicAuth(username, password)
-			if auth == EncodeBasicAuth(c.CommonInfo.User, c.CommonInfo.Pwd) {
+			if c.LoginAuth(username, password, context) {
 				context.JSON(http.StatusOK, gin.H{
 					"success": true,
 					"message": ginI18n.MustGetMessage(context, "Login success"),
-					"token":   auth,
 				})
 			} else {
 				context.JSON(http.StatusOK, gin.H{
 					"success": false,
 					"message": ginI18n.MustGetMessage(context, "Username or password incorrect"),
-					"token":   "",
 				})
 			}
 		}
@@ -128,7 +112,8 @@ func (c *HandleController) MakeLoginFunc() func(context *gin.Context) {
 
 func (c *HandleController) MakeLogoutFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
-		ClearLogin(context)
+		ClearAuth(context)
+		context.Redirect(http.StatusTemporaryRedirect, LogoutSuccessUrl)
 	}
 }
 
@@ -681,12 +666,10 @@ func (c *HandleController) MakeProxyFunc() func(context *gin.Context) {
 		requestUrl := protocol + host + ":" + strconv.Itoa(port) + context.Param("serverApi")
 		request, _ := http.NewRequest("GET", requestUrl, nil)
 		username := c.CommonInfo.DashboardUser
-		if len(strings.TrimSpace(username)) != 0 {
-			password := c.CommonInfo.DashboardPwd
-			userAndPwd := []byte(username + ":" + password)
-			authorization := "Basic " + base64.StdEncoding.EncodeToString(userAndPwd)
-			request.Header.Add("Authorization", authorization)
-			log.Printf("Proxy to %s with Authorization %s", requestUrl, authorization)
+		password := c.CommonInfo.DashboardPwd
+		if len(strings.TrimSpace(username)) != 0 && len(strings.TrimSpace(password)) != 0 {
+			request.SetBasicAuth(username, password)
+			log.Printf("Proxy to %s", requestUrl)
 		}
 
 		response, err := client.Do(request)

@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"frps-panel/pkg/server/controller"
 	ginI18n "github.com/gin-contrib/i18n"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/text/language"
 	"log"
@@ -171,6 +173,15 @@ func GinI18nLocalize(rootDir string) gin.HandlerFunc {
 func (s *Server) initHTTPServer() error {
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.New()
+	authStore := cookie.NewStore([]byte("frps-panel"))
+	authStore.Options(sessions.Options{
+		Secure:   true,
+		HttpOnly: false,
+		SameSite: 4,
+		Path:     "/",
+		MaxAge:   s.cfg.CommonInfo.KeepTime,
+	})
+	engine.Use(sessions.Sessions(controller.SessionName, authStore))
 	engine.Use(GinI18nLocalize(s.rootDir))
 	s.s = &http.Server{
 		Handler: engine,

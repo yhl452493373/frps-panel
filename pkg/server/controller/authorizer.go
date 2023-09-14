@@ -3,25 +3,36 @@ package controller
 import (
 	"encoding/base64"
 	"fmt"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func (c *HandleController) BasicAuth() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		if strings.TrimSpace(c.CommonInfo.User) == "" || strings.TrimSpace(c.CommonInfo.Pwd) == "" {
-			ClearLogin(context)
 			if context.Request.RequestURI == LoginUrl {
 				context.Redirect(http.StatusTemporaryRedirect, LoginSuccessUrl)
 			}
 			return
 		}
 
-		auth, err := context.Request.Cookie("token")
+		session := sessions.Default(context)
+		auth := session.Get(AuthName)
 
-		if err == nil {
-			username, password, _ := ParseBasicAuth(auth.Value)
+		if auth != nil {
+			if c.CommonInfo.KeepTime > 0 {
+				cookie, _ := context.Request.Cookie(SessionName)
+				if cookie != nil {
+					//important thx https://blog.csdn.net/zhanghongxia8285/article/details/107321838/
+					cookie.Expires = time.Now().Add(time.Second * time.Duration(c.CommonInfo.KeepTime))
+					http.SetCookie(context.Writer, cookie)
+				}
+			}
+
+			username, password, _ := parseBasicAuth(fmt.Sprintf("%v", auth))
 
 			usernameMatch := username == c.CommonInfo.User
 			passwordMatch := password == c.CommonInfo.Pwd
@@ -42,11 +53,40 @@ func (c *HandleController) BasicAuth() gin.HandlerFunc {
 	}
 }
 
-func ParseBasicAuth(auth string) (username, password string, ok bool) {
-	if len(auth) < len(AuthPrefix) || auth[:len(AuthPrefix)] != AuthPrefix {
-		return "", "", false
+func (c *HandleController) LoginAuth(username, password string, context *gin.Context) bool {
+	if strings.TrimSpace(c.CommonInfo.User) == "" || strings.TrimSpace(c.CommonInfo.Pwd) == "" {
+		return true
 	}
-	c, err := base64.StdEncoding.DecodeString(auth[len(AuthPrefix):])
+
+	session := sessions.Default(context)
+
+	sessionAuth := session.Get(AuthName)
+	internalAuth := encodeBasicAuth(c.CommonInfo.User, c.CommonInfo.Pwd)
+
+	if sessionAuth == internalAuth {
+		return true
+	} else {
+		basicAuth := encodeBasicAuth(username, password)
+		if basicAuth == internalAuth {
+			session.Set(AuthName, basicAuth)
+			_ = session.Save()
+			return true
+		} else {
+			session.Delete(AuthName)
+			_ = session.Save()
+			return false
+		}
+	}
+}
+
+func ClearAuth(context *gin.Context) {
+	session := sessions.Default(context)
+	session.Delete(AuthName)
+	_ = session.Save()
+}
+
+func parseBasicAuth(auth string) (username, password string, ok bool) {
+	c, err := base64.StdEncoding.DecodeString(auth)
 	if err != nil {
 		return "", "", false
 	}
@@ -58,11 +98,7 @@ func ParseBasicAuth(auth string) (username, password string, ok bool) {
 	return username, password, true
 }
 
-func EncodeBasicAuth(username, password string) string {
+func encodeBasicAuth(username, password string) string {
 	authString := fmt.Sprintf("%s:%s", username, password)
-	return AuthPrefix + base64.StdEncoding.EncodeToString([]byte(authString))
-}
-
-func ClearLogin(context *gin.Context) {
-	context.SetCookie("token", "", -1, "/", context.Request.Host, false, false)
+	return base64.StdEncoding.EncodeToString([]byte(authString))
 }

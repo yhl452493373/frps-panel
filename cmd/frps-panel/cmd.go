@@ -119,11 +119,16 @@ func ParseConfigFile(file string) (controller.HandleController, server.TLS, erro
 	common.PluginPort = commonSection.Key("plugin_port").MustInt(7200)
 	common.User = commonSection.Key("admin_user").Value()
 	common.Pwd = commonSection.Key("admin_pwd").Value()
+	common.KeepTime = commonSection.Key("admin_keep_time").MustInt(0)
 	common.DashboardAddr = commonSection.Key("dashboard_addr").MustString("127.0.0.1")
 	common.DashboardPort = commonSection.Key("dashboard_port").MustInt(7500)
 	common.DashboardUser = commonSection.Key("dashboard_user").Value()
 	common.DashboardPwd = commonSection.Key("dashboard_pwd").Value()
 	common.DashboardTLS = strings.HasPrefix(strings.ToLower(common.DashboardAddr), "https://")
+
+	if common.KeepTime < 0 {
+		common.KeepTime = 0
+	}
 
 	tls.Enable = commonSection.Key("tls_mode").MustBool(false)
 	tls.Cert = commonSection.Key("tls_cert_file").MustString("")

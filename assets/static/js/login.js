@@ -14,8 +14,7 @@
                 },
                 success: function (result) {
                     if (result.success) {
-                        document.cookie = 'token=' + result.token + ';path=/'
-                        window.location.href = "/"
+                        window.location.reload();
                     } else {
                         layui.layer.msg(result.message);
                     }
