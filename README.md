@@ -7,6 +7,7 @@ frp server plugin to show server info and support multiple users for [frp](https
 frps-panel will run as one single process and accept HTTP requests from frps.
 
 ![支持英文](screenshots/i18n.png)
+![登录页面](screenshots/login.png)
 ![服务器信息](screenshots/server%20info.png)
 ![用户列表](screenshots/user%20list.png)
 ![新增列表](screenshots/new%20user.png)

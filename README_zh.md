@@ -7,6 +7,7 @@ frps-panel 是 [frp](https://github.com/fatedier/frp) 的一个服务端插件�
 frps-panel 会以一个单独的进程运行，并接收 frps 发送过来的 HTTP 请求。
 
 ![支持英文](screenshots/i18n.png)
+![登录页面](screenshots/login.png)
 ![服务器信息](screenshots/server%20info.png)
 ![用户列表](screenshots/user%20list.png)
 ![新增列表](screenshots/new%20user.png)
