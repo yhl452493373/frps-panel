@@ -355,11 +355,14 @@ func (c *HandleController) MakeAddTokenFunc() func(context *gin.Context) {
 			return
 		}
 
+		c.Tokens[info.User] = info
+
 		tokenFile, err := os.Create(c.TokensFile)
 		if err != nil {
 			log.Printf("error to crate file %v: %v", c.TokensFile, err)
 		}
-		if err = toml.NewEncoder(tokenFile).Encode(c.Tokens); err != nil {
+
+		if err = toml.NewEncoder(tokenFile).Encode(c.TokensList()); err != nil {
 			log.Printf("error to encode tokens: %v", err)
 		}
 		if err = tokenFile.Close(); err != nil {

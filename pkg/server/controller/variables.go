@@ -39,7 +39,7 @@ type HTTPError struct {
 
 type Config struct {
 	Common CommonInfo
-	Tokens []TokenInfo
+	Tokens
 }
 
 type CommonInfo struct {
@@ -56,6 +56,10 @@ type CommonInfo struct {
 	DashboardUser string `toml:"dashboard_user"`
 	DashboardPwd  string `toml:"dashboard_pwd"`
 	DashboardTls  bool
+}
+
+type Tokens struct {
+	Tokens map[string]TokenInfo `toml:"tokens"`
 }
 
 type TokenInfo struct {
@@ -111,4 +115,10 @@ type TokenEnable struct {
 
 func (e *HTTPError) Error() string {
 	return e.Err.Error()
+}
+
+func (c *HandleController) TokensList() Tokens {
+	return Tokens{
+		c.Tokens,
+	}
 }

@@ -422,6 +422,9 @@ var loadUserList = (function ($) {
      */
     function add(data, index) {
         var loading = layui.layer.load();
+        data.ports = data.ports.split(',')
+        data.domains = data.domains.split(',')
+        data.subdomains = data.subdomains.split(',')
         $.ajax({
             url: '/add',
             type: 'post',

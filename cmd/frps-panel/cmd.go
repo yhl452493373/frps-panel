@@ -111,15 +111,9 @@ func parseConfigFile(configFile, tokensFile string) (controller.HandleController
 		}
 	}
 
-	tokens := make(map[string]controller.TokenInfo)
-
-	for _, token := range config.Tokens {
-		tokens[token.User] = token
-	}
-
 	return controller.HandleController{
 		CommonInfo: config.Common,
-		Tokens:     tokens,
+		Tokens:     config.Tokens.Tokens,
 		Version:    version,
 		ConfigFile: configFile,
 		TokensFile: tokensFile,
