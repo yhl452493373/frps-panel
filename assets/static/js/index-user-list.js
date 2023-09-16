@@ -277,13 +277,14 @@ var loadUserList = (function ($) {
     }
 
     /**
-     * bind event of layui.form
+     * bind event of {{@link layui.form}}
      */
     function bindFormEvent() {
         layui.table.on('edit(tokenTable)', function (obj) {
             var field = obj.field;
             var value = obj.value;
             var oldValue = obj.oldValue;
+
             var before = $.extend(true, {}, obj.data);
             var after = $.extend(true, {}, obj.data);
             var verifyMsg = false;
@@ -344,24 +345,34 @@ var loadUserList = (function ($) {
                 after.subdomains = value;
             }
 
+            before.ports = before.ports.split(',')
+            before.domains = before.domains.split(',')
+            before.subdomains = before.subdomains.split(',')
+
+            after.ports = after.ports.split(',')
+            after.domains = after.domains.split(',')
+            after.subdomains = after.subdomains.split(',')
+
             update(before, after);
         });
 
         layui.table.on('toolbar(tokenTable)', function (obj) {
             var id = obj.config.id;
             var checkStatus = layui.table.checkStatus(id);
+
+            var data = checkStatus.data;
             switch (obj.event) {
                 case 'add':
                     addPopup();
                     break
                 case 'remove':
-                    batchRemovePopup(checkStatus.data);
+                    batchRemovePopup(data);
                     break
                 case 'disable':
-                    batchDisablePopup(checkStatus.data);
+                    batchDisablePopup(data);
                     break
                 case 'enable':
-                    batchEnablePopup(checkStatus.data);
+                    batchEnablePopup(data);
                     break
             }
         });
@@ -406,7 +417,11 @@ var loadUserList = (function ($) {
             btn: [i18n['Confirm'], i18n['Cancel']],
             btn1: function (index) {
                 if (layui.form.validate('#addUserForm')) {
-                    add(layui.form.val('addUserForm'), index);
+                    var formData = layui.form.val('addUserForm');
+                    formData.ports = formData.ports.split(',')
+                    formData.domains = formData.domains.split(',')
+                    formData.subdomains = formData.subdomains.split(',')
+                    add(formData, index);
                 }
             },
             btn2: function (index) {
@@ -417,14 +432,11 @@ var loadUserList = (function ($) {
 
     /**
      * add user action
-     * @param data {{user:string, token:string, comment:string, status:boolean, ports:string, domains:string, subdomains:string}} user data
+     * @param data {{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}} user data
      * @param index popup index
      */
     function add(data, index) {
         var loading = layui.layer.load();
-        data.ports = data.ports.split(',')
-        data.domains = data.domains.split(',')
-        data.subdomains = data.subdomains.split(',')
         $.ajax({
             url: '/add',
             type: 'post',
@@ -449,8 +461,8 @@ var loadUserList = (function ($) {
 
     /**
      * update user action
-     * @param before {{user:string, token:string, comment:string, status:boolean, ports:string, domains:string, subdomains:string}} data before update
-     * @param after {{user:string, token:string, comment:string, status:boolean, ports:string, domains:string, subdomains:string}} data after update
+     * @param before {{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}} data before update
+     * @param after {{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}} data after update
      */
     function update(before, after) {
         var loading = layui.layer.load();
@@ -477,7 +489,7 @@ var loadUserList = (function ($) {
 
     /**
      * batch remove user popup
-     * @param data {[{user:string, token:string, comment:string, status:boolean, ports:string, domains:string, subdomains:string}]} user data list
+     * @param data {[{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}]} user data list
      */
     function batchRemovePopup(data) {
         if (data.length === 0) {
@@ -494,7 +506,7 @@ var loadUserList = (function ($) {
 
     /**
      * batch disable user popup
-     * @param data {[{user:string, token:string, comment:string, status:boolean, ports:string, domains:string, subdomains:string}]} user data list
+     * @param data {[{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}]} user data list
      */
     function batchDisablePopup(data) {
         if (data.length === 0) {
@@ -511,7 +523,7 @@ var loadUserList = (function ($) {
 
     /**
      * batch enable user popup
-     * @param data {[{user:string, token:string, comment:string, status:boolean, ports:string, domains:string, subdomains:string}]} user data list
+     * @param data {[{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}]} user data list
      */
     function batchEnablePopup(data) {
         if (data.length === 0) {
@@ -528,7 +540,7 @@ var loadUserList = (function ($) {
 
     /**
      * remove one user popup
-     * @param data {{user:string, token:string, comment:string, status:boolean, ports:string, domains:string, subdomains:string}} user data
+     * @param data {{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}} user data
      */
     function removePopup(data) {
         layui.layer.confirm(i18n['ConfirmRemoveUser'], {
@@ -541,7 +553,7 @@ var loadUserList = (function ($) {
 
     /**
      * disable one user popup
-     * @param data {{user:string, token:string, comment:string, status:boolean, ports:string, domains:string, subdomains:string}} user data
+     * @param data {{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}} user data
      */
     function disablePopup(data) {
         layui.layer.confirm(i18n['ConfirmDisableUser'], {
@@ -554,7 +566,7 @@ var loadUserList = (function ($) {
 
     /**
      * enable one user popup
-     * @param data {{user:string, token:string, comment:string, status:boolean, ports:string, domains:string, subdomains:string}} user data
+     * @param data {{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}} user data
      */
     function enablePopup(data) {
         layui.layer.confirm(i18n['ConfirmEnableUser'], {
@@ -568,7 +580,7 @@ var loadUserList = (function ($) {
     /**
      * operate actions
      * @param type {apiType} action type
-     * @param data {[{user:string, token:string, comment:string, status:boolean, ports:string, domains:string, subdomains:string}]} user data list
+     * @param data {[{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}]} user data list
      * @param index popup index
      */
     function operate(type, data, index) {

@@ -311,6 +311,28 @@ func filter(main TokenInfo, sub TokenInfo) bool {
 	return true
 }
 
+func TokensList(tokens map[string]TokenInfo) Tokens {
+	return Tokens{
+		tokens,
+	}
+}
+
+func (c *HandleController) SaveToken() error {
+	tokenFile, err := os.Create(c.TokensFile)
+	if err != nil {
+		log.Printf("error to crate file %v: %v", c.TokensFile, err)
+	}
+
+	if err = toml.NewEncoder(tokenFile).Encode(TokensList(c.Tokens)); err != nil {
+		log.Printf("error to encode tokens: %v", err)
+	}
+	if err = tokenFile.Close(); err != nil {
+		log.Printf("error to close file %v: %v", c.TokensFile, err)
+	}
+
+	return err
+}
+
 func (c *HandleController) MakeAddTokenFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		info := TokenInfo{
@@ -357,18 +379,7 @@ func (c *HandleController) MakeAddTokenFunc() func(context *gin.Context) {
 
 		c.Tokens[info.User] = info
 
-		tokenFile, err := os.Create(c.TokensFile)
-		if err != nil {
-			log.Printf("error to crate file %v: %v", c.TokensFile, err)
-		}
-
-		if err = toml.NewEncoder(tokenFile).Encode(c.TokensList()); err != nil {
-			log.Printf("error to encode tokens: %v", err)
-		}
-		if err = tokenFile.Close(); err != nil {
-			log.Printf("error to close file %v: %v", c.TokensFile, err)
-		}
-
+		err = c.SaveToken()
 		if err != nil {
 			log.Printf("add failed, error : %v", err)
 			response.Success = false
@@ -395,36 +406,35 @@ func (c *HandleController) MakeUpdateTokensFunc() func(context *gin.Context) {
 			log.Printf("update failed, param error : %v", err)
 			response.Success = false
 			response.Code = ParamError
-			response.Message = "user update failed, param error "
+			response.Message = "user update failed, param error"
 			context.JSON(http.StatusOK, &response)
 			return
 		}
 
+		before := update.Before
 		after := update.After
-		_ = update.Before
+
+		if after.User != before.User {
+			log.Printf("update failed, user not match")
+			response.Success = false
+			response.Code = ParamError
+			response.Message = "update failed, user not match"
+			context.JSON(http.StatusOK, &response)
+			return
+		}
 
 		if !TokenFormatReg.MatchString(after.Token) {
 			log.Printf("update failed, token format error")
 			response.Success = false
 			response.Code = TokenFormatError
-			response.Message = "user update failed, token format error "
+			response.Message = "user update failed, token format error"
 			context.JSON(http.StatusOK, &response)
 			return
 		}
 
 		c.Tokens[after.User] = after
 
-		tokenFile, err := os.Create(c.TokensFile)
-		if err != nil {
-			log.Printf("error to crate file %v: %v", c.TokensFile, err)
-		}
-		if err = toml.NewEncoder(tokenFile).Encode(c.Tokens); err != nil {
-			log.Printf("error to encode tokens: %v", err)
-		}
-		if err = tokenFile.Close(); err != nil {
-			log.Printf("error to close file %v: %v", c.TokensFile, err)
-		}
-
+		err = c.SaveToken()
 		if err != nil {
 			log.Printf("user update failed, error : %v", err)
 			response.Success = false
@@ -460,17 +470,7 @@ func (c *HandleController) MakeRemoveTokensFunc() func(context *gin.Context) {
 			delete(c.Tokens, user.User)
 		}
 
-		tokenFile, err := os.Create(c.TokensFile)
-		if err != nil {
-			log.Printf("error to crate file %v: %v", c.TokensFile, err)
-		}
-		if err = toml.NewEncoder(tokenFile).Encode(c.Tokens); err != nil {
-			log.Printf("error to encode tokens: %v", err)
-		}
-		if err = tokenFile.Close(); err != nil {
-			log.Printf("error to close file %v: %v", c.TokensFile, err)
-		}
-
+		err = c.SaveToken()
 		if err != nil {
 			log.Printf("user update failed, error : %v", err)
 			response.Success = false
@@ -505,18 +505,10 @@ func (c *HandleController) MakeDisableTokensFunc() func(context *gin.Context) {
 		for _, user := range disable.Users {
 			token := c.Tokens[user.User]
 			token.Status = false
+			c.Tokens[user.User] = token
 		}
 
-		tokenFile, err := os.Create(c.TokensFile)
-		if err != nil {
-			log.Printf("error to crate file %v: %v", c.TokensFile, err)
-		}
-		if err = toml.NewEncoder(tokenFile).Encode(c.Tokens); err != nil {
-			log.Printf("error to encode tokens: %v", err)
-		}
-		if err = tokenFile.Close(); err != nil {
-			log.Printf("error to close file %v: %v", c.TokensFile, err)
-		}
+		err = c.SaveToken()
 
 		if err != nil {
 			log.Printf("disable failed, error : %v", err)
@@ -552,18 +544,10 @@ func (c *HandleController) MakeEnableTokensFunc() func(context *gin.Context) {
 		for _, user := range enable.Users {
 			token := c.Tokens[user.User]
 			token.Status = true
+			c.Tokens[user.User] = token
 		}
 
-		tokenFile, err := os.Create(c.TokensFile)
-		if err != nil {
-			log.Printf("error to crate file %v: %v", c.TokensFile, err)
-		}
-		if err = toml.NewEncoder(tokenFile).Encode(c.Tokens); err != nil {
-			log.Printf("error to encode tokens: %v", err)
-		}
-		if err = tokenFile.Close(); err != nil {
-			log.Printf("error to close file %v: %v", c.TokensFile, err)
-		}
+		err = c.SaveToken()
 
 		if err != nil {
 			log.Printf("enable failed, error : %v", err)

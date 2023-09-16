@@ -22,10 +22,9 @@ const (
 )
 
 var (
-	UserFormatReg    = regexp.MustCompile("^\\w+$")
-	TokenFormatReg   = regexp.MustCompile("^[\\w!@#$%^&*()]+$")
-	TrimAllSpaceReg  = regexp.MustCompile("[\\n\\t\\r\\s]")
-	TrimBreakLineReg = regexp.MustCompile("[\\n\\t\\r]")
+	UserFormatReg   = regexp.MustCompile("^\\w+$")
+	TokenFormatReg  = regexp.MustCompile("^[\\w!@#$%^&*()]+$")
+	TrimAllSpaceReg = regexp.MustCompile("[\\n\\t\\r\\s]")
 )
 
 type Response struct {
@@ -115,10 +114,4 @@ type TokenEnable struct {
 
 func (e *HTTPError) Error() string {
 	return e.Err.Error()
-}
-
-func (c *HandleController) TokensList() Tokens {
-	return Tokens{
-		c.Tokens,
-	}
 }
