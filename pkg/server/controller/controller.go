@@ -5,14 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/BurntSushi/toml"
 	plugin "github.com/fatedier/frp/pkg/plugin/server"
 	ginI18n "github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"net/http"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -123,7 +121,7 @@ func (c *HandleController) MakeIndexFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		context.HTML(http.StatusOK, "index.html", gin.H{
 			"version":                      c.Version,
-			"showExit":                     strings.TrimSpace(c.CommonInfo.AdminUser) != "" && strings.TrimSpace(c.CommonInfo.AdminPwd) != "",
+			"showExit":                     trimString(c.CommonInfo.AdminUser) != "" && trimString(c.CommonInfo.AdminPwd) != "",
 			"FrpsPanel":                    ginI18n.MustGetMessage(context, "Frps Panel"),
 			"User":                         ginI18n.MustGetMessage(context, "User"),
 			"Token":                        ginI18n.MustGetMessage(context, "Token"),
@@ -206,6 +204,7 @@ func (c *HandleController) MakeLangFunc() func(context *gin.Context) {
 			"OperateError":          ginI18n.MustGetMessage(context, "Operate error"),
 			"OperateFailed":         ginI18n.MustGetMessage(context, "Operate failed"),
 			"UserExist":             ginI18n.MustGetMessage(context, "User exist"),
+			"UserNotExist":          ginI18n.MustGetMessage(context, "User not exist"),
 			"UserFormatError":       ginI18n.MustGetMessage(context, "User format error"),
 			"TokenFormatError":      ginI18n.MustGetMessage(context, "Token format error"),
 			"ShouldCheckUser":       ginI18n.MustGetMessage(context, "Please check at least one user"),
@@ -220,6 +219,7 @@ func (c *HandleController) MakeLangFunc() func(context *gin.Context) {
 			"SubdomainsInvalid":     ginI18n.MustGetMessage(context, "Subdomains is invalid"),
 			"CommentInvalid":        ginI18n.MustGetMessage(context, "Comment is invalid"),
 			"ParamError":            ginI18n.MustGetMessage(context, "Param error"),
+			"OtherError":            ginI18n.MustGetMessage(context, "Other error"),
 			"Name":                  ginI18n.MustGetMessage(context, "Name"),
 			"Port":                  ginI18n.MustGetMessage(context, "Port"),
 			"Connections":           ginI18n.MustGetMessage(context, "Connections"),
@@ -287,52 +287,6 @@ func (c *HandleController) MakeQueryTokensFunc() func(context *gin.Context) {
 	}
 }
 
-func filter(main TokenInfo, sub TokenInfo) bool {
-	replaceSpaceUser := TrimAllSpaceReg.ReplaceAllString(sub.User, "")
-	if len(replaceSpaceUser) != 0 {
-		if !strings.Contains(main.User, replaceSpaceUser) {
-			return false
-		}
-	}
-
-	replaceSpaceToken := TrimAllSpaceReg.ReplaceAllString(sub.Token, "")
-	if len(replaceSpaceToken) != 0 {
-		if !strings.Contains(main.Token, replaceSpaceToken) {
-			return false
-		}
-	}
-
-	replaceSpaceComment := TrimAllSpaceReg.ReplaceAllString(sub.Comment, "")
-	if len(replaceSpaceComment) != 0 {
-		if !strings.Contains(main.Comment, replaceSpaceComment) {
-			return false
-		}
-	}
-	return true
-}
-
-func TokensList(tokens map[string]TokenInfo) Tokens {
-	return Tokens{
-		tokens,
-	}
-}
-
-func (c *HandleController) SaveToken() error {
-	tokenFile, err := os.Create(c.TokensFile)
-	if err != nil {
-		log.Printf("error to crate file %v: %v", c.TokensFile, err)
-	}
-
-	if err = toml.NewEncoder(tokenFile).Encode(TokensList(c.Tokens)); err != nil {
-		log.Printf("error to encode tokens: %v", err)
-	}
-	if err = tokenFile.Close(); err != nil {
-		log.Printf("error to close file %v: %v", c.TokensFile, err)
-	}
-
-	return err
-}
-
 func (c *HandleController) MakeAddTokenFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		info := TokenInfo{
@@ -345,46 +299,34 @@ func (c *HandleController) MakeAddTokenFunc() func(context *gin.Context) {
 		}
 		err := context.BindJSON(&info)
 		if err != nil {
-			log.Printf("user add failed, param error : %v", err)
 			response.Success = false
 			response.Code = ParamError
-			response.Message = "user add failed, param error "
+			response.Message = fmt.Sprintf("user add failed, param error : %v", err)
+			log.Printf(response.Message)
 			context.JSON(http.StatusOK, &response)
 			return
 		}
-		if !UserFormatReg.MatchString(info.User) {
-			log.Printf("user add failed, user format error")
-			response.Success = false
-			response.Code = UserFormatError
-			response.Message = fmt.Sprintf("user add failed, user format error")
-			context.JSON(http.StatusOK, &response)
+
+		result := c.verifyToken(info, TOKEN_ADD)
+
+		if !result.Success {
+			context.JSON(http.StatusOK, &result)
 			return
 		}
-		if _, exist := c.Tokens[info.User]; exist {
-			log.Printf("user add failed, user [%v] exist", info.User)
-			response.Success = false
-			response.Code = UserExist
-			response.Message = fmt.Sprintf("user add failed, user [%s] exist ", info.User)
-			context.JSON(http.StatusOK, &response)
-			return
-		}
-		if !TokenFormatReg.MatchString(info.Token) {
-			log.Printf("user add failed, token format error")
-			response.Success = false
-			response.Code = TokenFormatError
-			response.Message = fmt.Sprintf("user add failed, token format error")
-			context.JSON(http.StatusOK, &response)
-			return
-		}
+
+		info.Comment = cleanString(info.Comment)
+		info.Ports = cleanStrings(info.Ports)
+		info.Domains = cleanStrings(info.Domains)
+		info.Subdomains = cleanStrings(info.Subdomains)
 
 		c.Tokens[info.User] = info
 
-		err = c.SaveToken()
+		err = c.saveToken()
 		if err != nil {
-			log.Printf("add failed, error : %v", err)
 			response.Success = false
 			response.Code = SaveError
-			response.Message = "user add failed"
+			response.Message = fmt.Sprintf("add failed, error : %v", err)
+			log.Printf(response.Message)
 			context.JSON(http.StatusOK, &response)
 			return
 		}
@@ -403,10 +345,10 @@ func (c *HandleController) MakeUpdateTokensFunc() func(context *gin.Context) {
 		update := TokenUpdate{}
 		err := context.BindJSON(&update)
 		if err != nil {
-			log.Printf("update failed, param error : %v", err)
 			response.Success = false
 			response.Code = ParamError
-			response.Message = "user update failed, param error"
+			response.Message = fmt.Sprintf("update failed, param error : %v", err)
+			log.Printf(response.Message)
 			context.JSON(http.StatusOK, &response)
 			return
 		}
@@ -414,32 +356,35 @@ func (c *HandleController) MakeUpdateTokensFunc() func(context *gin.Context) {
 		before := update.Before
 		after := update.After
 
-		if after.User != before.User {
-			log.Printf("update failed, user not match")
+		if before.User != after.User {
 			response.Success = false
 			response.Code = ParamError
-			response.Message = "update failed, user not match"
+			response.Message = fmt.Sprintf("update failed, user should be same : before -> %v, after -> %v", before.User, after.User)
+			log.Printf(response.Message)
 			context.JSON(http.StatusOK, &response)
 			return
 		}
 
-		if !TokenFormatReg.MatchString(after.Token) {
-			log.Printf("update failed, token format error")
-			response.Success = false
-			response.Code = TokenFormatError
-			response.Message = "user update failed, token format error"
-			context.JSON(http.StatusOK, &response)
+		result := c.verifyToken(after, TOKEN_UPDATE)
+
+		if !result.Success {
+			context.JSON(http.StatusOK, &result)
 			return
 		}
+
+		after.Comment = cleanString(after.Comment)
+		after.Ports = cleanStrings(after.Ports)
+		after.Domains = cleanStrings(after.Domains)
+		after.Subdomains = cleanStrings(after.Subdomains)
 
 		c.Tokens[after.User] = after
 
-		err = c.SaveToken()
+		err = c.saveToken()
 		if err != nil {
-			log.Printf("user update failed, error : %v", err)
 			response.Success = false
 			response.Code = SaveError
-			response.Message = "user update failed"
+			response.Message = fmt.Sprintf("user update failed, error : %v", err)
+			log.Printf(response.Message)
 			context.JSON(http.StatusOK, &response)
 			return
 		}
@@ -458,24 +403,33 @@ func (c *HandleController) MakeRemoveTokensFunc() func(context *gin.Context) {
 		remove := TokenRemove{}
 		err := context.BindJSON(&remove)
 		if err != nil {
-			log.Printf("user remove failed, param error : %v", err)
 			response.Success = false
 			response.Code = ParamError
-			response.Message = "user remove failed, param error "
+			response.Message = fmt.Sprintf("user remove failed, param error : %v", err)
+			log.Printf(response.Message)
 			context.JSON(http.StatusOK, &response)
 			return
+		}
+
+		for _, user := range remove.Users {
+			result := c.verifyToken(user, TOKEN_REMOVE)
+
+			if !result.Success {
+				context.JSON(http.StatusOK, &result)
+				return
+			}
 		}
 
 		for _, user := range remove.Users {
 			delete(c.Tokens, user.User)
 		}
 
-		err = c.SaveToken()
+		err = c.saveToken()
 		if err != nil {
-			log.Printf("user update failed, error : %v", err)
 			response.Success = false
 			response.Code = SaveError
-			response.Message = "user update failed"
+			response.Message = fmt.Sprintf("user update failed, error : %v", err)
+			log.Printf(response.Message)
 			context.JSON(http.StatusOK, &response)
 			return
 		}
@@ -494,12 +448,21 @@ func (c *HandleController) MakeDisableTokensFunc() func(context *gin.Context) {
 		disable := TokenDisable{}
 		err := context.BindJSON(&disable)
 		if err != nil {
-			log.Printf("disable failed, param error : %v", err)
 			response.Success = false
 			response.Code = ParamError
-			response.Message = "disable failed, param error "
+			response.Message = fmt.Sprintf("disable failed, param error : %v", err)
+			log.Printf(response.Message)
 			context.JSON(http.StatusOK, &response)
 			return
+		}
+
+		for _, user := range disable.Users {
+			result := c.verifyToken(user, TOKEN_DISABLE)
+
+			if !result.Success {
+				context.JSON(http.StatusOK, &result)
+				return
+			}
 		}
 
 		for _, user := range disable.Users {
@@ -508,13 +471,13 @@ func (c *HandleController) MakeDisableTokensFunc() func(context *gin.Context) {
 			c.Tokens[user.User] = token
 		}
 
-		err = c.SaveToken()
+		err = c.saveToken()
 
 		if err != nil {
-			log.Printf("disable failed, error : %v", err)
 			response.Success = false
 			response.Code = SaveError
-			response.Message = "disable failed"
+			response.Message = fmt.Sprintf("disable failed, error : %v", err)
+			log.Printf(response.Message)
 			context.JSON(http.StatusOK, &response)
 			return
 		}
@@ -533,12 +496,21 @@ func (c *HandleController) MakeEnableTokensFunc() func(context *gin.Context) {
 		enable := TokenEnable{}
 		err := context.BindJSON(&enable)
 		if err != nil {
-			log.Printf("enable failed, param error : %v", err)
 			response.Success = false
 			response.Code = ParamError
-			response.Message = "enable failed, param error "
+			response.Message = fmt.Sprintf("enable failed, param error : %v", err)
+			log.Printf(response.Message)
 			context.JSON(http.StatusOK, &response)
 			return
+		}
+
+		for _, user := range enable.Users {
+			result := c.verifyToken(user, TOKEN_ENABLE)
+
+			if !result.Success {
+				context.JSON(http.StatusOK, &result)
+				return
+			}
 		}
 
 		for _, user := range enable.Users {
@@ -547,7 +519,7 @@ func (c *HandleController) MakeEnableTokensFunc() func(context *gin.Context) {
 			c.Tokens[user.User] = token
 		}
 
-		err = c.SaveToken()
+		err = c.saveToken()
 
 		if err != nil {
 			log.Printf("enable failed, error : %v", err)
@@ -588,7 +560,7 @@ func (c *HandleController) MakeProxyFunc() func(context *gin.Context) {
 		request, _ := http.NewRequest("GET", requestUrl, nil)
 		username := c.CommonInfo.DashboardUser
 		password := c.CommonInfo.DashboardPwd
-		if len(strings.TrimSpace(username)) != 0 && len(strings.TrimSpace(password)) != 0 {
+		if trimString(username) != "" && trimString(password) != "" {
 			request.SetBasicAuth(username, password)
 			log.Printf("Proxy to %s", requestUrl)
 		}

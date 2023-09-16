@@ -3,15 +3,15 @@
     user = "user1"
     token = "token1"
     comment = "张三"
-    ports = ["1", "2", "3", "10-100"]
-    domains = ["aaa.com", "bbb.com"]
-    subdomains = ["a", "b"]
+    ports = [""]
+    domains = [""]
+    subdomains = [""]
     status = true
   [tokens.user2]
     user = "user2"
     token = "token2"
     comment = "李四"
-    ports = ["11", "22", "33", "110-200"]
-    domains = ["ccc.com", "ddd.com"]
-    subdomains = ["c", "d"]
+    ports = [""]
+    domains = [""]
+    subdomains = [""]
     status = true

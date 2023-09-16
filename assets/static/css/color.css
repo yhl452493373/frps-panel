@@ -46,6 +46,14 @@
     border-color: #79bbff;
 }
 
+.layui-form-checkbox[lay-skin=primary] > .layui-icon-indeterminate:before {
+    background-color: #79bbff;
+}
+
+.layui-form-checkbox[lay-skin=primary]>.layui-icon-indeterminate{
+    border-color: #79bbff;
+}
+
 .layui-form-checked[lay-skin=primary] > i {
     background-color: #409eff;
     border-color: #409eff !important;
@@ -170,6 +178,14 @@ section.proxy-list .proxy-info .layui-row .layui-row > div:first-child {
     }
 
     .layui-form-checkbox[lay-skin=primary]:hover > i {
+        border-color: #5f5f60;
+    }
+
+    .layui-form-checkbox[lay-skin=primary] > .layui-icon-indeterminate:before {
+        background-color: #5f5f60;
+    }
+
+    .layui-form-checkbox[lay-skin=primary]>.layui-icon-indeterminate{
         border-color: #5f5f60;
     }
 

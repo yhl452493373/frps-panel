@@ -70,34 +70,22 @@ func Execute() {
 }
 
 func parseConfigFile(configFile, tokensFile string) (controller.HandleController, server.TLS, error) {
-	var config controller.Config
-	_, err := toml.DecodeFile(configFile, &config)
+	var common controller.Common
+	var tokens controller.Tokens
+	_, err := toml.DecodeFile(configFile, &common)
 	if err != nil {
 		log.Fatalf("decode config file %v error: %v", configFile, err)
 	}
 
-	_, err = toml.DecodeFile(tokensFile, &config)
+	_, err = toml.DecodeFile(tokensFile, &tokens)
 	if err != nil {
 		log.Fatalf("decode token file %v error: %v", tokensFile, err)
 	}
 
-	config.Common.DashboardTls = strings.HasPrefix("https://", strings.ToLower(config.Common.DashboardAddr))
-
-	//f, err := os.Create("/Volumes/Work/Git Sources/frps-panel/config/frps-panel-new.toml")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//if err := toml.NewEncoder(f).Encode(config); err != nil {
-	//	// failed to encode
-	//	log.Fatal(err)
-	//}
-	//if err := f.Close(); err != nil {
-	//	// failed to close the file
-	//	log.Fatal(err)
-	//}
+	common.Common.DashboardTls = strings.HasPrefix("https://", strings.ToLower(common.Common.DashboardAddr))
 
 	tls := server.TLS{
-		Enable:   config.Common.TlsMode,
+		Enable:   common.Common.TlsMode,
 		Protocol: "HTTP",
 	}
 
@@ -112,8 +100,8 @@ func parseConfigFile(configFile, tokensFile string) (controller.HandleController
 	}
 
 	return controller.HandleController{
-		CommonInfo: config.Common,
-		Tokens:     config.Tokens.Tokens,
+		CommonInfo: common.Common,
+		Tokens:     tokens.Tokens,
 		Version:    version,
 		ConfigFile: configFile,
 		TokensFile: tokensFile,

@@ -5,14 +5,29 @@ import (
 )
 
 const (
-	Success          = 0
-	ParamError       = 1
-	UserExist        = 2
-	SaveError        = 3
-	UserFormatError  = 4
-	TokenFormatError = 5
-	FrpServerError   = 6
+	Success int = iota
+	ParamError
+	UserExist
+	UserNotExist
+	SaveError
+	UserFormatError
+	TokenFormatError
+	CommentFormatError
+	PortsFormatError
+	DomainsFormatError
+	SubdomainsFormatError
+	FrpServerError
+)
 
+const (
+	TOKEN_ADD int = iota
+	TOKEN_UPDATE
+	TOKEN_REMOVE
+	TOKEN_ENABLE
+	TOKEN_DISABLE
+)
+
+const (
 	SessionName      = "GOSESSION"
 	AuthName         = "_PANEL_AUTH"
 	LoginUrl         = "/login"
@@ -22,9 +37,14 @@ const (
 )
 
 var (
-	UserFormatReg   = regexp.MustCompile("^\\w+$")
-	TokenFormatReg  = regexp.MustCompile("^[\\w!@#$%^&*()]+$")
-	TrimAllSpaceReg = regexp.MustCompile("[\\n\\t\\r\\s]")
+	userFormat        = regexp.MustCompile("^\\w+$")
+	tokenFormat       = regexp.MustCompile("^[\\w!@#$%^&*()]+$")
+	commentFormat     = regexp.MustCompile("[\\n\\t\\r]")
+	portsFormatSingle = regexp.MustCompile("^\\s*\\d{1,5}\\s*$")
+	portsFormatRange  = regexp.MustCompile("^\\s*\\d{1,5}\\s*-\\s*\\d{1,5}\\s*$")
+	domainFormat      = regexp.MustCompile("^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\\.)+[a-zA-Z]{2,}$")
+	subdomainFormat   = regexp.MustCompile("^[a-zA-z0-9-]{1,20}$")
+	trimAllSpace      = regexp.MustCompile("[\\n\\t\\r\\s]")
 )
 
 type Response struct {
@@ -36,9 +56,8 @@ type HTTPError struct {
 	Err  error
 }
 
-type Config struct {
+type Common struct {
 	Common CommonInfo
-	Tokens
 }
 
 type CommonInfo struct {

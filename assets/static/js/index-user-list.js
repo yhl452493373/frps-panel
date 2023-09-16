@@ -184,7 +184,7 @@ var loadUserList = (function ($) {
         if (domains.trim() !== '') {
             try {
                 domains.split(',').forEach(function (domain) {
-                    if (!/^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62}){1,3}$/.test(domain.trim())) {
+                    if (!/^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}$/.test(domain.trim())) {
                         valid = false;
                         throw 'break';
                     }
@@ -209,7 +209,7 @@ var loadUserList = (function ($) {
         if (subdomains.trim() !== '') {
             try {
                 subdomains.split(',').forEach(function (subdomain) {
-                    if (!/^[a-zA-z0-9][a-zA-Z0-9-]{0,19}$/.test(subdomain.trim())) {
+                    if (!/^[a-zA-z0-9][a-zA-z0-9-]{0,19}$/.test(subdomain.trim())) {
                         valid = false;
                         throw 'break';
                     }
@@ -227,7 +227,7 @@ var loadUserList = (function ($) {
      * set verify rule of layui.form
      */
     (function setFormVerifyRule() {
-        layui.form.verify(verifyRules);
+        // layui.form.verify(verifyRules);
     })();
 
     /**
@@ -251,7 +251,9 @@ var loadUserList = (function ($) {
             where: {},
             dataType: 'json',
             editTrigger: 'dblclick',
-            page: navigator.language.indexOf("zh") !== -1,
+            page: {
+                layout: navigator.language.indexOf("zh") === -1 ? ['first', 'prev', 'next', 'last'] : ['prev', 'page', 'next', 'skip', 'count', 'limit']
+            },
             toolbar: '#userListToolbarTemplate',
             defaultToolbar: false,
             cols: [[
@@ -270,7 +272,14 @@ var loadUserList = (function ($) {
                     sort: true
                 },
                 {title: i18n['Operation'], width: 150, toolbar: '#userListOperationTemplate'}
-            ]]
+            ]],
+            parseData: function (res) {
+                res.data.forEach(function (data) {
+                    data.ports = data.ports.join(',');
+                    data.domains = data.domains.join(',');
+                    data.subdomains = data.subdomains.join(',');
+                });
+            }
         });
 
         bindFormEvent();
@@ -348,7 +357,6 @@ var loadUserList = (function ($) {
             before.ports = before.ports.split(',')
             before.domains = before.domains.split(',')
             before.subdomains = before.subdomains.split(',')
-
             after.ports = after.ports.split(',')
             after.domains = after.domains.split(',')
             after.subdomains = after.subdomains.split(',')
@@ -359,8 +367,14 @@ var loadUserList = (function ($) {
         layui.table.on('toolbar(tokenTable)', function (obj) {
             var id = obj.config.id;
             var checkStatus = layui.table.checkStatus(id);
-
             var data = checkStatus.data;
+
+            data.forEach(function (temp) {
+                temp.ports = temp.ports.split(',')
+                temp.domains = temp.domains.split(',')
+                temp.subdomains = temp.subdomains.split(',')
+            });
+
             switch (obj.event) {
                 case 'add':
                     addPopup();
@@ -379,6 +393,10 @@ var loadUserList = (function ($) {
 
         layui.table.on('tool(tokenTable)', function (obj) {
             var data = obj.data;
+
+            data.ports = data.ports.split(',')
+            data.domains = data.domains.split(',')
+            data.subdomains = data.subdomains.split(',')
             switch (obj.event) {
                 case 'remove':
                     removePopup(data);
@@ -418,9 +436,15 @@ var loadUserList = (function ($) {
             btn1: function (index) {
                 if (layui.form.validate('#addUserForm')) {
                     var formData = layui.form.val('addUserForm');
-                    formData.ports = formData.ports.split(',')
-                    formData.domains = formData.domains.split(',')
-                    formData.subdomains = formData.subdomains.split(',')
+                    if (formData.ports != null) {
+                        formData.ports = formData.ports.split(',')
+                    }
+                    if (formData.domains != null) {
+                        formData.domains = formData.domains.split(',')
+                    }
+                    if (formData.subdomains != null) {
+                        formData.subdomains = formData.subdomains.split(',')
+                    }
                     add(formData, index);
                 }
             },
@@ -638,17 +662,27 @@ var loadUserList = (function ($) {
      * @param result
      */
     function errorMsg(result) {
-        var reason = i18n['Other Error'];
+        var reason = i18n['OtherError'];
         if (result.code === 1)
             reason = i18n['ParamError'];
         else if (result.code === 2)
             reason = i18n['UserExist'];
         else if (result.code === 3)
-            reason = i18n['ParamError'];
+            reason = i18n['UserNotExist'];
         else if (result.code === 4)
-            reason = i18n['UserFormatError'];
+            reason = i18n['ParamError'];
         else if (result.code === 5)
+            reason = i18n['UserFormatError'];
+        else if (result.code === 6)
             reason = i18n['TokenFormatError'];
+        else if (result.code === 7)
+            reason = i18n['CommentInvalid'];
+        else if (result.code === 8)
+            reason = i18n['PortsInvalid'];
+        else if (result.code === 9)
+            reason = i18n['DomainsInvalid'];
+        else if (result.code === 10)
+            reason = i18n['SubdomainsInvalid'];
         layui.layer.msg(i18n['OperateFailed'] + ',' + reason)
     }
 

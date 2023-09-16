@@ -29,6 +29,7 @@
   "Other error": "其他异常",
   "Param error": "参数异常",
   "User exist": "用户已经存在",
+  "User not exist": "用户不存在",
   "User format error": "用户不能为空或包含空格。只允许英文数字、字母、下划线",
   "Token format error": "Token不能为空或包含空格。允许的特殊符号：_!@#$%^&*()",
   "Please check at least one user": "请选中需要操作的用户",

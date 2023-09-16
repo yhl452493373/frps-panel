@@ -12,7 +12,7 @@ import (
 
 func (c *HandleController) BasicAuth() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		if strings.TrimSpace(c.CommonInfo.AdminUser) == "" || strings.TrimSpace(c.CommonInfo.AdminPwd) == "" {
+		if trimString(c.CommonInfo.AdminUser) == "" || trimString(c.CommonInfo.AdminPwd) == "" {
 			if context.Request.RequestURI == LoginUrl {
 				context.Redirect(http.StatusTemporaryRedirect, LoginSuccessUrl)
 			}
@@ -54,7 +54,7 @@ func (c *HandleController) BasicAuth() gin.HandlerFunc {
 }
 
 func (c *HandleController) LoginAuth(username, password string, context *gin.Context) bool {
-	if strings.TrimSpace(c.CommonInfo.AdminUser) == "" || strings.TrimSpace(c.CommonInfo.AdminPwd) == "" {
+	if trimString(c.CommonInfo.AdminUser) == "" || trimString(c.CommonInfo.AdminPwd) == "" {
 		return true
 	}
 

@@ -78,7 +78,7 @@ func (c *HandleController) JudgePort(content *plugin.NewProxyContent) plugin.Res
 	}
 	proxyType := content.ProxyType
 
-	if StringIndexOf(proxyType, supportProxyTypes) == -1 {
+	if stringContains(proxyType, supportProxyTypes) {
 		log.Printf("proxy type [%v] not support, plugin do nothing", proxyType)
 		res.Unchange = true
 		return res
@@ -100,12 +100,12 @@ func (c *HandleController) JudgePort(content *plugin.NewProxyContent) plugin.Res
 						portErr = fmt.Errorf("user [%v] port range [%v] format error", user, port)
 						break
 					}
-					start, err := strconv.Atoi(strings.TrimSpace(allowedRanges[0]))
+					start, err := strconv.Atoi(trimString(allowedRanges[0]))
 					if err != nil {
 						portErr = fmt.Errorf("user [%v] port rang [%v] start port [%v] is not a number", user, port, allowedRanges[0])
 						break
 					}
-					end, err := strconv.Atoi(strings.TrimSpace(allowedRanges[1]))
+					end, err := strconv.Atoi(trimString(allowedRanges[1]))
 					if err != nil {
 						portErr = fmt.Errorf("user [%v] port rang [%v] end port [%v] is not a number", user, port, allowedRanges[0])
 						break
@@ -141,7 +141,7 @@ func (c *HandleController) JudgePort(content *plugin.NewProxyContent) plugin.Res
 		if portAllowed {
 			if token, exist := c.Tokens[user]; exist {
 				for _, userDomain := range userDomains {
-					if StringIndexOf(userDomain, token.Domains) == -1 {
+					if stringContains(userDomain, token.Domains) {
 						domainAllowed = false
 						break
 					}
@@ -182,13 +182,4 @@ func (c *HandleController) JudgePort(content *plugin.NewProxyContent) plugin.Res
 		res.Unchange = true
 	}
 	return res
-}
-
-func StringIndexOf(element string, data []string) int {
-	for k, v := range data {
-		if element == v {
-			return k
-		}
-	}
-	return -1
 }
