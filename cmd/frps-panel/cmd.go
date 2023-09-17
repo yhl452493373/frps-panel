@@ -92,6 +92,8 @@ func parseConfigFile(configFile, tokensFile string) (controller.HandleController
 	tls := server.TLS{
 		Enable:   common.Common.TlsMode,
 		Protocol: "HTTP",
+		Cert:     common.Common.TlsCertFile,
+		Key:      common.Common.TlsKeyFile,
 	}
 
 	if tls.Enable {

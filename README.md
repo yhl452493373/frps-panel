@@ -51,8 +51,8 @@ admin_keep_time = 0
 
 # enable tls
 tls_mode = false
-# tls_cert_file = cert.crt
-# tls_key_file = cert.key
+# tls_cert_file = "cert.crt"
+# tls_key_file = "cert.key"
 
 # frp dashboard info
 dashboard_addr = "127.0.0.1"
