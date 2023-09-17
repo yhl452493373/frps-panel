@@ -43,7 +43,7 @@ frps-panel 会以一个单独的进程运行，并接收 frps 发送过来的 HT
 # frps-panel.toml
 [common]
 # frps panel config info
-plugin_addr = "127.0.0.1" #aadr
+plugin_addr = "127.0.0.1"
 plugin_port = 7200
 #admin_user = "admin"
 #admin_pwd = "admin"

@@ -42,7 +42,7 @@ frp version >= v0.31.0
 #frps-panel.toml
 [common]
 # frps panel config info
-plugin_addr = "127.0.0.1" #aadr
+plugin_addr = "127.0.0.1"
 plugin_port = 7200
 #admin_user = "admin"
 #admin_pwd = "admin"
