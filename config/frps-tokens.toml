@@ -1,0 +1,17 @@
+[tokens]
+    [tokens.user1]
+        user = "user1"
+        token = "token1"
+        comment = "user1 with token1"
+        ports = [8080, "10000-10200"]
+        domains = ["web01.domain.com", "web02.domain.com"]
+        subdomains = ["web01", "web02"]
+        enable = false
+    [tokens.user2]
+        user = "user2"
+        token = "token2"
+        comment = "user2 with token2"
+        ports = [9080]
+        domains = ["web11.domain.com", "web12.domain.com"]
+        subdomains = ["web11", "web12"]
+        enable = false
