@@ -97,7 +97,7 @@ var loadUserList = (function ($) {
         }
         return {
             valid: valid,
-            trim: username
+            trim: username.trim()
         };
     }
 
@@ -129,7 +129,7 @@ var loadUserList = (function ($) {
         }
         return {
             valid: valid,
-            trim: comment.replace(/[\n\t\r]/g, '')
+            trim: comment.trim().replace(/[\n\t\r]/g, '')
         };
     }
 
@@ -227,7 +227,7 @@ var loadUserList = (function ($) {
      * set verify rule of layui.form
      */
     (function setFormVerifyRule() {
-        // layui.form.verify(verifyRules);
+        layui.form.verify(verifyRules);
     })();
 
     /**
@@ -265,10 +265,10 @@ var loadUserList = (function ($) {
                 {field: 'domains', title: i18n['AllowedDomains'], sort: true, edit: 'textarea'},
                 {field: 'subdomains', title: i18n['AllowedSubdomains'], sort: true, edit: 'textarea'},
                 {
-                    field: 'status',
+                    field: 'enable',
                     title: i18n['Status'],
                     width: 100,
-                    templet: '<span>{{d.status? "' + i18n['Enable'] + '":"' + i18n['Disable'] + '"}}</span>',
+                    templet: '<span>{{d.enable? "' + i18n['Enable'] + '":"' + i18n['Disable'] + '"}}</span>',
                     sort: true
                 },
                 {title: i18n['Operation'], width: 150, toolbar: '#userListOperationTemplate'}
@@ -371,6 +371,12 @@ var loadUserList = (function ($) {
 
             data.forEach(function (temp) {
                 temp.ports = temp.ports.split(',')
+                temp.ports.forEach(function (port, index) {
+                    if (/^\d+$/.test(String(port))) {
+                        temp.ports[index] = parseInt(String(port));
+                    }
+                });
+
                 temp.domains = temp.domains.split(',')
                 temp.subdomains = temp.subdomains.split(',')
             });
@@ -395,6 +401,11 @@ var loadUserList = (function ($) {
             var data = obj.data;
 
             data.ports = data.ports.split(',')
+            data.ports.forEach(function (port, index) {
+                if (/^\d+$/.test(String(port))) {
+                    data.ports[index] = parseInt(String(port));
+                }
+            });
             data.domains = data.domains.split(',')
             data.subdomains = data.subdomains.split(',')
             switch (obj.event) {
@@ -438,6 +449,11 @@ var loadUserList = (function ($) {
                     var formData = layui.form.val('addUserForm');
                     if (formData.ports != null) {
                         formData.ports = formData.ports.split(',')
+                        formData.ports.forEach(function (port, index) {
+                            if (/^\d+$/.test(String(port))) {
+                                formData.ports[index] = parseInt(String(port));
+                            }
+                        })
                     }
                     if (formData.domains != null) {
                         formData.domains = formData.domains.split(',')
@@ -456,7 +472,7 @@ var loadUserList = (function ($) {
 
     /**
      * add user action
-     * @param data {{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}} user data
+     * @param data {{user:string, token:string, comment:string, enable:boolean, ports:[string|number], domains:[string], subdomains:[string]}} user data
      * @param index popup index
      */
     function add(data, index) {
@@ -485,10 +501,20 @@ var loadUserList = (function ($) {
 
     /**
      * update user action
-     * @param before {{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}} data before update
-     * @param after {{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}} data after update
+     * @param before {{user:string, token:string, comment:string, enable:boolean, ports:[string|number], domains:[string], subdomains:[string]}} data before update
+     * @param after {{user:string, token:string, comment:string, enable:boolean, ports:[string|number], domains:[string], subdomains:[string]}} data after update
      */
     function update(before, after) {
+        before.ports.forEach(function (port, index) {
+            if (/^\d+$/.test(String(port))) {
+                before.ports[index] = parseInt(String(port));
+            }
+        });
+        after.ports.forEach(function (port, index) {
+            if (/^\d+$/.test(String(port)) && typeof port === "string") {
+                after.ports[index] = parseInt(String(port));
+            }
+        });
         var loading = layui.layer.load();
         $.ajax({
             url: '/update',
@@ -513,7 +539,7 @@ var loadUserList = (function ($) {
 
     /**
      * batch remove user popup
-     * @param data {[{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}]} user data list
+     * @param data {[{user:string, token:string, comment:string, enable:boolean, ports:[string|number], domains:[string], subdomains:[string]}]} user data list
      */
     function batchRemovePopup(data) {
         if (data.length === 0) {
@@ -530,7 +556,7 @@ var loadUserList = (function ($) {
 
     /**
      * batch disable user popup
-     * @param data {[{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}]} user data list
+     * @param data {[{user:string, token:string, comment:string, enable:boolean, ports:[string|number], domains:[string], subdomains:[string]}]} user data list
      */
     function batchDisablePopup(data) {
         if (data.length === 0) {
@@ -547,7 +573,7 @@ var loadUserList = (function ($) {
 
     /**
      * batch enable user popup
-     * @param data {[{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}]} user data list
+     * @param data {[{user:string, token:string, comment:string, enable:boolean, ports:[string|number], domains:[string], subdomains:[string]}]} user data list
      */
     function batchEnablePopup(data) {
         if (data.length === 0) {
@@ -564,7 +590,7 @@ var loadUserList = (function ($) {
 
     /**
      * remove one user popup
-     * @param data {{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}} user data
+     * @param data {{user:string, token:string, comment:string, enable:boolean, ports:[string|number], domains:[string], subdomains:[string]}} user data
      */
     function removePopup(data) {
         layui.layer.confirm(i18n['ConfirmRemoveUser'], {
@@ -577,7 +603,7 @@ var loadUserList = (function ($) {
 
     /**
      * disable one user popup
-     * @param data {{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}} user data
+     * @param data {{user:string, token:string, comment:string, enable:boolean, ports:[string|number], domains:[string], subdomains:[string]}} user data
      */
     function disablePopup(data) {
         layui.layer.confirm(i18n['ConfirmDisableUser'], {
@@ -590,7 +616,7 @@ var loadUserList = (function ($) {
 
     /**
      * enable one user popup
-     * @param data {{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}} user data
+     * @param data {{user:string, token:string, comment:string, enable:boolean, ports:[string|number], domains:[string], subdomains:[string]}} user data
      */
     function enablePopup(data) {
         layui.layer.confirm(i18n['ConfirmEnableUser'], {
@@ -604,7 +630,7 @@ var loadUserList = (function ($) {
     /**
      * operate actions
      * @param type {apiType} action type
-     * @param data {[{user:string, token:string, comment:string, status:boolean, ports:[string], domains:[string], subdomains:[string]}]} user data list
+     * @param data {[{user:string, token:string, comment:string, enable:boolean, ports:[string|number], domains:[string], subdomains:[string]}]} user data list
      * @param index popup index
      */
     function operate(type, data, index) {

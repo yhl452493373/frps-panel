@@ -50,7 +50,7 @@
     background-color: #79bbff;
 }
 
-.layui-form-checkbox[lay-skin=primary]>.layui-icon-indeterminate{
+.layui-form-checkbox[lay-skin=primary] > .layui-icon-indeterminate {
     border-color: #79bbff;
 }
 
@@ -69,6 +69,11 @@
 
 .layui-table-cell-c:hover {
     border-color: #79bbff;
+}
+
+.layui-table-checked.layui-table-click,
+.layui-table-checked.layui-table-hover {
+    background-color: #d9ecff;
 }
 
 .layui-nav-tree .layui-nav-child dd.layui-this,
@@ -185,7 +190,7 @@ section.proxy-list .proxy-info .layui-row .layui-row > div:first-child {
         background-color: #5f5f60;
     }
 
-    .layui-form-checkbox[lay-skin=primary]>.layui-icon-indeterminate{
+    .layui-form-checkbox[lay-skin=primary] > .layui-icon-indeterminate {
         border-color: #5f5f60;
     }
 
@@ -204,6 +209,11 @@ section.proxy-list .proxy-info .layui-row .layui-row > div:first-child {
 
     .layui-table-cell-c:hover {
         border-color: #5f5f60;
+    }
+
+    .layui-table-checked.layui-table-click,
+    .layui-table-checked.layui-table-hover {
+        background-color: #5f5f60;
     }
 
     .layui-nav-tree .layui-nav-child dd.layui-this,

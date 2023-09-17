@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <title>${ .FrpsPanel }</title>
-    <link rel="stylesheet" href="./static/lib/layui/css/layui.css">
-    <link rel="stylesheet" href="./static/css/layui-theme-dark.css">
-    <link rel="stylesheet" href="./static/css/index.css">
-    <link rel="stylesheet" href="./static/css/color.css">
-    <script src="./static/lib/layui/layui.js"></script>
-    <script src="./static/lib/echarts.min.js"></script>
-    <script src="./static/lib/filesize.min.js"></script>
-    <script src="./static/js/index-server-info.js"></script>
-    <script src="./static/js/index-user-list.js"></script>
-    <script src="./static/js/index-proxy-list.js"></script>
-    <script src="./static/js/index.js"></script>
+    <link rel="stylesheet" href="./static/lib/layui/css/layui.css?v=${ .version }">
+    <link rel="stylesheet" href="./static/css/layui-theme-dark.css?v=${ .version }">
+    <link rel="stylesheet" href="./static/css/index.css?v=${ .version }">
+    <link rel="stylesheet" href="./static/css/color.css?v=${ .version }">
+    <script src="./static/lib/layui/layui.js?v=${ .version }"></script>
+    <script src="./static/lib/echarts.min.js?v=${ .version }"></script>
+    <script src="./static/lib/filesize.min.js?v=${ .version }"></script>
+    <script src="./static/js/index-server-info.js?v=${ .version }"></script>
+    <script src="./static/js/index-user-list.js?v=${ .version }"></script>
+    <script src="./static/js/index-proxy-list.js?v=${ .version }"></script>
+    <script src="./static/js/index.js?v=${ .version }"></script>
     <style>
         section.user-list .layui-table-cell:empty::after {
             content: '${ .NotLimit }';
@@ -214,7 +214,7 @@
 <script type="text/html" id="userListOperationTemplate">
     <div class="layui-clear-space">
         <a class="layui-btn layui-btn-xs" lay-event="remove">${ .Remove }</a>
-        {{# if (d.status) { }}
+        {{# if (d.enable) { }}
         <a class="layui-btn layui-btn-xs" lay-event="disable">${ .Disable }</a>
         {{# } else { }}
         <a class="layui-btn layui-btn-xs" lay-event="enable">${ .Enable }</a>

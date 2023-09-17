@@ -50,7 +50,7 @@ func (c *HandleController) JudgeToken(user string, token string) plugin.Response
 		res.Reject = true
 		res.RejectReason = "user or meta token can not be empty"
 	} else if info, exist := c.Tokens[user]; exist {
-		if !info.Status {
+		if !info.Enable {
 			res.Reject = true
 			res.RejectReason = fmt.Sprintf("user [%s] is disabled", user)
 		} else {
@@ -77,7 +77,6 @@ func (c *HandleController) JudgePort(content *plugin.NewProxyContent) plugin.Res
 		"tcp", "tcpmux", "udp", "http", "https",
 	}
 	proxyType := content.ProxyType
-
 	if stringContains(proxyType, supportProxyTypes) {
 		log.Printf("proxy type [%v] not support, plugin do nothing", proxyType)
 		res.Unchange = true
@@ -94,36 +93,45 @@ func (c *HandleController) JudgePort(content *plugin.NewProxyContent) plugin.Res
 		portAllowed = false
 		if token, exist := c.Tokens[user]; exist {
 			for _, port := range token.Ports {
-				if strings.Contains(port, "-") {
-					allowedRanges := strings.Split(port, "-")
-					if len(allowedRanges) != 2 {
-						portErr = fmt.Errorf("user [%v] port range [%v] format error", user, port)
-						break
-					}
-					start, err := strconv.Atoi(trimString(allowedRanges[0]))
-					if err != nil {
-						portErr = fmt.Errorf("user [%v] port rang [%v] start port [%v] is not a number", user, port, allowedRanges[0])
-						break
-					}
-					end, err := strconv.Atoi(trimString(allowedRanges[1]))
-					if err != nil {
-						portErr = fmt.Errorf("user [%v] port rang [%v] end port [%v] is not a number", user, port, allowedRanges[0])
-						break
-					}
-					if max(userPort, start) == userPort && min(userPort, end) == userPort {
-						portAllowed = true
-						break
+				if str, ok := port.(string); ok {
+					if strings.Contains(str, "-") {
+						allowedRanges := strings.Split(str, "-")
+						if len(allowedRanges) != 2 {
+							portErr = fmt.Errorf("user [%v] port range [%v] format error", user, port)
+							break
+						}
+						start, err := strconv.Atoi(trimString(allowedRanges[0]))
+						if err != nil {
+							portErr = fmt.Errorf("user [%v] port rang [%v] start port [%v] is not a number", user, port, allowedRanges[0])
+							break
+						}
+						end, err := strconv.Atoi(trimString(allowedRanges[1]))
+						if err != nil {
+							portErr = fmt.Errorf("user [%v] port rang [%v] end port [%v] is not a number", user, port, allowedRanges[0])
+							break
+						}
+						if max(userPort, start) == userPort && min(userPort, end) == userPort {
+							portAllowed = true
+							break
+						}
+					} else {
+						allowed, err := strconv.Atoi(str)
+						if err != nil {
+							portErr = fmt.Errorf("user [%v] allowed port [%v] is not a number", user, port)
+						}
+						if allowed == userPort {
+							portAllowed = true
+							break
+						}
 					}
 				} else {
-					allowed, err := strconv.Atoi(port)
-					if err != nil {
-						portErr = fmt.Errorf("user [%v] allowed port [%v] is not a number", user, port)
-					}
+					allowed := port
 					if allowed == userPort {
 						portAllowed = true
 						break
 					}
 				}
+
 			}
 		} else {
 			portAllowed = true

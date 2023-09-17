@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"frps-panel/pkg/server"
 	"frps-panel/pkg/server/controller"
 	"github.com/BurntSushi/toml"
@@ -11,7 +12,7 @@ import (
 	"strings"
 )
 
-const version = "1.6.0"
+const version = "1.7.0"
 
 var (
 	showVersion bool
@@ -79,7 +80,11 @@ func parseConfigFile(configFile, tokensFile string) (controller.HandleController
 
 	_, err = toml.DecodeFile(tokensFile, &tokens)
 	if err != nil {
-		log.Fatalf("decode token file %v error: %v", tokensFile, err)
+		if errors.Is(err, os.ErrNotExist) {
+			tokens = controller.Tokens{Tokens: make(map[string]controller.TokenInfo)}
+		} else {
+			log.Fatalf("decode token file %v error: %v", tokensFile, err)
+		}
 	}
 
 	common.Common.DashboardTls = strings.HasPrefix("https://", strings.ToLower(common.Common.DashboardAddr))

@@ -37,63 +37,59 @@ frps-panel 会以一个单独的进程运行，并接收 frps 发送过来的 HT
 
 ### 使用示例
 
-1. 创建 `frps-panel.ini` 文件，内容为所有支持的用户名和 token。
+1. 创建 `frps-panel.toml` 文件，内容为基础配置。
 
-```ini
+```toml
+# frps-panel.toml
 [common]
-;插件监听地址
-;如果上面配置中 tls_mode = true, 则把plugin_addr的值改为 https://127.0.0.1:7200
-plugin_addr = 127.0.0.1
-;插件端口
+# frps panel config info
+plugin_addr = "127.0.0.1" #aadr
 plugin_port = 7200
-;插件管理页面账号,可选
-admin_user  = admin
-;插件管理页面密码,与账号一起进行鉴权,可选
-admin_pwd   = admin
-;登录状态空闲时间(秒):0-浏览器完全退出前不用重新登录,大于0-空闲超过此时间则需要重新登录.
+#admin_user = "admin"
+#admin_pwd = "admin"
+# specified login state keep time
 admin_keep_time = 0
 
-; frps 面板页面是否启用https访问,如果为true,则只能通过https访问
+# enable tls
 tls_mode = false
-; tls_cert_file = cert.crt
-; tls_key_file = cert.key
+# tls_cert_file = cert.crt
+# tls_key_file = cert.key
 
-; frp服务器的看板页面信息，必须配置，且与frp服务器一致，否则无法获取服务器信息
-dashboard_addr = 127.0.0.1
+# frp dashboard info
+dashboard_addr = "127.0.0.1"
 dashboard_port = 7500
-dashboard_user = admin
-dashboard_pwd  = admin
-
-[users]
-;user1的meta_token为123
-user1 = 123
-;user2的meta_token为abc
-user2 = abc
-
-[ports]
-;user1只能使用8080,9090到9010端口,其他端口则建立连接时返回失败(不影响客户端启动)
-user1=8080,9090-9010
-
-[domains]
-;user1只能使用web01.yyy.zzz域名,配置了其他域名则建立连接时返回失败(不影响客户端启动)
-user1=web01.user1.com
-
-[subdomains]
-;user1只能使用web01.xxx.yyy.zzz域名,配置了其他三级域名则建立连接时返回失败(不影响客户端启动)
-user1=web01
-
-[disabled]
-;user2被禁用,frpc使用此账户与frps通信时,如果未启动则无法启动,如果已启动,则会一直打印错误日志
-user2 = disable
+dashboard_user = "admin"
+dashboard_pwd = "admin"
 ```
 
-    每一个用户占一行，用户名和 token 之间以 `=` 号分隔。
+2. 创建`frps-tokens.toml`文件，其内容为系统中的用户，该文件位置和`frps-panel.toml`相同。如不创建此文件，在增加用户时会自动创建。
 
-2. 运行 frps-panel，指定监听地址以及 token 存储文件路径。
+```toml
+#frps-tokens.toml
+[tokens]
+   [tokens.user1]
+      user = "user1"
+      token = "token1"
+      comment = "user1 with token1"
+      ports = [8080, "10000-10200"]
+      domains = ["web01.domain.com", "web02.domain.com"]
+      subdomains = ["web01", "web02"]
+      enable = true
+   [tokens.user2]
+      user = "user2"
+      token = "token2"
+      comment = "user2 with token2"
+      ports = [9080]
+      domains = ["web11.domain.com", "web12.domain.com"]
+      subdomains = ["web11", "web12"]
+      enable = false
+```
 
-    `./frps-panel -c ./frps-panel.ini`
+3. 运行 frps-panel，指定监听地址以及 token 存储文件路径。
 
-3. 在 frps 的配置文件中注册插件，并启动。
+    `./frps-panel -c ./frps-panel.toml`
+
+4. 在 frps 的配置文件中注册插件，并启动。
 
 ```ini
 # frps.ini
@@ -106,7 +102,7 @@ path = /handler
 ops = Login,NewWorkConn,NewUserConn,NewProxy,Ping
 ```
 
-4. 在 frpc 中指定用户名，在 meta 中指定 token，用户名以及 `meta_token` 的内容需要和之前创建的 token 文件匹配。
+5. 在 frpc 中指定用户名，在 meta 中指定 token，用户名以及 `meta_token` 的内容需要和之前创建的 token 文件匹配。
 
     user1 的配置:
 
@@ -140,7 +136,7 @@ local_port = 22
 remote_port = 6000
 ```
 
-5.浏览器中输入地址: http://127.0.0.1:7200 或 https://127.0.0.1:7200 进入管理页面进行用户管理
+6.浏览器中输入地址: http://127.0.0.1:7200 或 https://127.0.0.1:7200 进入管理页面进行用户管理
 
 ## 以服务的形式运行
 
@@ -156,8 +152,8 @@ Wants = network.target
 
 [Service]
 Type = simple
-# 启动frps-panel的配置文件路径，需修改为您的frps-panel.ini的路径
-Environment=FRPS_PANEL_OPTS="-c /root/frps-panel/frps-panel.ini"
+# 启动frps-panel的配置文件路径，需修改为您的frps-panel.toml的路径
+Environment=FRPS_PANEL_OPTS="-c /root/frps-panel/frps-panel.toml"
 # 启动frps-panel的命令，需修改为您的frps-panel的安装路径
 ExecStart = /root/frps-panel/frps-panel $FRPS_PANEL_OPTS
 

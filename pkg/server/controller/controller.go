@@ -290,7 +290,7 @@ func (c *HandleController) MakeQueryTokensFunc() func(context *gin.Context) {
 func (c *HandleController) MakeAddTokenFunc() func(context *gin.Context) {
 	return func(context *gin.Context) {
 		info := TokenInfo{
-			Status: true,
+			Enable: true,
 		}
 		response := OperationResponse{
 			Success: true,
@@ -315,7 +315,7 @@ func (c *HandleController) MakeAddTokenFunc() func(context *gin.Context) {
 		}
 
 		info.Comment = cleanString(info.Comment)
-		info.Ports = cleanStrings(info.Ports)
+		info.Ports = cleanPorts(info.Ports)
 		info.Domains = cleanStrings(info.Domains)
 		info.Subdomains = cleanStrings(info.Subdomains)
 
@@ -373,7 +373,7 @@ func (c *HandleController) MakeUpdateTokensFunc() func(context *gin.Context) {
 		}
 
 		after.Comment = cleanString(after.Comment)
-		after.Ports = cleanStrings(after.Ports)
+		after.Ports = cleanPorts(after.Ports)
 		after.Domains = cleanStrings(after.Domains)
 		after.Subdomains = cleanStrings(after.Subdomains)
 
@@ -467,7 +467,7 @@ func (c *HandleController) MakeDisableTokensFunc() func(context *gin.Context) {
 
 		for _, user := range disable.Users {
 			token := c.Tokens[user.User]
-			token.Status = false
+			token.Enable = false
 			c.Tokens[user.User] = token
 		}
 
@@ -515,7 +515,7 @@ func (c *HandleController) MakeEnableTokensFunc() func(context *gin.Context) {
 
 		for _, user := range enable.Users {
 			token := c.Tokens[user.User]
-			token.Status = true
+			token.Enable = true
 			c.Tokens[user.User] = token
 		}
 

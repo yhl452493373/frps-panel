@@ -36,62 +36,60 @@ frp version >= v0.31.0
 
 ### Usage
 
-1. Create file `frps-panel.ini` including all support usernames and tokens.
+1. Create file `frps-panel.toml` including common config.
 
-```ini
+```toml
+#frps-panel.toml
 [common]
-;plugin listen ip
-plugin_addr = 127.0.0.1
-;plugin listen port
+# frps panel config info
+plugin_addr = "127.0.0.1" #aadr
 plugin_port = 7200
-;the username of manage ui,optional
-admin_user  = admin
-;the password of manage ui,optional
-admin_pwd   = admin
-;specified login state keep time in seconds.0 - before the browser completely exit, don't need to re-login,greater than 0: when Idle time exceeds this value,you should re-login
+#admin_user = "admin"
+#admin_pwd = "admin"
+# specified login state keep time
 admin_keep_time = 0
 
-; enable tls
+# enable tls
 tls_mode = false
-; tls_cert_file = cert.crt
-; tls_key_file = cert.key
+# tls_cert_file = cert.crt
+# tls_key_file = cert.key
 
-; frp dashboard info
-dashboard_addr = 127.0.0.1
+# frp dashboard info
+dashboard_addr = "127.0.0.1"
 dashboard_port = 7500
-dashboard_user = admin
-dashboard_pwd  = admin
-
-[users]
-;user user1 with meta_token 123
-user1 = 123
-;user user2 with meta_token abc
-user2 = abc
-
-[ports]
-;user1 can only use ports 8080,9090 to 9010 ,other ports will fail to create proxy (frpc can normally startup)
-user1=8080,9090-9010
-
-[domains]
-;user1 can only use domain web01.user1.com ,other domain will fail to create proxy (frpc can normally startup)
-user1=web01.user1.com
-
-[subdomains]
-;user1 can only use subdomain web01 ,other subdomain will fail to create proxy (frpc can normally startup)
-user1=web01
-
-[disabled]
-;user2 is disabled,when frpc use this user to connect with frps,if frpc is not startup,it cannot startup,if it's already startup,it will always show error logs on console
-user2 = disable
+dashboard_user = "admin"
+dashboard_pwd = "admin"
 ```
 
-   One user each line. Username and token are split by `=`.
+2. Create file `frps-tokens.toml` to save users,it should be the same place with `frps-panel.toml`.this file will auto create by system.
 
-2. Run frps-panel:
+```toml
+#frps-tokens.toml
+[tokens]
+   [tokens.user1]
+      user = "user1"
+      token = "token1"
+      comment = "user1 with token1"
+      ports = [8080, "10000-10200"]
+      domains = ["web01.domain.com", "web02.domain.com"]
+      subdomains = ["web01", "web02"]
+      enable = true
+   [tokens.user2]
+      user = "user2"
+      token = "token2"
+      comment = "user2 with token2"
+      ports = [9080]
+      domains = ["web11.domain.com", "web12.domain.com"]
+      subdomains = ["web11", "web12"]
+      enable = false
+```
 
-   `./frps-panel -c ./frps-panel.ini`
 
-3. Register plugin in frps.
+3. Run frps-panel:
+
+   `./frps-panel -c ./frps-panel.toml`
+
+4. Register plugin in frps.
 
 ```ini
 # frps.ini
@@ -105,7 +103,7 @@ path = /handler
 ops = Login,NewWorkConn,NewUserConn,NewProxy,Ping
 ```
 
-4. Specify username and meta_token in frpc configure file.
+5. Specify username and meta_token in frpc configure file.
 
    For user1:
 
@@ -139,7 +137,7 @@ local_port = 22
 remote_port = 6000
 ```
 
-5. Manage your users in browser via: http://127.0.0.1:7200 or https://127.0.0.1:7200
+6. Manage your users in browser via: http://127.0.0.1:7200 or https://127.0.0.1:7200
 
 ## Run as service
 
@@ -155,8 +153,8 @@ Wants = network.target
 
 [Service]
 Type = simple
-# config of frps-panel.ini,you should change the file path
-Environment=FRPS_PANEL_OPTS="-c /root/frps-panel/frps-panel.ini"
+# config of frps-panel.toml,you should change the file path
+Environment=FRPS_PANEL_OPTS="-c /root/frps-panel/frps-panel.toml"
 # command of run frps-panel,you should change the file path
 ExecStart = /root/frps-panel/frps-panel $FRPS_PANEL_OPTS
 

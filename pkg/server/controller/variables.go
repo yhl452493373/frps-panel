@@ -84,10 +84,10 @@ type TokenInfo struct {
 	User       string   `toml:"user" json:"user" form:"user"`
 	Token      string   `toml:"token" json:"token" form:"token"`
 	Comment    string   `toml:"comment" json:"comment" form:"comment"`
-	Ports      []string `toml:"ports" json:"ports" from:"ports"`
+	Ports      []any    `toml:"ports" json:"ports" from:"ports"`
 	Domains    []string `toml:"domains" json:"domains" from:"domains"`
 	Subdomains []string `toml:"subdomains" json:"subdomains" from:"subdomains"`
-	Status     bool     `toml:"status" json:"status" form:"status"`
+	Enable     bool     `toml:"enable" json:"enable" form:"enable"`
 }
 
 type TokenResponse struct {

@@ -121,13 +121,15 @@ func (c *HandleController) verifyToken(token TokenInfo, operate int) OperationRe
 
 	if validatePorts {
 		for _, port := range token.Ports {
-			trimmedPort := trimString(port)
-			if trimmedPort != "" && !portsFormatSingle.MatchString(trimmedPort) && !portsFormatRange.MatchString(trimmedPort) {
-				response.Success = false
-				response.Code = PortsFormatError
-				response.Message = fmt.Sprintf("operate failed, ports [%v] format error", token.Ports)
-				log.Printf(response.Message)
-				return response
+			if str, ok := port.(string); ok {
+				trimmedPort := trimString(str)
+				if trimmedPort != "" && !portsFormatSingle.MatchString(trimmedPort) && !portsFormatRange.MatchString(trimmedPort) {
+					response.Success = false
+					response.Code = PortsFormatError
+					response.Message = fmt.Sprintf("operate failed, ports [%v] format error", token.Ports)
+					log.Printf(response.Message)
+					return response
+				}
 			}
 		}
 	}
@@ -161,6 +163,19 @@ func (c *HandleController) verifyToken(token TokenInfo, operate int) OperationRe
 	return response
 }
 
+func cleanPorts(ports []any) []any {
+	cleanedPorts := make([]any, len(ports))
+	for i, port := range ports {
+		if str, ok := port.(string); ok {
+			cleanedPorts[i] = cleanString(str)
+		} else {
+			//float64, for JSON numbers
+			cleanedPorts[i] = int(port.(float64))
+		}
+	}
+	return cleanedPorts
+}
+
 func cleanStrings(originalStrings []string) []string {
 	cleanedStrings := make([]string, len(originalStrings))
 	for i, str := range originalStrings {
@@ -170,7 +185,7 @@ func cleanStrings(originalStrings []string) []string {
 }
 
 func cleanString(originalString string) string {
-	return trimAllSpace.ReplaceAllString(originalString, "")
+	return trimString(originalString)
 }
 
 func stringContains(element string, data []string) bool {
@@ -194,7 +209,9 @@ func (c *HandleController) saveToken() error {
 		log.Printf("error to crate file %v: %v", c.TokensFile, err)
 	}
 
-	if err = toml.NewEncoder(tokenFile).Encode(tokensList(c.Tokens)); err != nil {
+	encoder := toml.NewEncoder(tokenFile)
+	encoder.Indent = "    "
+	if err = encoder.Encode(tokensList(c.Tokens)); err != nil {
 		log.Printf("error to encode tokens: %v", err)
 	}
 	if err = tokenFile.Close(); err != nil {
