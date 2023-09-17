@@ -5,7 +5,8 @@ package: copy
 	sh ./package.sh
 
 copy: build
-	cp ./config/frps-panel.ini ./release/frps-panel.ini
+	cp ./config/frps-panel.toml ./release/frps-panel.toml
+	cp ./config/frps-tokens.toml ./release/frps-tokens.toml
 	cp -r ./assets/ ./release/assets/
 
 build:
