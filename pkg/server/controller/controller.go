@@ -586,10 +586,14 @@ func (c *HandleController) MakeProxyFunc() func(context *gin.Context) {
 			if res.Code == http.StatusOK {
 				res.Success = true
 				res.Data = string(body)
-				res.Message = "Proxy to " + requestUrl + " success"
+				res.Message = fmt.Sprintf("Proxy to %s success", requestUrl)
 			} else {
 				res.Success = false
-				res.Message = "Proxy to " + requestUrl + " error: " + string(body)
+				if res.Code == http.StatusNotFound {
+					res.Message = fmt.Sprintf("Proxy to %s error: url not found", requestUrl)
+				} else {
+					res.Message = fmt.Sprintf("Proxy to %s error: %s", requestUrl, string(body))
+				}
 			}
 		}
 		log.Printf(res.Message)
