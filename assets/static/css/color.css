@@ -1,3 +1,7 @@
+::-webkit-scrollbar-thumb {
+    background: rgba(199, 199, 199, 0.8);
+}
+
 .layui-bg-blue {
     background-color: #58b7ff !important;
 }
@@ -132,6 +136,10 @@ section.proxy-list .proxy-info .layui-row .layui-row > div:first-child {
 }
 
 @media (prefers-color-scheme: dark) {
+    ::-webkit-scrollbar-thumb {
+        background: rgba(107, 107, 107, 0.8);
+    }
+
     .login-title,
     .login-title a {
         color: #99a9bf !important;

@@ -1,3 +1,13 @@
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    transition: 0.3s ease-in-out;
+}
+
 html, body {
     padding: 0;
     word-break: break-all;
