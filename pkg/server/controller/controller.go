@@ -295,13 +295,13 @@ func (c *HandleController) MakeAddTokenFunc() func(context *gin.Context) {
 		response := OperationResponse{
 			Success: true,
 			Code:    Success,
-			Message: "user add success",
+			Message: "add success",
 		}
 		err := context.BindJSON(&info)
 		if err != nil {
 			response.Success = false
 			response.Code = ParamError
-			response.Message = fmt.Sprintf("user add failed, param error : %v", err)
+			response.Message = fmt.Sprintf("add failed, param error : %v", err)
 			log.Printf(response.Message)
 			context.JSON(http.StatusOK, &response)
 			return
