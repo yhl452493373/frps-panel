@@ -85,7 +85,7 @@ dashboard_pwd = "admin"
       enable = false
 ```
 
-3. 运行 frps-panel，指定监听地址以及 token 存储文件路径。
+3. 运行 frps-panel，指定配置文件路径。
 
     `./frps-panel -c ./frps-panel.toml`
 
