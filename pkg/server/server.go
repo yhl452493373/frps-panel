@@ -175,9 +175,9 @@ func (s *Server) initHTTPServer() error {
 	engine := gin.New()
 	authStore := cookie.NewStore([]byte("frps-panel"))
 	authStore.Options(sessions.Options{
-		Secure:   true,
+		Secure:   false,
 		HttpOnly: false,
-		SameSite: 4,
+		SameSite: http.SameSiteDefaultMode,
 		Path:     "/",
 		MaxAge:   s.cfg.CommonInfo.AdminKeepTime,
 	})
