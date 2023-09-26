@@ -33,6 +33,10 @@
     border-color: #ff5722 !important;
 }
 
+.layui-laypage a:hover {
+    color: #409eff;
+}
+
 .layui-laypage .layui-laypage-curr .layui-laypage-em {
     background-color: #409eff;
 }
@@ -170,6 +174,10 @@ section.proxy-list .proxy-info .layui-row .layui-row > div:first-child {
     .layui-textarea:focus {
         border-color: #5f5f60 !important;
         box-shadow: none;
+    }
+
+    .layui-laypage a:hover {
+        color: #4f80a1;
     }
 
     .layui-laypage .layui-laypage-curr .layui-laypage-em {

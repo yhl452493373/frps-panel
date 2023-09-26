@@ -9,9 +9,9 @@ plugin_port = 7200
 admin_keep_time = 0
 
 # enable tls
-tls_mode = true
-tls_cert_file = "cert.crt"
-tls_key_file = "cert.key"
+tls_mode = false
+#tls_cert_file = "cert.crt"
+#tls_key_file = "cert.key"
 
 # frp dashboard info
 dashboard_addr = "127.0.0.1"
