@@ -556,6 +556,13 @@ func (c *HandleController) MakeProxyFunc() func(context *gin.Context) {
 		res := ProxyResponse{}
 		host := c.CommonInfo.DashboardAddr
 		port := c.CommonInfo.DashboardPort
+
+		if strings.HasPrefix(host, "http://") {
+			host, _ = strings.CutPrefix(host, "http://")
+		} else if strings.HasPrefix(host, "https://") {
+			host, _ = strings.CutPrefix(host, "https://")
+		}
+
 		requestUrl := protocol + host + ":" + strconv.Itoa(port) + context.Param("serverApi")
 		request, _ := http.NewRequest("GET", requestUrl, nil)
 		username := c.CommonInfo.DashboardUser
