@@ -77,7 +77,7 @@ func (c *HandleController) JudgePort(content *plugin.NewProxyContent) plugin.Res
 		"tcp", "tcpmux", "udp", "http", "https",
 	}
 	proxyType := content.ProxyType
-	if stringContains(proxyType, supportProxyTypes) {
+	if !stringContains(proxyType, supportProxyTypes) {
 		log.Printf("proxy type [%v] not support, plugin do nothing", proxyType)
 		res.Unchange = true
 		return res
