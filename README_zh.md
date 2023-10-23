@@ -1,4 +1,4 @@
-# frps-panel
+# frps-panel(支持 FRP 0.51.3)
 
 [README](README.md) | [中文文档](README_zh.md)
 
