@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-const version = "1.7.2"
+const version = "1.8.2"
 
 var (
 	showVersion bool

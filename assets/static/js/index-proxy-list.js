@@ -35,28 +35,30 @@ var loadProxyInfo = (function ($) {
         proxyType = proxyType.toLowerCase();
         data.forEach(function (temp) {
             temp.conf = temp.conf || {
-                remote_port: 0,
-                use_encryption: false,
-                use_compression: false,
-                custom_domains: null,
+                remotePort: 0,
+                transport: {
+                    useEncryption: false,
+                    useCompression: false
+                },
+                customDomains: null,
                 subdomain: null,
                 locations: null,
-                host_header_rewrite: null
+                hostHeaderRewrite: null
             };
 
-            temp.client_version = temp.client_version || '-';
-            temp.conf.custom_domains = temp.conf.custom_domains || '-';
+            temp.clientVersion = temp.clientVersion || '-';
+            temp.conf.customDomains = temp.conf.customDomains || '-';
             temp.conf.subdomain = temp.conf.subdomain || '-';
             temp.conf.locations = temp.conf.locations || '-';
-            temp.conf.host_header_rewrite = temp.conf.host_header_rewrite || '-';
+            temp.conf.hostHeaderRewrite = temp.conf.hostHeaderRewrite || '-';
 
-            if (temp.conf.custom_domains !== '-') {
-                temp.conf.custom_domains = JSON.stringify(temp.conf.custom_domains);
+            if (temp.conf.customDomains !== '-') {
+                temp.conf.customDomains = JSON.stringify(temp.conf.customDomains);
             }
             if (proxyType === 'http') {
-                temp.conf.remote_port = http_port;
+                temp.conf.remotePort = httpPort;
             } else if (proxyType === 'https') {
-                temp.conf.remote_port = https_port;
+                temp.conf.remotePort = httpsPort;
             }
         });
         var $section = $('#content > section');
@@ -68,30 +70,30 @@ var loadProxyInfo = (function ($) {
                 title: i18n['Port'],
                 width: '12%',
                 sort: true,
-                templet: '<span>{{= d.conf.remote_port }}</span>'
+                templet: '<span>{{= d.conf.remotePort }}</span>'
             },
-            {field: 'cur_conns', title: i18n['Connections'], minWidth: 140, width: '12%', sort: true},
+            {field: 'curConns', title: i18n['Connections'], minWidth: 140, width: '12%', sort: true},
             {
-                field: 'today_traffic_in',
+                field: 'todayTrafficIn',
                 title: i18n['TrafficIn'],
                 minWidth: 140,
                 width: '12%',
                 sort: true,
                 templet: function (d) {
-                    return size(d.today_traffic_in);
+                    return size(d.todayTrafficIn);
                 }
             },
             {
-                field: 'today_traffic_out',
+                field: 'todayTrafficOut',
                 title: i18n['TrafficOut'],
                 minWidth: 140,
                 width: '12%',
                 sort: true,
                 templet: function (d) {
-                    return size(d.today_traffic_out);
+                    return size(d.todayTrafficOut);
                 }
             },
-            {field: 'client_version', title: i18n['ClientVersion'], minWidth: 140, width: '12%', sort: true},
+            {field: 'clientVersion', title: i18n['ClientVersion'], minWidth: 140, width: '12%', sort: true},
             {
                 field: 'status', title: i18n['Status'], width: '12%', sort: true, templet: function (d) {
                     return '<span class="' + d.status + '">' + i18n[d.status] + '</span>';
@@ -104,7 +106,7 @@ var loadProxyInfo = (function ($) {
             height: $section.height(),
             text: {none: i18n['EmptyData']},
             cols: [cols],
-            page: navigator.language.indexOf("zh") !== -1,
+            page: pageOptions,
             data: data,
             initSort: {
                 field: 'name',
@@ -116,10 +118,10 @@ var loadProxyInfo = (function ($) {
                 var expandTrTemplateHtml = $('#expandTrTemplate').html();
                 for (var i = 0; i < $tr.length; i++) {
                     var datum = res.data[i];
-                    var useEncryption = datum.conf.use_encryption;
-                    var useCompression = datum.conf.use_compression;
-                    datum.conf.use_encryption = i18n[useEncryption];
-                    datum.conf.use_compression = i18n[useCompression];
+                    var useEncryption = datum.conf.transport.useEncryption || false;
+                    var useCompression = datum.conf.transport.useCompression || false;
+                    datum.conf.transport.useEncryption = i18n[useEncryption];
+                    datum.conf.transport.useCompression = i18n[useCompression];
                     var html = layui.laytpl(expandTrTemplateHtml).render({
                         index: i,
                         colspan: cols.length - 1,
@@ -169,7 +171,7 @@ var loadProxyInfo = (function ($) {
         var html = layui.laytpl($('#trafficStaticTemplate').html()).render();
         var dates = [];
         var now = new Date();
-        for (var i = 0; i < data.traffic_in.length; i++) {
+        for (var i = 0; i < data.trafficIn.length; i++) {
             dates.push(now.getFullYear() + "/" + (now.getMonth() + 1) + "/" + now.getDate());
             now.setDate(now.getDate() - 1);
         }
@@ -232,12 +234,12 @@ var loadProxyInfo = (function ($) {
                         {
                             name: i18n['TrafficIn'],
                             type: 'bar',
-                            data: data.traffic_in.reverse(),
+                            data: data.trafficIn.reverse(),
                         },
                         {
                             name: i18n['TrafficOut'],
                             type: 'bar',
-                            data: data.traffic_out.reverse(),
+                            data: data.trafficOut.reverse(),
                         }
                     ]
                 };
