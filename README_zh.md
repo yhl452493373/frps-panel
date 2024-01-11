@@ -6,6 +6,8 @@ frps-panel 是 [frp](https://github.com/fatedier/frp) 的一个服务端插件�
 
 frps-panel 会以一个单独的进程运行，并接收 frps 发送过来的 HTTP 请求。
 
+## 从版本2.0.0开始，本插件只支持版本号大于等于v0.52.0的frp
+
 ![支持英文](screenshots/i18n.png)
 ![登录页面](screenshots/login.png)
 ![服务器信息](screenshots/server%20info.png)
@@ -118,6 +120,20 @@ type = "tcp"
 localIP = 22
 localPort = 8080
 ```
+或
+```toml
+# frpc.toml
+serverAddr = "127.0.0.1"
+serverPort = 7000
+user = "user1"
+[metadatas]
+token = "123"
+
+[[proxies]]
+type = "tcp"
+localIP = 22
+localPort = 8080
+```
 
     user2 的配置:（由于示例文件中user2被禁用，因此无法连接）
 
@@ -127,6 +143,20 @@ serverAddr = "127.0.0.1"
 serverPort = 7000
 user = "user2"
 metadatas.token = "abc"
+
+[[proxies]]
+type = "tcp"
+local_port = 22
+remote_port = 6000
+```
+或
+```toml
+# frpc.toml
+serverAddr = "127.0.0.1"
+serverPort = 7000
+user = "user2"
+[metadatas]
+token = "abc"
 
 [[proxies]]
 type = "tcp"

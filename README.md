@@ -6,6 +6,8 @@ frp server plugin to show server info and support multiple users for [frp](https
 
 frps-panel will run as one single process and accept HTTP requests from frps.
 
+## Since version 2.0.0,this plugin only support frp version >= v0.52.0
+
 ![支持英文](screenshots/i18n.png)
 ![登录页面](screenshots/login.png)
 ![服务器信息](screenshots/server%20info.png)
@@ -118,6 +120,20 @@ type = "tcp"
 localIP = 22
 localPort = 8080
 ```
+or
+```toml
+# frpc.toml
+serverAddr = "127.0.0.1"
+serverPort = 7000
+user = "user1"
+[metadatas]
+token = "123"
+
+[[proxies]]
+type = "tcp"
+localIP = 22
+localPort = 8080
+```
 
    For user2:(user2 cannot connect to server,because it is disabled)
 
@@ -127,6 +143,20 @@ serverAddr = "127.0.0.1"
 serverPort = 7000
 user = "user2"
 metadatas.token = "abc"
+
+[[proxies]]
+type = "tcp"
+local_port = 22
+remote_port = 6000
+```
+or
+```toml
+# frpc.toml
+serverAddr = "127.0.0.1"
+serverPort = 7000
+user = "user2"
+[metadatas]
+token = "abc"
 
 [[proxies]]
 type = "tcp"
