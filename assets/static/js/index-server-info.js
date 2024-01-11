@@ -16,24 +16,24 @@ var loadServerInfo = (function ($) {
         $.getJSON('/proxy/api/serverinfo').done(function (result) {
             if (result.success) {
                 var data = JSON.parse(result.data);
-                data.proxy_counts = 0;
-                http_port = data.vhost_http_port;
-                https_port = data.vhost_https_port;
-                for (var proxy in data.proxy_type_count) {
-                    data.proxy_counts = data.proxy_counts + data.proxy_type_count[proxy];
+                data.proxyCounts = 0;
+                httpPort = data.vhostHTTPPort;
+                httpsPort = data.vhostHTTPSPort;
+                for (var proxy in data.proxyTypeCount) {
+                    data.proxyCounts = data.proxyCounts + data.proxyTypeCount[proxy];
                 }
-                data.bind_port = data.bind_port || i18n['Disable'];
-                data.kcp_bind_port = data.kcp_bind_port || i18n['Disable'];
-                data.quic_bind_port = data.quic_bind_port || i18n['Disable'];
-                data.vhost_http_port = data.vhost_http_port || i18n['Disable'];
-                data.vhost_https_port = data.vhost_https_port || i18n['Disable'];
-                data.tcpmux_httpconnect_port = data.tcpmux_httpconnect_port || i18n['Disable'];
-                data.subdomain_host = data.subdomain_host || i18n['NotSet'];
-                data.max_pool_count = data.max_pool_count || i18n['NotSet'];
-                data.max_ports_per_client = data.max_ports_per_client || i18n['NotLimit'];
-                data.heart_beat_timeout = data.heart_beat_timeout || i18n['NotSet'];
-                data.allow_ports_str = data.allow_ports_str || i18n['NotLimit'];
-                data.tls_only = i18n[data.tls_only || false];
+                data.bindPort = data.bindPort || i18n['Disable'];
+                data.kcpBindPort = data.kcpBindPort || i18n['Disable'];
+                data.quicBindPort = data.quicBindPort || i18n['Disable'];
+                data.vhostHTTPPort = data.vhostHTTPPort || i18n['Disable'];
+                data.vhostHTTPSPort = data.vhostHTTPSPort || i18n['Disable'];
+                data.tcpmuxHTTPConnectPort = data.tcpmuxHTTPConnectPort || i18n['Disable'];
+                data.subdomainHost = data.subdomainHost || i18n['NotSet'];
+                data.maxPoolCount = data.maxPoolCount || i18n['NotSet'];
+                data.maxPortsPerClient = data.maxPortsPerClient || i18n['NotLimit'];
+                data.heartbeatTimeout = data.heartbeatTimeout || i18n['NotSet'];
+                data.allowPortsStr = data.allowPortsStr || i18n['NotLimit'];
+                data.tlsForce = i18n[data.tlsForce || false];
                 renderServerInfo(data);
             } else {
                 layui.layer.msg(result.message);
@@ -63,8 +63,8 @@ var loadServerInfo = (function ($) {
     function renderTrafficChart(data) {
         var chartLegend = [i18n['TrafficIn'], i18n['TrafficOut']];
         var chartData = [
-            {value: data.total_traffic_in, name: i18n['TrafficIn']},
-            {value: data.total_traffic_out, name: i18n['TrafficOut']}
+            {value: data.totalTrafficIn, name: i18n['TrafficIn']},
+            {value: data.totalTrafficOut, name: i18n['TrafficOut']}
         ];
         var chartDom = document.getElementById('trafficPieChart');
         var chart = echarts.init(chartDom);
@@ -122,7 +122,7 @@ var loadServerInfo = (function ($) {
      * @param data proxy count data
      */
     function renderCountChart(data) {
-        var proxies = data.proxy_type_count;
+        var proxies = data.proxyTypeCount;
         var chartLegend = [];
         var chartData = [];
 

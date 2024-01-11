@@ -251,9 +251,7 @@ var loadUserList = (function ($) {
             where: {},
             dataType: 'json',
             editTrigger: 'dblclick',
-            page: {
-                layout: navigator.language.indexOf("zh") === -1 ? ['first', 'prev', 'next', 'last'] : ['prev', 'page', 'next', 'skip', 'count', 'limit']
-            },
+            page: pageOptions,
             toolbar: '#userListToolbarTemplate',
             defaultToolbar: false,
             cols: [[

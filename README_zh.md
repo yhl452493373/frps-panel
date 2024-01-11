@@ -6,6 +6,8 @@ frps-panel 是 [frp](https://github.com/fatedier/frp) 的一个服务端插件�
 
 frps-panel 会以一个单独的进程运行，并接收 frps 发送过来的 HTTP 请求。
 
+## 从版本2.0.0开始，本插件只支持版本号大于等于v0.52.0的frp
+
 ![支持英文](screenshots/i18n.png)
 ![登录页面](screenshots/login.png)
 ![服务器信息](screenshots/server%20info.png)
@@ -33,7 +35,7 @@ frps-panel 会以一个单独的进程运行，并接收 frps 发送过来的 HT
 
 ### 要求
 
-需要 frp 版本 >= v0.31.0
+需要 frp 版本 >= v0.52.3
 
 ### 使用示例
 
@@ -91,47 +93,73 @@ dashboard_pwd = "admin"
 
 4. 在 frps 的配置文件中注册插件，并启动。
 
-```ini
-# frps.ini
-[common]
-bind_port = 7000
+```toml
+# frps.toml
+bindPort = 7000
 
-[plugin.multiuser]
-addr = 127.0.0.1:7200
-path = /handler
-ops = Login,NewWorkConn,NewUserConn,NewProxy,Ping
+[[httpPlugins]]
+name = "frps-panel"
+addr = "127.0.0.1:7200"
+path = "/handler"
+ops = ["Login","NewWorkConn","NewUserConn","NewProxy","Ping"]
 ```
 
-5. 在 frpc 中指定用户名，在 meta 中指定 token，用户名以及 `meta_token` 的内容需要和之前创建的 token 文件匹配。
+5. 在 frpc 中指定用户名，在 metadatas 中指定 token，用户名以及 `metadatas.token` 的内容需要和之前创建的 token 文件匹配。
 
     user1 的配置:
 
-```ini
-# frpc.ini
-[common]
-server_addr = x.x.x.x
-server_port = 7000
-user = user1
-meta_token = 123
+```toml
+# frpc.toml
+serverAddr = "127.0.0.1"
+serverPort = 7000
+user = "user1"
+metadatas.token = "123"
 
-[ssh]
-type = tcp
-local_port = 22
-remote_port = 8080
+[[proxies]]
+type = "tcp"
+localIP = 22
+localPort = 8080
+```
+或
+```toml
+# frpc.toml
+serverAddr = "127.0.0.1"
+serverPort = 7000
+user = "user1"
+[metadatas]
+token = "123"
+
+[[proxies]]
+type = "tcp"
+localIP = 22
+localPort = 8080
 ```
 
     user2 的配置:（由于示例文件中user2被禁用，因此无法连接）
 
-```ini
-# frpc.ini
-[common]
-server_addr = x.x.x.x
-server_port = 7000
-user = user2
-meta_token = abc
+```toml
+# frpc.toml
+serverAddr = "127.0.0.1"
+serverPort = 7000
+user = "user2"
+metadatas.token = "abc"
 
-[ssh]
-type = tcp
+[[proxies]]
+type = "tcp"
+local_port = 22
+remote_port = 6000
+```
+或
+```toml
+# frpc.toml
+serverAddr = "127.0.0.1"
+serverPort = 7000
+user = "user2"
+[metadatas]
+token = "abc"
+
+[[proxies]]
+type = "tcp"
 local_port = 22
 remote_port = 6000
 ```

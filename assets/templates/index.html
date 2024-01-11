@@ -87,63 +87,63 @@
             </div>
             <div class="text-row">
                 <div class="text-col">${ .BindPort }</div>
-                <div class="text-col">{{= d.bind_port }}</div>
+                <div class="text-col">{{= d.bindPort }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .KCPBindPort }</div>
-                <div class="text-col">{{= d.kcp_bind_port }}</div>
+                <div class="text-col">{{= d.kcpBindPort }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .QUICBindPort }</div>
-                <div class="text-col">{{= d.quic_bind_port }}</div>
+                <div class="text-col">{{= d.quicBindPort }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .HTTPPort }</div>
-                <div class="text-col">{{= d.vhost_http_port }}</div>
+                <div class="text-col">{{= d.vhostHTTPPort }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .HTTPSPort }</div>
-                <div class="text-col">{{= d.vhost_https_port }}</div>
+                <div class="text-col">{{= d.vhostHTTPSPort }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .TCPMUXPort }</div>
-                <div class="text-col">{{= d.tcpmux_httpconnect_port }}</div>
+                <div class="text-col">{{= d.tcpmuxHTTPConnectPort }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .SubdomainHost }</div>
-                <div class="text-col">{{= d.subdomain_host }}</div>
+                <div class="text-col">{{= d.subdomainHost }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .MaxPoolCount }</div>
-                <div class="text-col">{{= d.max_pool_count }}</div>
+                <div class="text-col">{{= d.maxPoolCount }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .MaxPortsPerClient }</div>
-                <div class="text-col">{{= d.max_ports_per_client }}</div>
+                <div class="text-col">{{= d.maxPortsPerClient }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .HeartBeatTimeout }</div>
-                <div class="text-col">{{= d.heart_beat_timeout }}</div>
+                <div class="text-col">{{= d.heartbeatTimeout }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .AllowPorts }</div>
-                <div class="text-col">{{= d.allow_ports_str }}</div>
+                <div class="text-col">{{= d.allowPortsStr }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .TLSOnly }</div>
-                <div class="text-col">{{= d.tls_only }}</div>
+                <div class="text-col">{{= d.tlsForce }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .CurrentConnections }</div>
-                <div class="text-col">{{= d.cur_conns }}</div>
+                <div class="text-col">{{= d.curConns }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .ClientCounts }</div>
-                <div class="text-col">{{= d.client_counts }}</div>
+                <div class="text-col">{{= d.clientCounts }}</div>
             </div>
             <div class="text-row">
                 <div class="text-col">${ .ProxyCounts }</div>
-                <div class="text-col">{{= d.proxy_counts }}</div>
+                <div class="text-col">{{= d.proxyCounts }}</div>
             </div>
         </div>
         <div class="chart-info">
@@ -317,7 +317,7 @@
                 <div class="layui-col-xs6">
                     <div class="layui-row">
                         <div class="layui-col-md3">${ .Domains }</div>
-                        <div class="layui-col-md9">{{= d.data.conf.custom_domains }}</div>
+                        <div class="layui-col-md9">{{= d.data.conf.customDomains }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
@@ -337,7 +337,7 @@
                 <div class="layui-col-xs6">
                     <div class="layui-row">
                         <div class="layui-col-md3">${ .HostRewrite }</div>
-                        <div class="layui-col-md9">{{= d.data.conf.host_header_rewrite }}</div>
+                        <div class="layui-col-md9">{{= d.data.conf.hostHeaderRewrite }}</div>
                     </div>
                 </div>
             </div>
@@ -345,13 +345,13 @@
                 <div class="layui-col-xs6">
                     <div class="layui-row">
                         <div class="layui-col-md3">${ .Encryption }</div>
-                        <div class="layui-col-md9">{{= d.data.conf.use_encryption }}</div>
+                        <div class="layui-col-md9">{{= d.data.conf.transport.useEncryption }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
                     <div class="layui-row">
                         <div class="layui-col-md3">${ .Compression }</div>
-                        <div class="layui-col-md9">{{= d.data.conf.use_compression }}</div>
+                        <div class="layui-col-md9">{{= d.data.conf.transport.useCompression }}</div>
                     </div>
                 </div>
             </div>
@@ -359,13 +359,13 @@
                 <div class="layui-col-xs6">
                     <div class="layui-row">
                         <div class="layui-col-md3">${ .LastStart }</div>
-                        <div class="layui-col-md9">{{= d.data.last_start_time }}</div>
+                        <div class="layui-col-md9">{{= d.data.lastStartTime }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
                     <div class="layui-row">
                         <div class="layui-col-md3">${ .LastClose }</div>
-                        <div class="layui-col-md9">{{= d.data.last_close_time }}</div>
+                        <div class="layui-col-md9">{{= d.data.lastCloseTime }}</div>
                     </div>
                 </div>
             </div>
@@ -388,13 +388,13 @@
                 <div class="layui-col-xs6">
                     <div class="layui-row">
                         <div class="layui-col-md3">${ .Addr }</div>
-                        <div class="layui-col-md9">{{= d.data.conf.remote_port }}</div>
+                        <div class="layui-col-md9">{{= d.data.conf.remotePort }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
                     <div class="layui-row">
                         <div class="layui-col-md3">${ .Encryption }</div>
-                        <div class="layui-col-md9">{{= d.data.conf.use_encryption }}</div>
+                        <div class="layui-col-md9">{{= d.data.conf.transport.useEncryption }}</div>
                     </div>
                 </div>
             </div>
@@ -402,13 +402,13 @@
                 <div class="layui-col-xs6">
                     <div class="layui-row">
                         <div class="layui-col-md3">${ .Compression }</div>
-                        <div class="layui-col-md9">{{= d.data.conf.use_compression }}</div>
+                        <div class="layui-col-md9">{{= d.data.conf.transport.useCompression }}</div>
                     </div>
                 </div>
                 <div class="layui-col-xs6">
                     <div class="layui-row">
                         <div class="layui-col-md3">${ .LastStart }</div>
-                        <div class="layui-col-md9">{{= d.data.last_start_time }}</div>
+                        <div class="layui-col-md9">{{= d.data.lastStartTime }}</div>
                     </div>
                 </div>
             </div>
@@ -416,7 +416,7 @@
                 <div class="layui-col-xs6">
                     <div class="layui-row">
                         <div class="layui-col-md3">${ .LastClose }</div>
-                        <div class="layui-col-md9">{{= d.data.last_close_time }}</div>
+                        <div class="layui-col-md9">{{= d.data.lastCloseTime }}</div>
                     </div>
                 </div>
             </div>

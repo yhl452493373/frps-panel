@@ -1,4 +1,4 @@
-var http_port, https_port;
+var httpPort, httpsPort;
 (function ($) {
     $(function () {
         function init() {
@@ -48,3 +48,14 @@ var http_port, https_port;
         init();
     });
 })(layui.$);
+
+var pageOptions = {
+    layout: navigator.language.indexOf("zh") === -1 ? ['prev', 'page', 'next', 'skip', 'limit'] : ['prev', 'page', 'next', 'skip', 'count', 'limit'],
+    limitTemplet: function (item) {
+        if (navigator.language.indexOf("zh") === -1) {
+            return item + ' / Page';
+        }
+        return item + ' 条/页';
+    },
+    skipText: navigator.language.indexOf("zh") === -1 ? ['Go to', '', 'Confirm'] : ['&#x5230;&#x7B2C;', '&#x9875;', '&#x786e;&#x5b9a;']
+};
