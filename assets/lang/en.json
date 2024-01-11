@@ -99,5 +99,9 @@
   "Please input password": "Please input password",
   "Login success": "Login success",
   "Username or password incorrect": "Username or password incorrect",
-  "Token invalid": "Token invalid"
+  "Token invalid": "Token invalid",
+  "Total": "Total ",
+  "Items": " items",
+  "Go to": "Go to",
+  "Per Page": " / page"
 }

@@ -238,6 +238,10 @@ func (c *HandleController) MakeLangFunc() func(context *gin.Context) {
 			"NotSet":                ginI18n.MustGetMessage(context, "Not Set"),
 			"Proxy":                 ginI18n.MustGetMessage(context, "Proxy"),
 			"TokenInvalid":          ginI18n.MustGetMessage(context, "Token invalid"),
+			"Total":                 ginI18n.MustGetMessage(context, "Total"),
+			"Items":                 ginI18n.MustGetMessage(context, "Items"),
+			"Goto":                  ginI18n.MustGetMessage(context, "Go to"),
+			"PerPage":               ginI18n.MustGetMessage(context, "Per Page"),
 		})
 	}
 }

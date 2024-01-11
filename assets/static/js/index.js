@@ -1,9 +1,17 @@
-var httpPort, httpsPort;
+var httpPort, httpsPort, pageOptions;
 (function ($) {
     $(function () {
         function init() {
             var langLoading = layui.layer.load()
             $.getJSON('/lang.json').done(function (lang) {
+                pageOptions = {
+                    limitTemplet: function (item) {
+                        return item + lang['PerPage'];
+                    },
+                    skipText: [lang['Goto'], '', lang['Confirm']],
+                    countText: [lang['Total'], lang['Items']]
+                };
+
                 $.ajaxSetup({
                     error: function (xhr,) {
                         if (xhr.status === 401) {
@@ -12,7 +20,7 @@ var httpPort, httpsPort;
                             });
                         }
                     },
-                })
+                });
 
                 layui.element.on('nav(leftNav)', function (elem) {
                     var id = elem.attr('id');
@@ -48,14 +56,3 @@ var httpPort, httpsPort;
         init();
     });
 })(layui.$);
-
-var pageOptions = {
-    layout: navigator.language.indexOf("zh") === -1 ? ['prev', 'page', 'next', 'skip', 'limit'] : ['prev', 'page', 'next', 'skip', 'count', 'limit'],
-    limitTemplet: function (item) {
-        if (navigator.language.indexOf("zh") === -1) {
-            return item + ' / Page';
-        }
-        return item + ' 条/页';
-    },
-    skipText: navigator.language.indexOf("zh") === -1 ? ['Go to', '', 'Confirm'] : ['&#x5230;&#x7B2C;', '&#x9875;', '&#x786e;&#x5b9a;']
-};

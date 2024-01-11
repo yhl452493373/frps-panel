@@ -99,5 +99,9 @@
   "Please input password": "请填写密码",
   "Login success": "登录成功",
   "Username or password incorrect": "用户名或密码错误",
-  "Token invalid": "登录信息无效"
+  "Token invalid": "登录信息无效",
+  "Total": "共",
+  "Items": "条记录",
+  "Go to": "到第",
+  "Per Page": "条/页"
 }
